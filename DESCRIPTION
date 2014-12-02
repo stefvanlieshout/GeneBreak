@@ -1,0 +1,30 @@
+Package: BreakPointGenes
+Version: 0.0.1
+Title: Breakpoint Genes Detection
+Author: Evert van den Broek / Stef van Lieshout
+Maintainer: Stef van Lieshout <s.vanLieshout@vumc.nl>
+Depends:
+    R (>= 2.15.0)
+Imports:
+    graphics,
+    methods,
+    stats,
+    utils,
+    matrixStats (>= 0.9.4),
+    R.utils (>= 1.28.4),
+    Biobase (>= 2.18.0),
+    CGHbase (>= 1.18.0),
+    CGHcall (>= 2.18.0),
+    DNAcopy (>= 1.32.0)
+Suggests:
+    R.cache (>= 0.9.0),
+    digest,
+    snowfall,
+    BSgenome,
+    GenomeInfoDb,
+    GenomicRanges
+Description: Breakpoint Genes Detection on Copy Number Aberration data
+biocViews: CopyNumberVariation, DNASeq, Genetics, GenomeAnnotation,
+    Preprocessing, QualityControl, Sequencing
+License: GPL
+LazyData: true

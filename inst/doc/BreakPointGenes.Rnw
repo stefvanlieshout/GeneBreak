@@ -1,0 +1,97 @@
+%\VignetteIndexEntry{Introduction to BreakPointGenes}
+
+\documentclass{article}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{
+  hyperref}
+
+\begin{document}
+
+\newcommand{\pkg}[1]{\texttt{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\title{Introduction to BreakPointGenes}
+\author{Stef van Lieshout, Evert van den Broek}
+\maketitle
+
+\section{Running BreakPointGenes}
+
+This is a short tutorial on how to use the \pkg{BreakPointGenes} package. It covers an
+example run using the included data set of chromosomes 7--10 of a
+low grade glioma (LGG) sample. First step is naturally to load the package.
+
+<<>>=
+library(BreakPointGenes)
+@
+
+<<echo=FALSE>>=
+options("BreakPointGenes::verbose"=NA)
+options(width=40)
+@
+
+\subsection{Loading data from a cghCall object}
+
+Then we need to obtain copy number data. These are available pre-calculated for
+genome build hg19 and bin sizes 1, 5, 10, 15, 30, 50, 100, 500, and 1000 kbp.
+They can be downloaded for example with:
+
+\begin{Schunk}
+\begin{Sinput}
+> bins <- getBinAnnotations(binSize=15)
+Downloading bin annotations for genome hg19, bin size 15kbp,
+and experiment type SR50 ...
+\end{Sinput}
+\end{Schunk}
+
+After downloading, the bin annotations can be saved locally with
+\code{saveRDS}, and in the future be read from the local file with
+\code{loadRDS} instead of relying on downloading.
+
+If you are working with another genome build (or another species), see the
+section on generating the bin annotations.
+
+\subsection{Processing bam files}
+
+Next step is to load the copy number data from a cghCall file or from a
+text file. This can be done for example with one of the commands below.
+
+<<eval=FALSE>>=
+breakPoints <- getBP( cghCallObject )
+# all files ending in .bam from the current working directory
+
+# or
+
+breakPoints <- getBP( "file.txt", type='txt' )
+# file 'file.txt' from the current working directory
+
+@
+
+This will return an object of class \code{CNBPgene}.
+
+For the purpose of this tutorial, we load an example data set of chromosomes
+7--10 of low grade glioma sample LGG150.
+
+<<>>=
+breakPoints <- "example_code"
+breakPoints
+@
+
+Finally, for other downstream analyses, such as running CGHregions, it might be
+useful to convert to a cghCall object.
+
+<<>>=
+cgh <- matrix()
+@
+
+\clearpage
+
+\section{Session Information}
+
+The version number of R and packages loaded for generating the vignette were:
+
+<<echo=FALSE>>=
+sessionInfo()
+@
+
+\end{document}
+
+% EOF
