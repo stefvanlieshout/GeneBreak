@@ -14,7 +14,7 @@ getBP(data, first.rm = TRUE)
 Object of class \code{CopyNumberBreakPoints}.
 }
 \description{
-\code{getBP} builds the CopyNumberBreakPoints object with CGHcall data
+Builds the CopyNumberBreakPoints object with CGHcall data
 }
 \examples{
 getBP( cghCallObj )
