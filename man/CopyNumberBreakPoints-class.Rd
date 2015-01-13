@@ -3,9 +3,9 @@
 \name{CopyNumberBreakPoints-class}
 \alias{CopyNumberBreakPoints}
 \alias{CopyNumberBreakPoints-class}
-\title{An S4 class to represent a CopyNumberBreakPointGenes object.}
+\title{An S4 class to represent a CopyNumberBreakPoints object.}
 \description{
-An S4 class to represent a CopyNumberBreakPointGenes object.
+An S4 class to represent a CopyNumberBreakPoints object.
 }
 \section{Slots}{
 

@@ -27,4 +27,4 @@ Description: Breakpoint Genes Detection on Copy Number Aberration data
 biocViews: CopyNumberVariation, DNASeq, Genetics, GenomeAnnotation,
     Preprocessing, QualityControl, Sequencing
 License: GPL
-LazyData: true
+LazyData: FALSE

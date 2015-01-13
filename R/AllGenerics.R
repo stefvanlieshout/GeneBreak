@@ -16,11 +16,18 @@ setGeneric( "sampleNames", function(object) standardGeneric("sampleNames") )
 setGeneric( "geneNames", function(object) standardGeneric("geneNames") )
 
 
+## -----------------
 ## CNBPgene generics
-setGeneric( "bpFilter", function(object, ...) standardGeneric("bpFilter") )
-setGeneric( "bpSummary", function(object) standardGeneric("bpSummary") )
-setGeneric( "addGeneAnnotation", function(object, geneAnnotations ) standardGeneric("addGeneAnnotation") )
+## -----------------
 
+## set
+setGeneric( "bpFilter", function(object, filter, ...) standardGeneric("bpFilter") )
+setGeneric( "bpSummary", function(object) standardGeneric("bpSummary") )
+setGeneric( "addGeneAnnotation", function(object, geneAnnotation ) standardGeneric("addGeneAnnotation") )
+setGeneric( "bpGenes", function(object) standardGeneric("bpGenes") )
+setGeneric( "bpStats", function(object, level="gene", method="BH") standardGeneric("bpStats") )
+
+## get
 setGeneric( "callDiff", function(object) standardGeneric("callDiff") )
 setGeneric( "segDiff", function(object) standardGeneric("segDiff") )
 setGeneric( "calls", function(object) standardGeneric("calls") )
@@ -28,5 +35,7 @@ setGeneric( "segments", function(object) standardGeneric("segments") )
 setGeneric( "breakpoints", function(object) standardGeneric("breakpoints") )
 setGeneric( "featureAnnotation", function(object) standardGeneric("featureAnnotation") )
 setGeneric( "geneAnnotation", function(object) standardGeneric("geneAnnotation") )
+setGeneric( "featuresPerGene", function(object, geneName) standardGeneric("featuresPerGene") )
+setGeneric( "breakpointsPerGene", function(object) standardGeneric("breakpointsPerGene") )
 
 # EOF
