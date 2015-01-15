@@ -143,7 +143,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	genes$genelength_features <- NA
 	genes$featureTotal <- NA
 	genes$featureNames <- NA
-	
+
 	geneCount <- nrow( genes )
 
 
@@ -177,8 +177,6 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 		if( !is.na(progress[gene_idx])) { 
 			cat( paste( progress[ gene_idx ], "... ") ) 
 		}
-		geneName <- geneAnnotation[gene_idx, "Gene"]
-		#cat( "DEBUG TEST", gene_idx, ":", geneName, "\n")
 		
 		feature_idx_chr <- which( features$Chromosome == genes$Chromosome[ gene_idx ] )
 		tmp_features <- features[ feature_idx_chr, ]
@@ -206,8 +204,6 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 				geneRelatedFeatures <- rownames( features )[ features_S:features_E ]
 				
 				if( length( geneRelatedFeatures ) == 1 & features_S == start_endChr[ which( start_endChr$chr == genes$Chromosome[ gene_idx ]),"start_index"]) {
-					## goes wrong here?
-					#geneAnnotation$situation[gene_idx] <- "A"
 					genes$situation[gene_idx] <- "A"
 					gene_features[[ gene_idx ]] <- geneRelatedFeatures
 				}			
@@ -218,7 +214,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 					gene_features[[ gene_idx ]] <- geneRelatedFeatures
 				}
 					
-				else if(is.na( genes$situation[ gene_idx ]) & features_S == features_E) { # & features_S!=start_endChr[which(start_endChr$chr==geneAnnotation$Chromosome[gene_idx]),"start_index"]) {
+				else if(is.na( genes$situation[ gene_idx ]) & features_S == features_E) {
 					genes$situation[gene_idx] <- "C"
 					genes$genelength_features[ gene_idx ] <- features$Start[ features_E ] - features$Start[ features_S - 1 ]
 					gene_features[[ gene_idx ]] <- geneRelatedFeatures
@@ -240,7 +236,6 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 			gene_features[[gene_idx]] <- geneRelatedFeatures
 		}
 	} # end for-loop with geneAnnotation
-	cat( "end of loop\n")
 	
 	genes$featureTotal <- sapply( gene_features, function(x){ length( x[!is.na(x)] )})
 	## for the names as.vector used, because sapply returns lists...?
