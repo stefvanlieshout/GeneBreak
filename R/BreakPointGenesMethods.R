@@ -17,8 +17,8 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 	breakpoints <- NULL; segDiff <- NULL; callDiff <- NULL; startChr <- c()
 	featureAnnotation <- NULL;	probeDistance <- c()
 	
-	segmData <- segmented(data)
-	callData <- calls(data)
+	segmData <- CGHbase::segmented(data)
+	callData <- CGHbase::calls(data)
 	featureNames <- rownames( segmData )
 	
 	segDiff  <- rbind( segmData[ 1, ], apply( segmData, 2, diff ) )	
@@ -49,8 +49,8 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 		segDiff = segDiff,
 		callDiff = callDiff,
 		featureAnnotation = featureAnnotation,
-		calls = calls(data),
-		segments = segmented(data),
+		calls = callData,
+		segments = segmData,
 		breakpoints = ifelse( segDiff != 0,1,0 )
 	)
 	return(output)
@@ -249,12 +249,12 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	
 	## create output object
 	output <- new( 'CopyNumberBreakPointGenes', 
-		segDiff     = segDiff(data),
-		callDiff    = callDiff(data),
-		segments    = segments(data),
-		calls       = calls(data),
-		breakpoints = breakpoints(data),
-		featureAnnotation = featureAnnotation(data),
+		segDiff     = data@segDiff,
+		callDiff    = data@callDiff,
+		segments    = data@segments,
+		calls       = data@calls,
+		breakpoints = data@breakpoints,
+		featureAnnotation = data@featureAnnotation,
 		geneAnnotation    = genes, # same as input slot with extra colums
 		featuresPerGene   = gene_features # list of length nrow genes
 	)
