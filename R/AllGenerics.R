@@ -30,9 +30,9 @@ setGeneric( "bpStats", function(object, level="gene", method="BH") standardGener
 ## get
 setGeneric( "callDiff", function(object) standardGeneric("callDiff") )
 setGeneric( "segDiff", function(object) standardGeneric("segDiff") )
-setGeneric( "calls", function(object) standardGeneric("calls") )
-setGeneric( "segments", function(object) standardGeneric("segments") )
-setGeneric( "breakpoints", function(object) standardGeneric("breakpoints") )
+setGeneric( "callData", function(object) standardGeneric("calls") )
+setGeneric( "segmentData", function(object) standardGeneric("segments") )
+setGeneric( "breakpointData", function(object) standardGeneric("breakpoints") )
 setGeneric( "featureAnnotation", function(object) standardGeneric("featureAnnotation") )
 setGeneric( "geneAnnotation", function(object) standardGeneric("geneAnnotation") )
 setGeneric( "featuresPerGene", function(object, geneName) standardGeneric("featuresPerGene") )

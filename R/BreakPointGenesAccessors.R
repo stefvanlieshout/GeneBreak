@@ -3,8 +3,9 @@
 .dataAccessOptions = list(
     segDiff  = "segmentDiff",
     callDiff = "callDiff",
-    calls = "feature call values",
-    segments = "feature segment values",
+    callData = "feature call values",
+    segmentData = "feature segment values",
+    breakpointData = "feature breakpoint values",
     sampleNames = "vector with sample names",
     featureNames = "vector with feature names",
     featureAnnotation = "feature annotation"
@@ -14,7 +15,7 @@
     featuresPerGene = "a list of genes with coupled features",
     breakpointsPerGene = "gene break status"
 )
-
+`
 setMethod( "show",
     signature = "CopyNumberBreakPoints",
     definition = function(object) {
@@ -56,13 +57,13 @@ setMethod( "segDiff", "CopyNumberBreakPoints",
 setMethod( "callDiff", "CopyNumberBreakPoints",
 	function(object) object@callDiff
 )
-setMethod( "calls", "CopyNumberBreakPoints",
+setMethod( "callData", "CopyNumberBreakPoints",
 	function(object) object@calls
 )
-setMethod( "segments", "CopyNumberBreakPoints",
+setMethod( "segmentData", "CopyNumberBreakPoints",
 	function(object) object@segments
 )
-setMethod( "breakpoints", "CopyNumberBreakPoints",
+setMethod( "breakpointData", "CopyNumberBreakPoints",
     function(object) object@breakpoints
 )
 setMethod( "featureAnnotation", "CopyNumberBreakPoints",
