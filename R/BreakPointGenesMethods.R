@@ -170,7 +170,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	warning_Z <- NULL # will be set if unable to determine situation for one or more genes
 	
 	## Loop for all geneAnnotation
-	print(head(genes))
+	#print(head(genes))
 
 	for( gene_idx in 1:geneCount ) {
 

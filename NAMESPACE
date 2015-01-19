@@ -32,13 +32,9 @@ importFrom( utils, packageVersion, read.table, write.table )
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # EXPORTS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-export( "doSomething", "multiplyCounts", "addMultipliedCounts", "readCGHcall" )
-export( "plotDaShizzle", "sayHello", "divideNumbers" )
-export( "counts", "mCounts", "sampleNames", "featureNames" )
 
-## real ones
 export( "getBreakpoints", "createGeneAnnotations", "bpFilter", "bpSummary", "addGeneAnnotation" )
-export( "callDiff", "segDiff", "calls", "segments", "breakpoints", "featureAnnotation", "geneAnnotation", "featuresPerGene", "breakpointsPerGene" )
+export( "callDiff", "segDiff", "callData", "segmentData", "breakpointData", "featureAnnotation", "geneAnnotation", "featuresPerGene", "breakpointsPerGene" )
 export( "bpGenes", "bpStats" )
 
 # EOF

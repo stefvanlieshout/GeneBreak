@@ -7,10 +7,10 @@
 ## NOTES:
 ## any "new" method defined need a generic here too
 
-setGeneric( "counts", function(object) standardGeneric("counts") )
-setGeneric( "mCounts", function(object) standardGeneric("mCounts") )
-setGeneric( "multiplyCounts", function(object, mFactor=2) standardGeneric("multiplyCounts") )
-setGeneric( "addMultipliedCounts", function(object, mFactor=2) standardGeneric("addMultipliedCounts") )
+#setGeneric( "counts", function(object) standardGeneric("counts") )
+#setGeneric( "mCounts", function(object) standardGeneric("mCounts") )
+#setGeneric( "multiplyCounts", function(object, mFactor=2) standardGeneric("multiplyCounts") )
+#setGeneric( "addMultipliedCounts", function(object, mFactor=2) standardGeneric("addMultipliedCounts") )
 
 setGeneric( "sampleNames", function(object) standardGeneric("sampleNames") )
 setGeneric( "geneNames", function(object) standardGeneric("geneNames") )
@@ -30,9 +30,9 @@ setGeneric( "bpStats", function(object, level="gene", method="BH") standardGener
 ## get
 setGeneric( "callDiff", function(object) standardGeneric("callDiff") )
 setGeneric( "segDiff", function(object) standardGeneric("segDiff") )
-setGeneric( "callData", function(object) standardGeneric("calls") )
-setGeneric( "segmentData", function(object) standardGeneric("segments") )
-setGeneric( "breakpointData", function(object) standardGeneric("breakpoints") )
+setGeneric( "callData", function(object) standardGeneric("callData") )
+setGeneric( "segmentData", function(object) standardGeneric("segmentData") )
+setGeneric( "breakpointData", function(object) standardGeneric("breakpointData") )
 setGeneric( "featureAnnotation", function(object) standardGeneric("featureAnnotation") )
 setGeneric( "geneAnnotation", function(object) standardGeneric("geneAnnotation") )
 setGeneric( "featuresPerGene", function(object, geneName) standardGeneric("featuresPerGene") )

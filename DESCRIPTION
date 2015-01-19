@@ -24,7 +24,6 @@ Suggests:
     GenomeInfoDb,
     GenomicRanges
 Description: Breakpoint Genes Detection on Copy Number Aberration data
-biocViews: CopyNumberVariation, DNASeq, Genetics, GenomeAnnotation,
-    Preprocessing, QualityControl, Sequencing
+biocViews: CopyNumberVariation, DNASeq, Genetics, Sequencing
 License: GPL
 LazyData: FALSE
