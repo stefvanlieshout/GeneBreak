@@ -15,7 +15,7 @@
     featuresPerGene = "a list of genes with coupled features",
     breakpointsPerGene = "gene break status"
 )
-`
+
 setMethod( "show",
     signature = "CopyNumberBreakPoints",
     definition = function(object) {
