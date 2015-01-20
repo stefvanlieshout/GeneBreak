@@ -25,7 +25,7 @@ setGeneric( "bpFilter", function(object, filter, ...) standardGeneric("bpFilter"
 setGeneric( "bpSummary", function(object) standardGeneric("bpSummary") )
 setGeneric( "addGeneAnnotation", function(object, geneAnnotation ) standardGeneric("addGeneAnnotation") )
 setGeneric( "bpGenes", function(object) standardGeneric("bpGenes") )
-setGeneric( "bpStats", function(object, level="gene", method="BH") standardGeneric("bpStats") )
+setGeneric( "bpStats", function(object, level="gene", method="BH", fdr_treshold=1 ) standardGeneric("bpStats") )
 
 ## get
 setGeneric( "callDiff", function(object) standardGeneric("callDiff") )

@@ -254,7 +254,14 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	
 	geneData$featureTotal <- sapply( gene_features, function(x){ length( x[!is.na(x)] )})
 	## for the names as.vector used, because sapply returns lists...?
-	geneData$featureNames <- as.vector( sapply( gene_features, function(x){ ifelse( is.na(x), NA, paste( x, collapse = "|" ))}) )
+	exclude_idx <- which( is.na( gene_features ) )
+	print(exclude_idx)
+
+	geneData$featureNames <- NA
+	geneData$featureNames[-exclude_idx] <- sapply( gene_features[-exclude_idx], function(x){ paste( x, collapse = "|" ) })
+
+
+	#tmp <- sapply( gene_features, function(x){ if( is.na(x) ){ NA }else{ paste( x, collapse = "|" ) } })
 		
 	cat( "Adding gene annotation DONE\n" )
 	
@@ -296,8 +303,8 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 		breakpointdata <- object
 		gene_probes <- breakpointdata@featuresPerGene
 		breakpoints <- breakpointdata@breakpoints
-		
 		geneData <- object@geneData
+
 		geneData$geneBreaks <- NA
 		geneData$samplesWithGeneBreaks <- NA
 		geneCount <- nrow( geneData )
@@ -318,7 +325,10 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 			}
 
 			tmp_bps <- NULL
-			tmp_bps <- as.matrix( breakpoints[ unlist( gene_probes[ gene_idx ] ), ] ) # as.matrix() in stead of rbind () ?
+			tmp_bps <- as.matrix( breakpoints[ gene_probes[[ gene_idx ]], ] ) # as.matrix() in stead of rbind () ?
+			if( length( gene_probes[[ gene_idx ]] ) == 1 ){
+				tmp_bps <- t( tmp_bps )
+			}
 			
 			gene_breakpoints[ gene_idx, ] <- as.vector( colSums(tmp_bps) )
 			geneData$geneBreaks[ gene_idx ] <- length( which( rowSums(tmp_bps) > 0 ) )
@@ -371,6 +381,8 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 ## internal function
 .pval_gene <- function( i, breakgene=breakgene, cumgfs=cumgfs ) {
 	#i<-1
+	#nr_idx <- length(i)
+	#cat( "NR idx", nr_idx, "\n" )
 	obs <- breakgene[i]
 	pv <- cumgfs[ i, obs + 1 ]
 	return( pv )
@@ -379,7 +391,7 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 ## internal function
 .pval_probe <- function( i, breakgene=breakgene, cumgfs=cumgfs ) {
 	obs <- breakgene[i]
-	pv <- cumgfs[ obs + 1 ] # slidely different
+	pv <- cumgfs[ , obs + 1 ]
 	return( pv )
 }
 
@@ -397,7 +409,7 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 #' @aliases bpStats
 setMethod( "bpStats", "CopyNumberBreakPoints",
 
-	function( object, level="gene", method="BH" ) {
+	function( object, level="gene", method="BH", fdr_treshold=1 ) {
 		
 		allowed.methods <- c( "Gilbert", "BH" )
 		allowed.levels <- c( "all", "gene" )
@@ -428,9 +440,9 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 
 			# setup data
 			bps <- breakpointData@breakpointsPerGene
+			# because of later sum() transform to 1
 			bps[ bps > 0 ] <- 1
-		
-			# don't take situation A,B,X into account
+			# exclude situations A,B,X
 			exclude <- which( breakpointData@geneData$situation %in% c("A","B","X") )
 			bpt <- bps[ -exclude, ]
 
@@ -460,12 +472,14 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 
 
 			
-			cat( "About to apply .glmbreak() function\n")
+			#cat( "About to apply .glmbreak() function\n")
 
-			nms <- apply( bpt, 2, 
-				function( breakg ){ 
+			nms <- apply( bpt, 2, function( breakg )
+				{ 
 					.glmbreak( breakg = breakg, lenst = lenst, nprobes = nprobes)
-				} ) ### WARNINGS !!!
+				} 
+			) 
+				### WARNINGS !!!
 				# Warning messages:
 				# 1: glm.fit: fitted probabilities numerically 0 or 1 occurred
 				# 2: glm.fit: algorithm did not converge
@@ -473,7 +487,13 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			
 			cumgfs <- t( apply( nms, 1, function(probs){ .cumgf( probs=probs ) }))
 			
-			pvalues <- sapply( 1:length(breakgene), function(i){ .pval_gene( i=i, breakgene=breakgene, cumgfs=cumgfs) })
+			#pvalues <- sapply( 1:length(breakgene), function(i){ .pval_gene( i=i, breakgene=breakgene, cumgfs=cumgfs) })
+			pvalues <- sapply( 1:length(breakgene), function(i)
+				{ 
+					cumgfs[ i, breakgene[i] + 1 ] 
+				}
+			)
+			#sapply( 1:10, function(i){ cumgfs[ i, breakgene[i]+1] } )
 			
 			if( method == "BH" ) {
 				fdrs <- p.adjust( pvalues, method = "BH")
@@ -501,22 +521,23 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 					npvsmall <- i
 					fdr <- min( 1, sum(largsmall[ 1,]) / npvsmall )
 					if( fdr < fdrprev ) fdr <- fdrprev #enforce monotonicity
-					elmax <- min( nc, max( largsmall[2,] ) )
+					elmax <- min( nc, max( largsmall[ 2,] ) )
 					cumgfscut <- cumgfscut[ ,1:elmax ]
 					i <- i + 1
 					#print(c(i,elmax,fdr))
-					if( fdr >= 1 ) fdrnot1 <- F
+					if( fdr >= fdr_treshold ) fdrnot1 <- F
 					fdrgilbert <- c( fdrgilbert, fdr )
 					fdrprev <- fdr
 				}
 				
+				## all values above FDR threshold (fdr_threshold) are set to 1
 				fdrgilbertfull <- c( fdrgilbert, rep( 1, length(pvalssort) - length(fdrgilbert)))
 				
 				fdrs <- fdrgilbertfull[ order(pvsrt$ix) ]
 				# allres <- data.frame(name=name,nbreak=breakgene,glength=len,glength_stand=lenst,nprobe=nprobes,pvalue=pvalues,fdr=fdrs)
 			}
 			else{
-				stop( "Chosen method not supported...\n")
+				stop( "Chosen method [", method, "] not supported...\n")
 			}
 			
 			geneAnn$glength_stand <- NA
