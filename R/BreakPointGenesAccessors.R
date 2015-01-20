@@ -32,11 +32,26 @@ setMethod( "show",
         if ( class(object) == "CopyNumberBreakPointGenes" && nrow(object@breakpointsPerGene) > 0){
             geneBreaksTotal <- sum( object@breakpointsPerGene )
             genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
-            if ( is.na(object@breakpointsPerGene)[1] ){
-                cat( " Run bpGenes() to determine gene breakpoints\n", sep = "" )
+            
+
+            if ( !is.na(object@breakpointsPerGene)[1] ){
+                cat( " A total of ", geneBreaksTotal, " gene breaks in ", genesBrokenTotal, " genes\n", sep = "" )
             }
             else{
-                cat( " A total of ", geneBreaksTotal, " gene breaks in ", genesBrokenTotal, " genes\n", sep = "" )
+                cat( " Run bpGenes() to determine gene breakpoints\n", sep = "" )
+            }
+            
+            if ( length( object@geneData$FDR ) ){
+                signGenes <- length( which( object@geneData$FDR < 0.1 ) )
+                cat( " A total of ", signGenes, " recurrent breakpoint genes (FDR < 0.1)\n", sep = "" )
+            }
+            else{
+                cat( " Run bpStats() to determine breakpoint statistics\n", sep = "" )
+            }
+            
+            if ( length(object@featureData$FDR) ){
+                signGenes <- length( which( object@featureData$FDR < 0.1 ) )
+                cat( " A total of ", signGenes, " recurrent breakpoints (FDR < 0.1)\n", sep = "" )
             }
         }
         

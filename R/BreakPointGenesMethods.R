@@ -453,6 +453,8 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 				level, "breakpoints:", method, "test...\n"
 			)) # place just before the loop #
 
+			
+
 			breaktotal <- apply( bpt, 2, sum )
 			breakgene <- apply( bpt, 1, sum )
 			
