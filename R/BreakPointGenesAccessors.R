@@ -8,10 +8,14 @@
     breakpointData = "feature breakpoint values",
     sampleNames = "vector with sample names",
     featureNames = "vector with feature names",
-    featureAnnotation = "feature annotation"
+    featureAnnotation = "feature annotation",
+    featureChromosomes = "vector of feature chromosomes",
+    featureData = "feature data"
 )
 .dataAccessOptionsGene = list(
     geneAnnotation = "gene annotation",
+    geneChromosomes = "vector of gene chromosomes",
+    geneData = "gene data",
     featuresPerGene = "a list of genes with coupled features",
     breakpointsPerGene = "gene break status"
 )
@@ -28,10 +32,15 @@ setMethod( "show",
         if ( class(object) == "CopyNumberBreakPointGenes" && nrow(object@breakpointsPerGene) > 0){
             geneBreaksTotal <- sum( object@breakpointsPerGene )
             genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
-            cat( " A total of ", geneBreaksTotal, " gene breaks in ", genesBrokenTotal, " genes\n", sep = "" )
+            if ( is.na(object@breakpointsPerGene)[1] ){
+                cat( " Run bpGenes() to determine gene breakpoints\n", sep = "" )
+            }
+            else{
+                cat( " A total of ", geneBreaksTotal, " gene breaks in ", genesBrokenTotal, " genes\n", sep = "" )
+            }
         }
         
-        cat( "\n --- Object Data Access ---\n", sep="")
+        cat( "\n --- Object Data Access Options ---\n", sep="")
         for ( i in names(.dataAccessOptions) ){
             cat( " ", i, "(obj) => returns ", .dataAccessOptions[[ i ]],"\n", sep="")    
         }
@@ -75,6 +84,9 @@ setMethod( "featureNames", "CopyNumberBreakPoints",
 setMethod( "sampleNames", "CopyNumberBreakPoints",
     function(object) colnames(object@breakpoints)
 )
+setMethod( "featureChromosomes", "CopyNumberBreakPoints",
+    function(object) object@featureAnnotation$Chromosome
+)
 
 ## CopyNumberBreakPointGenes
 setMethod( "geneAnnotation", "CopyNumberBreakPointGenes",
@@ -95,5 +107,8 @@ setMethod( "featuresPerGene", "CopyNumberBreakPointGenes",
 )
 setMethod( "breakpointsPerGene", "CopyNumberBreakPointGenes",
     function(object) object@breakpointsPerGene
+)
+setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
+    function(object) object@geneAnnotation$Chromosome
 )
 

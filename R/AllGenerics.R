@@ -37,5 +37,7 @@ setGeneric( "featureAnnotation", function(object) standardGeneric("featureAnnota
 setGeneric( "geneAnnotation", function(object) standardGeneric("geneAnnotation") )
 setGeneric( "featuresPerGene", function(object, geneName) standardGeneric("featuresPerGene") )
 setGeneric( "breakpointsPerGene", function(object) standardGeneric("breakpointsPerGene") )
+setGeneric( "featureChromosomes", function(object) standardGeneric("featureChromosomes") )
+setGeneric( "geneChromosomes", function(object) standardGeneric("geneChromosomes") )
 
 # EOF

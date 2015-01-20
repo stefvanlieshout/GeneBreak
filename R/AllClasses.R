@@ -46,7 +46,8 @@ CopyNumberBreakPoints <- setClass(
 		calls       = "matrix",
 		segments    = "matrix",
 		breakpoints = "matrix",
-		featureAnnotation  = "data.frame"
+		featureAnnotation  = "data.frame",
+		featureData = "data.frame"
 	),
 	prototype=list( # set defaults
 		segDiff     = matrix(),
@@ -54,7 +55,8 @@ CopyNumberBreakPoints <- setClass(
 		calls       = matrix(),
 		segments    = matrix(),
 		breakpoints = matrix(),
-		featureAnnotation = data.frame()
+		featureAnnotation = data.frame(),
+		featureData = data.frame()
 	)
 )
 
@@ -68,16 +70,19 @@ CopyNumberBreakPointGenes <- setClass(
 	contains  = 'CopyNumberBreakPoints',
 	slots = c( # contents
 		geneAnnotation = "data.frame",
+		geneData = "data.frame",
 		featuresPerGene = "list",
 		#geneBreakStatus = "matrix",
 		breakpointsPerGene = "matrix"
 	),
 	prototype=list( # set defaults
 		geneAnnotation = data.frame(),
+		geneData = data.frame(),
 		featuresPerGene = list(),
 		#geneBreakStatus = matrix(),
 		breakpointsPerGene = matrix()
 	)
 )
+
 
 # EOF

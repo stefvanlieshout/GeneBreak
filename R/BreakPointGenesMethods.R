@@ -37,18 +37,23 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 		Chromosome = chromosomes(data), 
 		Start = bpstart(data), 
 		End = bpend(data), 
-		row.names = featureNames(data) 
+		row.names = featureNames 
 	)
+
 	# probe distance is needed for statistics
 	probeDistance <- c( 0, diff( bpstart(data) ) )
 	probeDistance[startChr] <- 0
-	featureAnnotation$probeDistance <- probeDistance
+	featureData <- data.frame( 
+		probeDistance = probeDistance, 
+		row.names = featureNames 
+	)
 	
 	# put everything in one object:
 	output <- new( 'CopyNumberBreakPoints', 
 		segDiff = segDiff,
 		callDiff = callDiff,
 		featureAnnotation = featureAnnotation,
+		featureData = featureData,
 		calls = callData,
 		segments = segmData,
 		breakpoints = ifelse( segDiff != 0,1,0 )
@@ -137,15 +142,14 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	data <- object
 	
 	## setup gene information
-	genes <- geneAnnotation
-	genes$geneLength <- apply( genes[, c("Start","End") ], 1, diff )
-	genes$situation <- NA
-	genes$genelength_features <- NA
-	genes$featureTotal <- NA
-	genes$featureNames <- NA
+	geneData <- data.frame( geneLength = apply( geneAnnotation[, c("Start","End") ], 1, diff ) )
+	geneData$situation <- NA
+	geneData$genelength_features <- NA
+	geneData$featureTotal <- NA
+	geneData$featureNames <- NA
 
-	geneCount <- nrow( genes )
-
+	geneCount <- nrow( geneData )
+	sampCount <- length( sampleNames(data) )
 
 	## setup probe / bin information
 	features <- cbind( data@featureAnnotation, idx=1:nrow( data@featureAnnotation ) )
@@ -162,10 +166,10 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	gene_features <- list()
 		
 	## loop through single geneAnnotation:
-	cat( paste( "Breakpoint annotation started...", geneCount, "genes\n"))
+	cat( paste( "Adding of gene annotation started on ", geneCount, " genes by ", sampCount, " samples\n", sep=""))
 	
 	progress <- rep( NA, geneCount )
-	progress[ c( round( seq( 1, length(genes[,"Gene"]), by=(length(genes[,"Gene"])/4))))] <- c("0%","25%","50%","75%")
+	progress[ c( round( seq( 1, geneCount, by = ( geneCount/4))))] <- c("0%","25%","50%","75%")
 	
 	warning_Z <- NULL # will be set if unable to determine situation for one or more genes
 	
@@ -178,14 +182,13 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 			cat( paste( progress[ gene_idx ], "... ") ) 
 		}
 		
-		feature_idx_chr <- which( features$Chromosome == genes$Chromosome[ gene_idx ] )
+		feature_idx_chr <- which( features$Chromosome == geneAnnotation$Chromosome[ gene_idx ] )
 		tmp_features <- features[ feature_idx_chr, ]
-		
 		features_S <- NULL	# first probe after start position gene
 		features_E <- NULL	# first probe after end position gene
 		
-		features_S <- head( tmp_features$idx[ which(tmp_features$End >= genes$Start[ gene_idx ])], 1) # for QDNAseq: take features$Start too; CAVE !!!
-		features_E <- head( tmp_features$idx[ which(tmp_features$Start >= genes$End[ gene_idx ])], 1)
+		features_S <- head( tmp_features$idx[ which(tmp_features$End >= geneAnnotation$Start[ gene_idx ])], 1) # for QDNAseq: take features$Start too; CAVE !!!
+		features_E <- head( tmp_features$idx[ which(tmp_features$Start >= geneAnnotation$End[ gene_idx ])], 1)
 				
 		geneRelatedFeatures <- NULL
 		
@@ -193,55 +196,67 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 			
 			if( !any(features_E) ) {				
 				
-				features_E <- start_endChr[ which( start_endChr$chr == genes$Chromosome[ gene_idx ] ), "end_index"] # make features_E last probe on chr
+				features_E <- start_endChr[ which( start_endChr$chr == geneAnnotation$Chromosome[ gene_idx ] ), "end_index"] # make features_E last probe on chr
 				geneRelatedFeatures <- rownames(features)[ features_S:features_E ]
 				
-				genes$situation[gene_idx] <- "E"
-				genes$genelength_features[ gene_idx ] <- features$Start[ features_E ] - features$Start[ features_S - 1 ]
+				geneData$situation[gene_idx] <- "E"
+				geneData$genelength_features[ gene_idx ] <- features$Start[ features_E ] - features$Start[ features_S - 1 ]
 				gene_features[[ gene_idx ]] <- geneRelatedFeatures
 
-			} else {
+			}
+			else {
 				geneRelatedFeatures <- rownames( features )[ features_S:features_E ]
 				
-				if( length( geneRelatedFeatures ) == 1 & features_S == start_endChr[ which( start_endChr$chr == genes$Chromosome[ gene_idx ]),"start_index"]) {
-					genes$situation[gene_idx] <- "A"
+				if( length( geneRelatedFeatures ) == 1 & features_S == start_endChr[ which( start_endChr$chr == geneAnnotation$Chromosome[ gene_idx ]),"start_index"]) {
+					geneData$situation[gene_idx] <- "A"
 					gene_features[[ gene_idx ]] <- geneRelatedFeatures
 				}			
 					
-				else if( is.na(genes$situation[ gene_idx ]) & length(geneRelatedFeatures) > 1 ) {
-					genes$situation[gene_idx] <- "D"
-					genes$genelength_features[gene_idx] <- features$Start[ features_E ] - features$Start[ features_S - 1 ]
+				else if( is.na(geneData$situation[ gene_idx ]) & length(geneRelatedFeatures) > 1 ) {
+					geneData$situation[gene_idx] <- "D"
+					start_pos_feature <- features$Start[ features_E ]
+					end_pos_feature <- NA
+					
+					same_chr_idx <- which( start_endChr$chr == geneAnnotation$Chromosome[ gene_idx ] )
+
+					if( features_S == start_endChr[ same_chr_idx, "start_index" ] ){
+						end_pos_feature <- features$Start[ features_S  ]
+					}
+					else{
+						end_pos_feature <- features$Start[ features_S -1 ]
+					}
+					geneData$genelength_features[gene_idx] <- start_pos_feature - end_pos_feature
 					gene_features[[ gene_idx ]] <- geneRelatedFeatures
 				}
 					
-				else if(is.na( genes$situation[ gene_idx ]) & features_S == features_E) {
-					genes$situation[gene_idx] <- "C"
-					genes$genelength_features[ gene_idx ] <- features$Start[ features_E ] - features$Start[ features_S - 1 ]
+				else if(is.na( geneData$situation[ gene_idx ]) & features_S == features_E) {
+					geneData$situation[gene_idx] <- "C"
+					geneData$genelength_features[ gene_idx ] <- features$Start[ features_E ] - features$Start[ features_S - 1 ]
 					gene_features[[ gene_idx ]] <- geneRelatedFeatures
 				}
 				
 				else {
-					genes$situation[ gene_idx ] <- "Z"
+					geneData$situation[ gene_idx ] <- "Z"
 					warning_Z <- "NB: uncategorized situations (Z) were observed"
 				}
 			}
 		} else { # is.na( features_S) or chr not in primary data
-			ifelse( any( feature_idx_chr), genes$situation[ gene_idx ] <- "B", genes$situation[ gene_idx ] <- "X")
-			if( genes$situation[ gene_idx ] == "B" ) {
-				geneRelatedFeatures <- rownames( features )[ start_endChr[ which(start_endChr$chr == genes$Chromosome[ gene_idx ]),"end_index"] ] # make features_E last probe on chr
+			ifelse( any( feature_idx_chr), geneData$situation[ gene_idx ] <- "B", geneData$situation[ gene_idx ] <- "X")
+			if( geneData$situation[ gene_idx ] == "B" ) {
+				geneRelatedFeatures <- rownames( features )[ start_endChr[ which(start_endChr$chr == geneAnnotation$Chromosome[ gene_idx ]),"end_index"] ] # make features_E last probe on chr
 			} 
 			else { 
 				geneRelatedFeatures <- NA 
 			}
-			gene_features[[gene_idx]] <- geneRelatedFeatures
+			gene_features[[ gene_idx ]] <- geneRelatedFeatures
 		}
 	} # end for-loop with geneAnnotation
 	
-	genes$featureTotal <- sapply( gene_features, function(x){ length( x[!is.na(x)] )})
+	geneData$featureTotal <- sapply( gene_features, function(x){ length( x[!is.na(x)] )})
 	## for the names as.vector used, because sapply returns lists...?
-	genes$featureNames <- as.vector( sapply( gene_features, function(x){ ifelse( is.na(x), NA, paste( x, collapse = "|" ))}) )
+	geneData$featureNames <- as.vector( sapply( gene_features, function(x){ ifelse( is.na(x), NA, paste( x, collapse = "|" ))}) )
 		
-	cat("Breakpoint annotation DONE\n")
+	cat( "Adding gene annotation DONE\n" )
 	
 	if(any(warning_Z)) { 
 		cat(paste(warning_Z,"\n")) 
@@ -255,7 +270,9 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 		calls       = data@calls,
 		breakpoints = data@breakpoints,
 		featureAnnotation = data@featureAnnotation,
-		geneAnnotation    = genes, # same as input slot with extra colums
+		featureData = data@featureData,
+		geneAnnotation    = geneAnnotation, # same as input slot
+		geneData = geneData,
 		featuresPerGene   = gene_features # list of length nrow genes
 	)
 	return(output)
@@ -275,78 +292,65 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 	
 	function( object ){
 		
+		## variable setup
 		breakpointdata <- object
-		Genes <- breakpointdata@geneAnnotation
 		gene_probes <- breakpointdata@featuresPerGene
-		#gene_probes <- annotations_gene[["gene_probes"]]
-		
 		breakpoints <- breakpointdata@breakpoints
 		
-		Genes$geneBreaks <- NA
-		Genes$samplesWithGeneBreaks <- NA
+		geneData <- object@geneData
+		geneData$geneBreaks <- NA
+		geneData$samplesWithGeneBreaks <- NA
+		geneCount <- nrow( geneData )
 		
-		# genes x samples:
-		gene_breakpoints <- matrix( data=0, nrow=nrow(Genes), ncol=ncol(breakpoints) )
+		## setup genes x samples matrix
+		gene_breakpoints <- matrix( data = 0, nrow = geneCount, ncol = ncol(breakpoints) )
 
-		progress <- rep( NA,nrow(Genes) )
-		progress[ c( round( seq( 1, nrow(Genes), by=(nrow(Genes)/4) ))) ] <- c("0%","25%","50%","75%")
-		
-		cat(paste("Breakpoints per gene:", nrow(Genes), "genes and", ncol(breakpoints), "samples\n"))
+		progress <- rep( NA, geneCount )
+		progress[ c( round( seq( 1, geneCount, by = ( geneCount/4) ))) ] <- c("0%","25%","50%","75%")
+
+		cat(paste("Breakpoints per gene:", geneCount, "genes and", ncol(breakpoints), "samples\n"))
 		
 		gene_idx_loop <- which( sapply( gene_probes, function(x){ length(x[!is.na(x)])}) > 0 )
-		for(gene_idx in gene_idx_loop) {
-			# print(gene_idx)
+		for( gene_idx in gene_idx_loop ) {
+			
 			if( !is.na(progress[gene_idx]) ) { 
-				cat(paste(progress[gene_idx],"... ")) 
+				cat( paste( progress[gene_idx],"... " ) ) 
 			}
 
 			tmp_bps <- NULL
-			tmp_bps <- as.matrix( breakpoints[ unlist(gene_probes[gene_idx]), ] ) # as.matrix() in stead of rbind () ?
+			tmp_bps <- as.matrix( breakpoints[ unlist( gene_probes[ gene_idx ] ), ] ) # as.matrix() in stead of rbind () ?
 			
 			gene_breakpoints[ gene_idx, ] <- as.vector( colSums(tmp_bps) )
-			Genes$geneBreaks[ gene_idx ] <- length( which( rowSums(tmp_bps) > 0 ) )
+			geneData$geneBreaks[ gene_idx ] <- length( which( rowSums(tmp_bps) > 0 ) )
 		}
-		Genes$samplesWithGeneBreaks <- apply( gene_breakpoints,1,function(x){ length( which( x > 0 ) )})
+		geneData$samplesWithGeneBreaks <- apply( gene_breakpoints,1,function(x){ length( which( x > 0 ) )})
 		
-		# BPs_perGene <- list(
-		# 	annotation=breakpointdata@featureAnnotation,
-		# 	geneAnnotation=Genes,
-		# 	breakpoints=breakpoints,
-		# 	breakpointsPerGene=gene_breakpoints
-		# )
-
-		## create output object
-		# output <- new( 'CopyNumberBreakPointGenes', 
-		# 	segDiff     = segDiff(data),
-		# 	callDiff    = callDiff(data),
-		# 	segments    = segments(data),
-		# 	calls       = calls(data),
-		# 	breakpoints = breakpoints(data),
-		# 	featureAnnotation = featureAnnotation(data),
-		# 	geneAnnotation    = genes, # same as input slot with extra colums
-		# 	featuresPerGene   = gene_features # list of length nrow genes
-		# )
-		
-		## just add the extra slots in same class object
+		## just add the extra slots in same object class
 		object@breakpointsPerGene <- gene_breakpoints
-		object@geneAnnotation <- Genes
+		object@geneData <- geneData
+		geneBreaksTotal <- sum( object@breakpointsPerGene )
+        genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
 		
 		cat( "bpGenes DONE\n" )
+		cat( "A total of ", geneBreaksTotal, " gene breaks in ", genesBrokenTotal, " genes detected\n", sep = "" )
 		
 		return(object)
-		#return(output)
-		#return(BPs_perGene)
 	}
 )
 
 
 
 ## internal function
-.glmbreak <- function( breakg, lenst=lenst, nprobes=nprobes ) {
-	nullmodel <- glm( breakg ~ lenst + nprobes, family="binomial" )
-	pn <- predict( nullmodel, type="response" )
+## correction for co-variates (regression)
+## NOTE: could add more co-variates
+.glmbreak <- function( breakg, lenst = lenst, nprobes = nprobes ) {
+	nullmodel <- glm( breakg ~ lenst + nprobes, family = "binomial" )
+	pn <- predict( nullmodel, type = "response" )
 	return( pn )
 }
+# lenst = gestandaardiseerde lengte genen
+# regressie stap (qual filter)
+
 
 ## internal function
 .cumgf <- function( probs ) {
@@ -391,36 +395,46 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 #' @examples
 #' bpStats( breakPointsGenes )
 #' @aliases bpStats
-setMethod( "bpStats", "CopyNumberBreakPointGenes",
-	
-	function( object, level, method ) {
+setMethod( "bpStats", "CopyNumberBreakPoints",
+
+	function( object, level="gene", method="BH" ) {
 		
 		allowed.methods <- c( "Gilbert", "BH" )
 		allowed.levels <- c( "all", "gene" )
 
+		## --------------------
 		## Check input params
+		## --------------------
 		if ( ! method %in% allowed.methods ){
 			stop( "Parameter \"method\" incorrect, options are: ", paste( allowed.methods, collapse=', ' ), "\n" )
 		}
 		if ( ! level %in% allowed.levels ){
 			stop( "Parameter \"level\" incorrect, options are: ", paste( allowed.levels, collapse=', ' ), "\n" )
 		}
+		if ( ncol(object@breakpointsPerGene) < 2 ){
+			stop( "A minimum of 2 samples is required for statistical testing...", "\n" )
+		}
+		if ( level == "gene" & class(object) != "CopyNumberBreakPointGenes" ){
+			stop( "Object of type \"CopyNumberBreakPointGenes\" required for analysis per gene ...", "\n" )
+		}
 
 		## copy main object
 		breakpointData <- object
-				
+		
+		## --------------------		
 		## gene level analysis
+		## --------------------
 		if( level == "gene" ) {
-			#bps <- breakpointData@breakpointsPerGene
+
+			# setup data
 			bps <- breakpointData@breakpointsPerGene
-			
 			bps[ bps > 0 ] <- 1
 		
 			# don't take situation A,B,X into account
-			exclude <- which( breakpointData@geneAnnotation$situation %in% c("A","B","X") )
-			
+			exclude <- which( breakpointData@geneData$situation %in% c("A","B","X") )
 			bpt <- bps[ -exclude, ]
 
+			## start analysis
 			cat( paste(
 				"Applying statistical test over", 
 				ncol(bpt),"samples for:", 
@@ -430,29 +444,39 @@ setMethod( "bpStats", "CopyNumberBreakPointGenes",
 			breaktotal <- apply( bpt, 2, sum )
 			breakgene <- apply( bpt, 1, sum )
 			
-			geneAnn <- breakpointData@geneAnnotation
+			geneAnn <- breakpointData@geneData
 			len <- geneAnn$genelength_features[ -exclude ]
 			nprobes <- geneAnn$featureTotal[ -exclude ]
 			
 			mnlen <- mean( len )
 			sdlen <- sd( len )
-			lenst <- sapply( len, function(x) ( x - mnlen ) / sdlen )
-			
-			cat( "LENST made by now\n")
 
-			nms <- apply( bpt, 2, function( breakg ){ .glmbreak( breakg=breakg, lenst=lenst, nprobes=nprobes) } ) ### WARNINGS !!!
+			#cat( "About to apply .glmbreak() function\n")
+#			result <- tryCatch(
+#				{ lenst <- sapply( len, function(x) ( x - mnlen ) / sdlen ) }
+#			, error = function(err) { print( "AAP" ) }
+#			)
+			lenst <- sapply( len, function(x) ( x - mnlen ) / sdlen )
+
+
+			
+			cat( "About to apply .glmbreak() function\n")
+
+			nms <- apply( bpt, 2, 
+				function( breakg ){ 
+					.glmbreak( breakg = breakg, lenst = lenst, nprobes = nprobes)
+				} ) ### WARNINGS !!!
 				# Warning messages:
 				# 1: glm.fit: fitted probabilities numerically 0 or 1 occurred
 				# 2: glm.fit: algorithm did not converge
 				# 3: glm.fit: fitted probabilities numerically 0 or 1 occurred
-			# save(nms,file="nms.Rdata")
-			cumgfs <- t( apply( nms, 1, function(probs){ .cumgf(probs=probs) }))
-			# save(cumgfs,file="cumgfs.Rdata")       
+			
+			cumgfs <- t( apply( nms, 1, function(probs){ .cumgf( probs=probs ) }))
 			
 			pvalues <- sapply( 1:length(breakgene), function(i){ .pval_gene( i=i, breakgene=breakgene, cumgfs=cumgfs) })
 			
 			if( method == "BH" ) {
-				fdrs <- p.adjust( pvalues, method="BH")
+				fdrs <- p.adjust( pvalues, method = "BH")
 			}
 			else if( method == "Gilbert" ) {
 				pvsrt <- sort( pvalues, index.return=T )
@@ -466,6 +490,7 @@ setMethod( "bpStats", "CopyNumberBreakPointGenes",
 				nc <- ncol( cumgfs )
 				while( fdrnot1 ) {
 					pvi <- pvalssort[i]
+					## snowfall on apply?
 					largsmall <- apply( cumgfscut, 1, function(ceegf) 
 					    {
 							ceegf <- c(ceegf,0)
@@ -474,10 +499,10 @@ setMethod( "bpStats", "CopyNumberBreakPointGenes",
 					    }
 					)
 					npvsmall <- i
-					fdr <- min(1,sum(largsmall[1,])/npvsmall)
+					fdr <- min( 1, sum(largsmall[ 1,]) / npvsmall )
 					if( fdr < fdrprev ) fdr <- fdrprev #enforce monotonicity
-					elmax <- min( nc, max(largsmall[2,] ))
-					cumgfscut <- cumgfscut[ ,1:elmax]
+					elmax <- min( nc, max( largsmall[2,] ) )
+					cumgfscut <- cumgfscut[ ,1:elmax ]
 					i <- i + 1
 					#print(c(i,elmax,fdr))
 					if( fdr >= 1 ) fdrnot1 <- F
@@ -485,13 +510,13 @@ setMethod( "bpStats", "CopyNumberBreakPointGenes",
 					fdrprev <- fdr
 				}
 				
-				fdrgilbertfull <- c( fdrgilbert, rep( 1, length(pvalssort) - length(fdrgilbert) ))
+				fdrgilbertfull <- c( fdrgilbert, rep( 1, length(pvalssort) - length(fdrgilbert)))
 				
 				fdrs <- fdrgilbertfull[ order(pvsrt$ix) ]
 				# allres <- data.frame(name=name,nbreak=breakgene,glength=len,glength_stand=lenst,nprobe=nprobes,pvalue=pvalues,fdr=fdrs)
 			}
 			else{
-				stop( "WRONG METHOD\n")
+				stop( "Chosen method not supported...\n")
 			}
 			
 			geneAnn$glength_stand <- NA
@@ -501,16 +526,14 @@ setMethod( "bpStats", "CopyNumberBreakPointGenes",
 			geneAnn$FDR <- NA
 			geneAnn$FDR[ -exclude ] <- fdrs
 			
-			FDR_gene <- list( setdiff( ls(breakpointData), "geneAnnotation" ), geneAnnotation=geneAnn)
-			return(FDR_gene)
+			#FDR_gene <- list( setdiff( ls(breakpointData), "geneAnnotation" ), geneAnnotation=geneAnn)
+			breakpointData@geneData <- geneAnn
+			return(breakpointData)
 		}
-		
-		# gene #
-		
-		##################
-		
-		# # # # # probe # # # # # Gilbert equivalent ...
-		
+
+		## --------------------
+		## feature level analysis
+		## --------------------
 		else if( level == "all" ) {
 			bpt <- breakpointData@breakpoints
 			
@@ -518,7 +541,7 @@ setMethod( "bpStats", "CopyNumberBreakPointGenes",
 				"Applying statistical test over", ncol(bpt), 
 				"samples for:", level, 
 				"breakpoints:", method, "test...\n"
-			)) # place just before the loop #
+			))
 
 			nprobe <- dim(bpt)[1]
 			probuni <- rep( 1 / nprobe, nprobe )
@@ -526,22 +549,27 @@ setMethod( "bpStats", "CopyNumberBreakPointGenes",
 			breaktotal <- apply( bpt, 2, sum )
 			breakgene <- apply( bpt, 1, sum )
 			
-			probmat <- probuni %*% t(breaktotal)
-			
-			cumgfs <- cumgf( probmat[1,] )
-			
+			probmat <- probuni %*% t( breaktotal )
+			cumgfs <- .cumgf( probmat[1,] )
 			pvalues <- sapply( 1:length(breakgene), function(i){ .pval_probe( i=i, breakgene=breakgene, cumgfs=cumgfs) } )
-			# same till here
 			
-			if(method=="BH") {
+			if( method == "BH" ) {
 				padj <- p.adjust( pvalues, method="BH") #equivalent to fdr-gilbert, because each probe has the same null-distribution!!!!
 			}
+			else{
+				stop( "Only BH method implemented for level \"", level, "\"...\n")
+			}
 			
-			FDR_probe <- data.frame( bptann=breakpointData@featureAnnotation, nbreak=breakgene, pval = pvalues, fdr = padj)
-			return(FDR_probe)
+			currentData <- breakpointData@featureData
+			currentData$nbreak <- breakgene
+			currentData$pval <- pvalues
+			currentData$FDR <- padj
+			breakpointData@featureData <- currentData
+
+			return( breakpointData )
 		}
 		else{
-			stop( "WRONG LEVEL\n")
+			stop( "Chosen level not supported...\n")
 		}
 	}
 )

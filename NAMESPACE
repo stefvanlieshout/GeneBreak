@@ -34,7 +34,7 @@ importFrom( utils, packageVersion, read.table, write.table )
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export( "getBreakpoints", "createGeneAnnotations", "bpFilter", "bpSummary", "addGeneAnnotation" )
-export( "callDiff", "segDiff", "callData", "segmentData", "breakpointData", "featureAnnotation", "geneAnnotation", "featuresPerGene", "breakpointsPerGene" )
+export( "callDiff", "segDiff", "callData", "segmentData", "breakpointData", "featureAnnotation", "featureChromosomes", "geneAnnotation", "geneChromosomes", "featuresPerGene", "breakpointsPerGene" )
 export( "bpGenes", "bpStats" )
 
 # EOF
