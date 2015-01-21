@@ -255,7 +255,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	geneData$featureTotal <- sapply( gene_features, function(x){ length( x[!is.na(x)] )})
 	## for the names as.vector used, because sapply returns lists...?
 	exclude_idx <- which( is.na( gene_features ) )
-	print(exclude_idx)
+	#print(exclude_idx)
 
 	geneData$featureNames <- NA
 	geneData$featureNames[-exclude_idx] <- sapply( gene_features[-exclude_idx], function(x){ paste( x, collapse = "|" ) })
