@@ -309,7 +309,7 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 		progress <- rep( NA, geneCount )
 		progress[ c( round( seq( 1, geneCount, by = ( geneCount/4) ))) ] <- c("0%","25%","50%","75%")
 
-		cat(paste("Breakpoints per gene:", geneCount, "genes and", ncol(breakpoints), "samples\n"))
+		cat(paste(" Running bpGenes:", geneCount, "genes and", ncol(breakpoints), "samples\n"))
 		
 		gene_idx_loop <- which( sapply( gene_probes, function(x){ length(x[!is.na(x)])}) > 0 )
 		for( gene_idx in gene_idx_loop ) {
@@ -618,5 +618,121 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 		else{
 			stop( "Chosen level not supported...\n")
 		}
+	}
+)
+
+#' bpPlot
+#' 
+#' @description
+#' Add description...
+#' @param object A "CopyNumberBreakPoint" object
+#' @param chr The chromosome(s) to plot
+#' @param plot.ylim The max y
+#' @param fdr.threshold The FDR threshold
+#' @return Nothing
+#' @examples
+#' bpPlot( breakPointsGenes )
+#' @aliases bpPlot
+setMethod( "bpPlot", "CopyNumberBreakPoints",
+	
+	function( object, chr="all", plot.ylim=15, fdr.threshold=0.1 ) {
+		
+		cat( paste("Plotting breakpoint frequencies ...\n") )
+		
+		### checks:
+		# check for right class? (breakpoints ??)
+		
+		if( exists( "samplesWithGeneBreaks", where=object@geneData ) ) { breakpointGene <- 1 } else { 
+			breakpointGene <- 0
+			cat("Breakpoint gene data is not available yet.\n")
+			}
+		if( exists( "FDR", where=object@geneData ) ) { stats.gene <- 1 } else {
+			stats.gene <- 0
+			cat("Breakpoint gene statistics are not available yet.\n")
+			}
+		if( exists( "FDR", where=object@featureData ) ) { stats.feature <- 1 } else { stats.feature <- 0 }
+		
+		# set general parameters:
+		###NOTE ADDED FOLLOWING max.ylim
+		max.ylim <- 10
+		nstudy = length(sampleNames(object)) # werkt nog niet....
+		ylim = ifelse( max.ylim < 10, 10, plot.ylim)
+		color.gene <- "darkred"
+		color.feature <- "black"
+
+		###NOTE CHANGED FOLLOWING ifelse
+
+		# chromosomes to plot:
+		tmp <- ifelse( 
+			chr == "all", 
+			chromosomesToPlot <- unique( featureChromosomes(object) ), 
+			chromosomesToPlot <- chr 
+		) # possible to give vector with chromosomes
+		
+		### check whether chr is in data...
+		cat( "Chromosomes to plot: ", paste(chromosomesToPlot, collapse=", "), "\n", sep="" )
+
+		for( chr in chromosomesToPlot ) {
+			
+			cat( paste("Plotting chromosome:", chr, "\n") )
+					
+			# subset data:
+			chr.feature = which( featureChromosomes(object) == chr )
+			featureBreakPerc <- apply( object@breakpoints, 1, function(x) { sum(x)/length(x)*100 } ) [chr.feature]
+			# featureBreakPerc <- object@featureData$samplesBreaks/nstudy*100 [chr.feature]  # deze kolom bestaat nog niet... 
+			
+			if( breakpointGene == 1 ) {
+				chr.gene = which(geneChromosomes(object)==chr)
+				start.feature <- featureAnnotation(object)$Start[chr.feature]
+				geneBreakPerc <- apply( object@breakpointsPerGene, 1, function(x) { sum(x)/length(x)*100 } ) [chr.gene]
+				# geneBreakPerc <- object@geneData$samplesWithGeneBreaks/nstudy*100 [chr.gene]
+				start.gene <- object@geneAnnotation$Start[chr.gene]
+				end.gene <- object@geneAnnotation$End[chr.gene]
+				name.gene <- object@geneAnnotation$Gene[chr.gene]
+			} 
+			
+			if( stats.gene == 1 ) {
+				recurrent.gene <- which( object@geneData$FDR[chr.gene] < fdr.threshold )
+			}
+			
+			color.feature.chr <- 'red'
+			if( stats.feature == 1 ) {
+				# color recurrent breakpoints (feature level); this may be a bit overdone
+				recurrent.feature <- which( object@featureData$FDR[chr.gene] < fdr.threshold )
+				color.feature.chr <- rep( color.feature, length(featureBreakPerc) )
+				color.feature.chr[recurrent.feature] <- "darkblue"
+			}
+			
+			# xlim = c(startPlot,endPlot) extra zoomin function ?
+
+			mainTitle <- paste("BP frequencyPlot\nchromosome",chr)
+			xLab <- "chromosomal position (Mb)"
+			yLab <- "breakpoint frequencies (%)"
+			
+			plot( start.feature, featureBreakPerc, 
+				ylim=c(0, ylim+1), axes=T, type="h", 
+				xlab=xLab, ylab=yLab, main=mainTitle, 
+				xaxt="n", yaxt="n", cex.lab=1.3, col=color.feature.chr
+			)
+
+			axis( 1, at = as.vector( axis( 1,labels=F)), labels=( as.vector( axis( 1, labels=F))) / 10^6) # x-axis in MBs
+			axis( 2, at = 0:(ylim+1), labels = c( 0:(ylim), paste(">",ylim)), las=2)
+			abline( h = c(0,ylim), lty=c(1,5))
+			
+			if( breakpointGene == 1 ) {
+				frame.plot=segments( start.gene, geneBreakPerc, start.gene, geneBreakPerc,lwd=4,col= color.gene) # gene(levels)
+				
+				above.ylim <- which(geneBreakPerc > ylim)
+				
+				if( stats.gene == 1 & any(recurrent.gene) ) {
+					text(x= end.gene[ recurrent.gene ], y=jitter( geneBreakPerc[ recurrent.gene ], factor=1,amount=0.2 ), name.gene[ recurrent.gene], cex=0.7, pos=2, col= color.gene, font=4)
+				}
+					
+				else if( any (above.ylim) ){
+					frame.plot=segments( start.gene[ above.ylim ], rep(ylim+1), end.gene[ above.ylim ], geneBreakPerc, rep(ylim+1),lwd=3,col= color.gene) # gene(levels above ylim)
+					text( x= end.gene[ above.ylim ], y=rep(ylim+1), paste(name.gene[ above.ylim ]," (", round(geneBreakPerc[ above.ylim ],1),")",sep=""),cex=0.4,pos=4,col= color.gene,font=4)
+				}
+			}
+		} # end plot
 	}
 )

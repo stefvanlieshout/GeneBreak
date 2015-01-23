@@ -15,7 +15,6 @@
 setGeneric( "sampleNames", function(object) standardGeneric("sampleNames") )
 setGeneric( "geneNames", function(object) standardGeneric("geneNames") )
 
-
 ## -----------------
 ## CNBPgene generics
 ## -----------------
@@ -39,5 +38,8 @@ setGeneric( "featuresPerGene", function(object, geneName) standardGeneric("featu
 setGeneric( "breakpointsPerGene", function(object) standardGeneric("breakpointsPerGene") )
 setGeneric( "featureChromosomes", function(object) standardGeneric("featureChromosomes") )
 setGeneric( "geneChromosomes", function(object) standardGeneric("geneChromosomes") )
+
+## output
+setGeneric( "bpPlot", function(object, chr="all", plot.ylim=15, fdr.threshold=0.1) standardGeneric( "bpPlot" ))
 
 # EOF
