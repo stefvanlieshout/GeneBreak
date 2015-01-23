@@ -57,13 +57,13 @@ setMethod( "show",
         
         cat( "\n --- Object Data Access Options ---\n", sep="")
         for ( i in names(.dataAccessOptions) ){
-            cat( " ", i, "(obj) => returns ", .dataAccessOptions[[ i ]],"\n", sep="")    
+            cat( " ", i, "( obj ) => returns ", .dataAccessOptions[[ i ]],"\n", sep="")    
         }
         
         ## extra options if class is CopyNumberBreakPointGenes
         if ( class(object) == "CopyNumberBreakPointGenes" ){
             for ( i in names(.dataAccessOptionsGene) ){
-                cat( " ", i, "(obj) => returns ", .dataAccessOptionsGene[[ i ]],"\n", sep="")    
+                cat( " ", i, "( obj ) => returns ", .dataAccessOptionsGene[[ i ]],"\n", sep="")    
             }   
         }
 

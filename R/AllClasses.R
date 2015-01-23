@@ -72,17 +72,14 @@ CopyNumberBreakPointGenes <- setClass(
 		geneAnnotation = "data.frame",
 		geneData = "data.frame",
 		featuresPerGene = "list",
-		#geneBreakStatus = "matrix",
 		breakpointsPerGene = "matrix"
 	),
 	prototype=list( # set defaults
 		geneAnnotation = data.frame(),
 		geneData = data.frame(),
 		featuresPerGene = list(),
-		#geneBreakStatus = matrix(),
 		breakpointsPerGene = matrix()
 	)
 )
-
 
 # EOF
