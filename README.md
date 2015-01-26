@@ -6,15 +6,18 @@ Breakpoints of copy number aberrations (CNA) indicate underlying DNA breaks and 
 Installation
 ---------------------
 
-When using the package devtools, installing is very easy:
+Requires package "devtools":
 
 ```R
-library( "devtools" )
-install_github( "stefvanlieshout/BreakPointGenes" )
+devtools::install_github( "stefvanlieshout/BreakPointGenes" )
 ```
 
 Sample workflow
 ---------------------
+
+This package builds on to the Copy Number analysis workflows of CGHcall (for cgh data) and QDNAseq (for NGS data). The objects created in those packages can serve as the input of BreakPointGenes (importing other data-sources will be added later).
+
+The LGG150 data used in the example contains only one sample, which makes no sense in the context of searching for recurrently affected genes. We will add a example dataset with more samples later.
 
 ```R
 library( "BreakPointGenes" )

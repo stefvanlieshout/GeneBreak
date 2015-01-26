@@ -17,8 +17,12 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 	breakpoints <- NULL; segDiff <- NULL; callDiff <- NULL; startChr <- c()
 	featureAnnotation <- NULL;	probeDistance <- c()
 	
-	segmData <- CGHbase::segmented(data)
-	callData <- CGHbase::calls(data)
+	## slots are the same in object from packages CGHcall and QDNAseq
+	#segmData <- CGHbase::segmented(data)
+	#callData <- CGHbase::calls(data)
+	segmData <- data@assayData$segmented
+	callData <- data@assayData$calls
+
 	featureNames <- rownames( segmData )
 	
 	segDiff  <- rbind( segmData[ 1, ], apply( segmData, 2, diff ) )	
@@ -309,13 +313,13 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 		progress <- rep( NA, geneCount )
 		progress[ c( round( seq( 1, geneCount, by = ( geneCount/4) ))) ] <- c("0%","25%","50%","75%")
 
-		cat(paste(" Running bpGenes:", geneCount, "genes and", ncol(breakpoints), "samples\n"))
+		cat(paste("Running bpGenes:", geneCount, "genes and", ncol(breakpoints), "samples\n"))
 		
 		gene_idx_loop <- which( sapply( gene_probes, function(x){ length(x[!is.na(x)])}) > 0 )
 		for( gene_idx in gene_idx_loop ) {
 			
-			if( !is.na(progress[gene_idx]) ) { 
-				cat( paste( progress[gene_idx],"... " ) ) 
+			if( !is.na( progress[gene_idx] ) ) { 
+				cat( paste( progress[gene_idx], "... " ) ) 
 			}
 
 			tmp_bps <- NULL

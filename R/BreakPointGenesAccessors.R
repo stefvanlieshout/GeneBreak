@@ -1,8 +1,8 @@
 
 ## --- define what is shown when object is called --- ##
 .dataAccessOptions = list(
-    segDiff  = "segmentDiff",
-    callDiff = "callDiff",
+    segDiff  = "segment diff",
+    callDiff = "call diff",
     callData = "feature call values",
     segmentData = "feature segment values",
     breakpointData = "feature breakpoint values",
@@ -17,7 +17,8 @@
     geneChromosomes = "vector of gene chromosomes",
     geneData = "gene data",
     featuresPerGene = "a list of genes with coupled features",
-    breakpointsPerGene = "gene break status"
+    breakpointsPerGene = "gene break status",
+    recurrentGenes = "recurrently broken genes"
 )
 
 setMethod( "show",
@@ -32,7 +33,6 @@ setMethod( "show",
         if ( class(object) == "CopyNumberBreakPointGenes" && nrow(object@breakpointsPerGene) > 0){
             geneBreaksTotal <- sum( object@breakpointsPerGene )
             genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
-            
 
             if ( !is.na(object@breakpointsPerGene)[1] ){
                 cat( " A total of ", geneBreaksTotal, " gene breaks in ", genesBrokenTotal, " genes\n", sep = "" )
@@ -41,6 +41,7 @@ setMethod( "show",
                 cat( " Run bpGenes() to determine gene breakpoints\n", sep = "" )
             }
             
+            ## recurrent breakpoints and recurent genes
             if ( length( object@geneData$FDR ) ){
                 signGenes <- length( which( object@geneData$FDR < 0.1 ) )
                 cat( " A total of ", signGenes, " recurrent breakpoint genes (FDR < 0.1)\n", sep = "" )
@@ -48,8 +49,7 @@ setMethod( "show",
             else{
                 cat( " Run bpStats() to determine breakpoint statistics\n", sep = "" )
             }
-            
-            if ( length(object@featureData$FDR) ){
+            if ( length( object@featureData$FDR ) ){
                 signGenes <- length( which( object@featureData$FDR < 0.1 ) )
                 cat( " A total of ", signGenes, " recurrent breakpoints (FDR < 0.1)\n", sep = "" )
             }
@@ -110,14 +110,13 @@ setMethod( "geneAnnotation", "CopyNumberBreakPointGenes",
 setMethod( "featuresPerGene", "CopyNumberBreakPointGenes",
     function(object, geneName=NULL){
         if ( !is.null(geneName) ){
-            cat( "Gene chosen:", geneName, "\n", sep="")    
+            cat( "Gene chosen: ", geneName, "\n", sep="")    
             idx <- which( object@geneAnnotation$Gene == geneName)
             if( length(idx) == 0 ){
                 stop( "Sorry, no record found for gene ", geneName, sep="")
             }
-            object@featuresPerGene[idx]
+            object@featuresPerGene[[ idx ]]
         }
-        object@featuresPerGene
     } 
 )
 setMethod( "breakpointsPerGene", "CopyNumberBreakPointGenes",
@@ -125,5 +124,24 @@ setMethod( "breakpointsPerGene", "CopyNumberBreakPointGenes",
 )
 setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
     function(object) object@geneAnnotation$Chromosome
+)
+
+#' Show recurrent genes
+#' @param object
+#' @param fdr.threshold Genes with lower FDR are returned
+#' @return data.frame with gene annotation and data
+#' @examples
+#' recurrentGenes( bpStats )
+setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
+    function(object, fdr.threshold=0.1){
+        if ( length( object@geneData$FDR ) ){
+            idx <- which( object@geneData$FDR < fdr.threshold ) 
+            output <- cbind( object@geneAnnotation[idx,], object@geneData[idx,] )
+            cat( " A total of ", length(idx), " recurrent breakpoint genes (at FDR < ", fdr.threshold,")\n", sep = "" )
+            return( output )
+        }else{
+            cat( " No statistics information available in object, see ?bpStats\n", sep = "" )
+        }
+    } 
 )
 
