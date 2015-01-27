@@ -87,6 +87,9 @@ setMethod( "callData", "CopyNumberBreakPoints",
 setMethod( "segmentData", "CopyNumberBreakPoints",
 	function(object) object@segments
 )
+setMethod( "featureData", "CopyNumberBreakPoints",
+    function(object) object@featureData
+)
 setMethod( "breakpointData", "CopyNumberBreakPoints",
     function(object) object@breakpoints
 )
@@ -124,6 +127,9 @@ setMethod( "breakpointsPerGene", "CopyNumberBreakPointGenes",
 )
 setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
     function(object) object@geneAnnotation$Chromosome
+)
+setMethod( "geneData", "CopyNumberBreakPoints",
+    function(object) object@geneData
 )
 
 #' Show recurrent genes

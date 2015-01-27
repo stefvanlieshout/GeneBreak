@@ -18,10 +18,10 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 	featureAnnotation <- NULL;	probeDistance <- c()
 	
 	## slots are the same in object from packages CGHcall and QDNAseq
-	#segmData <- CGHbase::segmented(data)
-	#callData <- CGHbase::calls(data)
-	segmData <- data@assayData$segmented
-	callData <- data@assayData$calls
+	segmData <- CGHbase::segmented(data)
+	callData <- CGHbase::calls(data)
+	#segmData <- data@assayData$segmented
+	#callData <- data@assayData$calls
 
 	featureNames <- rownames( segmData )
 	
@@ -298,43 +298,44 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 	function( object ){
 		
 		## variable setup
-		breakpointdata <- object
-		gene_probes <- breakpointdata@featuresPerGene
-		breakpoints <- breakpointdata@breakpoints
+		#breakpointdata <- object
+		fpg <- object@featuresPerGene
+		bps <- object@breakpoints
 		geneData <- object@geneData
 
+		sampleCount <- ncol(bps)
+		geneCount <- nrow( geneData )
 		geneData$geneBreaks <- NA
 		geneData$samplesWithGeneBreaks <- NA
-		geneCount <- nrow( geneData )
 		
 		## setup genes x samples matrix
-		gene_breakpoints <- matrix( data = 0, nrow = geneCount, ncol = ncol(breakpoints) )
+		geneBreakpoints <- matrix( data = 0, nrow = geneCount, ncol = sampleCount )
 
 		progress <- rep( NA, geneCount )
-		progress[ c( round( seq( 1, geneCount, by = ( geneCount/4) ))) ] <- c("0%","25%","50%","75%")
+		progress[ c( round( seq( 1, geneCount, by = (geneCount/4) ))) ] <- c("0%","25%","50%","75%")
 
-		cat(paste("Running bpGenes:", geneCount, "genes and", ncol(breakpoints), "samples\n"))
+		cat( paste("Running bpGenes:", geneCount, "genes and", sampleCount, "samples\n"))
 		
-		gene_idx_loop <- which( sapply( gene_probes, function(x){ length(x[!is.na(x)])}) > 0 )
+		gene_idx_loop <- which( sapply( fpg, function(x){ length(x[!is.na(x)])}) > 0 )
 		for( gene_idx in gene_idx_loop ) {
 			
 			if( !is.na( progress[gene_idx] ) ) { 
 				cat( paste( progress[gene_idx], "... " ) ) 
 			}
 
-			tmp_bps <- NULL
-			tmp_bps <- as.matrix( breakpoints[ gene_probes[[ gene_idx ]], ] ) # as.matrix() in stead of rbind () ?
-			if( length( gene_probes[[ gene_idx ]] ) == 1 ){
-				tmp_bps <- t( tmp_bps )
-			}
+			features <- fpg[[ gene_idx ]]
+			tmp_bps <- as.matrix( bps[ features, ] ) # as.matrix() in stead of rbind () ?
 			
-			gene_breakpoints[ gene_idx, ] <- as.vector( colSums(tmp_bps) )
+			# needs transpose at lenght 1 because of as.matrix behaviour
+			if( length( features ) == 1 ) tmp_bps <- t( tmp_bps ) 
+
+			geneBreakpoints[ gene_idx, ] <- as.vector( colSums(tmp_bps) )
 			geneData$geneBreaks[ gene_idx ] <- length( which( rowSums(tmp_bps) > 0 ) )
 		}
-		geneData$samplesWithGeneBreaks <- apply( gene_breakpoints,1,function(x){ length( which( x > 0 ) )})
+		geneData$samplesWithGeneBreaks <- apply( geneBreakpoints, 1, function(x){ length( which( x > 0 ) )} )
 		
-		## just add the extra slots in same object class
-		object@breakpointsPerGene <- gene_breakpoints
+		## add the extra slots in same object class
+		object@breakpointsPerGene <- geneBreakpoints
 		object@geneData <- geneData
 		geneBreaksTotal <- sum( object@breakpointsPerGene )
         genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
@@ -620,7 +621,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			return( breakpointData )
 		}
 		else{
-			stop( "Chosen level not supported...\n")
+			stop( "Chosen level [", level, "] not supported...\n")
 		}
 	}
 )
