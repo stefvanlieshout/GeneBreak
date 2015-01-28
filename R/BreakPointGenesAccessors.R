@@ -1,8 +1,6 @@
 
 ## --- define what is shown when object is called --- ##
 .dataAccessOptions = list(
-    segDiff  = "segment diff",
-    callDiff = "call diff",
     callData = "feature call values",
     segmentData = "feature segment values",
     breakpointData = "feature breakpoint values",
@@ -28,7 +26,7 @@ setMethod( "show",
         #cat( " Hi ", systemUser, "\n", sep = "")
         cat( "\n --- Object Info ---\n", sep="")
         cat( " This is an object of class ", class(object), "\n", sep = "" )
-        cat( " ", nrow( object@segDiff ), " features by ", ncol( object@segDiff ), " samples.\n", sep = "")
+        cat( " ", nrow( object@segmDiff ), " features by ", ncol( object@segmDiff ), " samples.\n", sep = "")
         cat( " A total of ", sum( object@breakpoints ), " breakpoints\n", sep = "" )
         if ( class(object) == "CopyNumberBreakPointGenes" && nrow(object@breakpointsPerGene) > 0){
             geneBreaksTotal <- sum( object@breakpointsPerGene )
@@ -75,12 +73,6 @@ setMethod( "show",
 ## --- access to specific slots/data --- ##
 
 ## CopyNumberBreakPoints
-setMethod( "segDiff", "CopyNumberBreakPoints",
-	function(object) object@segDiff
-)
-setMethod( "callDiff", "CopyNumberBreakPoints",
-	function(object) object@callDiff
-)
 setMethod( "callData", "CopyNumberBreakPoints",
 	function(object) object@calls
 )

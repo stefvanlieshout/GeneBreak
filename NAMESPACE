@@ -34,7 +34,7 @@ importFrom( utils, packageVersion, read.table, write.table )
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 export( "runWorkflow", "getBreakpoints", "createGeneAnnotations", "bpFilter", "bpSummary", "addGeneAnnotation" )
-export( "callDiff", "segDiff", "callData", "segmentData", "breakpointData", "featureAnnotation", "featureData", "featureChromosomes", "geneAnnotation", "geneData", "geneChromosomes", "featuresPerGene", "breakpointsPerGene" )
+export( "callData", "segmentData", "breakpointData", "featureAnnotation", "featureData", "featureChromosomes", "geneAnnotation", "geneData", "geneChromosomes", "featuresPerGene", "breakpointsPerGene" )
 export( "bpGenes", "bpStats", "bpPlot", "recurrentGenes", "sampleNames" )
 
 # EOF

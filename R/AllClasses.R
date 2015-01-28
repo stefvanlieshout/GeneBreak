@@ -1,38 +1,9 @@
 ## ---------------
-## eSet way
-## ---------------
-# CNBP <-
-# 	function(
-# 		phenoData=AnnotatedDataFrame(), 
-# 		experimentData=MIAME(),
-# 		annotation=character(), 
-# 		segDiff=new("matrix"), 
-# 		callDiff=new("matrix"),
-# 		calls=new("matrix"), 
-# 		segments=new("matrix"), 
-# 		breakpoints=new("matrix"), 
-# 		...
-# 	)
-# {
-# 	.CNBP( 
-# 		phenoData=phenoData, 
-# 		experimentData=experimentData,
-# 		annotation=annotation, R=R, G=G, Rb=Rb, Gb=Gb, 
-# 		...
-# 	)
-# }
-
-# setValidity( "CNBP", function(object) {
-# 	assayDataValidMembers( assayData(object), c("R", "G", "Rb", "Gb"))
-# })
-
-
-## ---------------
 ## Own way of things
 ## ---------------
 #' An S4 class to represent a CopyNumberBreakPoints object.
 #'
-#' @slot segDiff A matrix
+#' @slot segmDiff A matrix 
 #' @slot callDiff A matrix
 #' @slot segments A matrix
 #' @slot calls A matrix
@@ -41,7 +12,7 @@ CopyNumberBreakPoints <- setClass(
 	'CopyNumberBreakPoints', # name of classs
 	
 	slots = c( # contents
-		segDiff     = "matrix",
+		segmDiff     = "matrix",
 		callDiff    = "matrix",
 		calls       = "matrix",
 		segments    = "matrix",
@@ -50,7 +21,7 @@ CopyNumberBreakPoints <- setClass(
 		featureData = "data.frame"
 	),
 	prototype=list( # set defaults
-		segDiff     = matrix(),
+		segmDiff     = matrix(),
 		callDiff    = matrix(),
 		calls       = matrix(),
 		segments    = matrix(),
