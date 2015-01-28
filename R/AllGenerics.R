@@ -43,6 +43,6 @@ setGeneric( "geneChromosomes", function(object) standardGeneric("geneChromosomes
 setGeneric( "recurrentGenes", function(object,fdr.threshold=0.1) standardGeneric("recurrentGenes") )
 
 ## output
-setGeneric( "bpPlot", function(object, chr="all", plot.ylim=15, fdr.threshold=0.1) standardGeneric( "bpPlot" ))
+setGeneric( "bpPlot", function(object, plot.chr="all", plot.ylim=15, fdr.threshold=0.1) standardGeneric( "bpPlot" ))
 
 # EOF
