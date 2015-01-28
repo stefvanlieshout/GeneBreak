@@ -28,12 +28,18 @@ data( "LGG150.data" )
 data( gene.annotation.hg19 )
 # setup the breakpoint data
 bp <- getBreakpoints( data = LGG150.data )
-bp <- bpFilter( object = bp, filter = "deltaSeg", threshold = 0.2 )
-bp <- addGeneAnnotation( object = bp, geneAnn_max )
+# optionally filter the data
+bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
+# setup the gene data 
+bp <- addGeneAnnotation( bp, gene.annotation.hg19 )
 # perform gene analysis
-bpGenes <- bpGenes( bp )
+bp <- bpGenes( bp )
 # get recurrent breakpoints
-bpStats <- bpStats( bpGenes )
+bp <- bpStats( bp )
+# list recurrently affected genes
+recurrentGenes( bp )
+# plot results of one chromosome
+bpPlot( bp, plot.chr=c(22) )
 ```
 
 More information or help
