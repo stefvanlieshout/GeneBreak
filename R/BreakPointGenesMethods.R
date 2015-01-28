@@ -661,26 +661,24 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 setMethod( "bpPlot", "CopyNumberBreakPoints",
 	
 	function( object, plot.chr="all", plot.ylim=15, fdr.threshold=0.1 ) {
-		cat(paste("Plot breakpoint frequencies ...\n"))
+		cat(paste("Plotting breakpoint frequencies ...\n"))
 		
 		### input checks
-		if( exists( "samplesWithGeneBreaks", where=object@geneData ) ) { 
-			breakpointGene <- 1 
-		} else { 
+		breakpointGene <- 1
+		stats.gene <- 1
+		stats.feature <- 1 
+
+		if( !exists( "samplesWithGeneBreaks", where=object@geneData ) ) { 
 			breakpointGene <- 0
 			cat("Breakpoint gene data is not available yet.\n")
 		}
 
-		if( exists( "FDR", where=object@geneData ) ) { 
-			stats.gene <- 1 
-		} else {
+		if( !exists( "FDR", where=object@geneData ) ) { 
 			stats.gene <- 0
 			cat("Breakpoint gene statistics are not available yet.\n")
 		}
 		
-		if( exists( "FDR", where=object@featureData ) ) { 
-			stats.feature <- 1 
-		} else { 
+		if( !exists( "FDR", where=object@featureData ) ) { 
 			stats.feature <- 0 
 		}
 		
@@ -702,6 +700,7 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 			chr.feature = which(featureChromosomes(object)==chr)
 			featureBreakPerc <- apply( object@breakpoints, 1, function(x) { sum(x)/length(x)*100 } ) [chr.feature]
 			# featureBreakPerc <- object@featureData$samplesBreaks/nstudy*100 [chr.feature]  # deze kolom bestaat nog niet... 
+			recurrent.gene <- NULL
 			
 			if( breakpointGene == 1 ) {
 				chr.gene = which(geneChromosomes(object)==chr)
@@ -746,7 +745,6 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 					text( x=end.gene[ above.ylim ], y=rep(ylim+1), paste( name.gene[ above.ylim ]," (", round(geneBreakPerc[ above.ylim ], 1), ")", sep=""), cex=0.4, pos=4, col=color.gene, font=4)
 				}
 			}
-			
-		} # end plot	
+		}
 	}
 )
