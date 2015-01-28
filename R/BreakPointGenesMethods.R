@@ -29,7 +29,7 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
         stop( '[ERR] input data not a cghCall object...' )
 
 
-	breakpoints <- NULL; segDiff <- NULL; callDiff <- NULL; startChr <- c()
+	breakpoints <- NULL; segmDiff <- NULL; callDiff <- NULL; startChr <- c()
 	featureAnnotation <- NULL;	probeDistance <- c()
 	
 	## slots are the same in object from packages CGHcall and QDNAseq
@@ -74,13 +74,13 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 	
 	# put everything in one object:
 	output <- new( 'CopyNumberBreakPoints', 
-		segDiff = segmDiff,
+		segmDiff = segmDiff,
 		callDiff = callDiff,
 		featureAnnotation = featureAnnotation,
 		featureData = featureData,
 		calls = callData,
 		segments = segmData,
-		breakpoints = ifelse( segDiff != 0, 1, 0 )
+		breakpoints = ifelse( segmDiff != 0, 1, 0 )
 	)
 	return( output )
 }
@@ -117,7 +117,7 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
 		if( filter == "deltaSeg" ) {
 			# check whether threshold exsist... (error)
 			if( !is.null( threshold ) ){
-				breakpoints_filtered <- ifelse( abs(data@segDiff) > threshold, 1, 0 )
+				breakpoints_filtered <- ifelse( abs(data@segmDiff) > threshold, 1, 0 )
 			}else{
 				stop( "parameter \"threshold needed\" when deltaSeg chosen as filter" )
 			}
@@ -128,7 +128,7 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
 		}
 		# CNA-associated breakpoints:
 		else if( filter == "CNA-ass" ) {
-			breakpoints_filtered <- ifelse(data@segDiff != 0, 
+			breakpoints_filtered <- ifelse(data@segmDiff != 0, 
 				ifelse( data@callDiff != 0 | data@calls != 0, 1, 0), 0)
 		}
 		else{
@@ -288,7 +288,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	
 	## create output object
 	output <- new( 'CopyNumberBreakPointGenes', 
-		segDiff     = data@segDiff,
+		segmDiff     = data@segmDiff,
 		callDiff    = data@callDiff,
 		segments    = data@segments,
 		calls       = data@calls,
