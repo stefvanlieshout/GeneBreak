@@ -660,8 +660,8 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 #' @aliases bpPlot
 setMethod( "bpPlot", "CopyNumberBreakPoints",
 	
-	function( object, plot.chr="all", plot.ylim=15, fdr.threshold=0.1 ) {
-		cat(paste("Plotting breakpoint frequencies ...\n"))
+	function( object, plot.chr=NULL, plot.ylim=15, fdr.threshold=0.1 ) {
+		cat( paste("Plotting breakpoint frequencies ...\n") )
 		
 		### input checks
 		breakpointGene <- 1
@@ -690,11 +690,21 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 		color.feature.chr <- color.feature
 		
 		## chromosomes to plot
-		chromosomesToPlot <- ifelse( plot.chr == "all", unique( object@featureAnnotation$Chromosome ), plot.chr ) # possible to give vector with chromosomes
+		chromosomesPresent <- unique( object@featureAnnotation$Chromosome )
+		chromosomesToPlot <- chromosomesPresent
+		if( !is.null( plot.chr) ){
+			for (chr in plot.chr){
+				if( !chr %in% chromosomesPresent ){
+					stop( "Chosen chromosome [", chr, "] not present in object-data\n", sep='' )
+				}
+			}
+			chromosomesToPlot <- plot.chr
+		}
+		#chromosomesToPlot <- ifelse( plot.chr == "all", chromosomesPresent, plot.chr ) # possible to give vector with chromosomes
 		
 		### check whether chr is in data...
 		for( chr in chromosomesToPlot ) {
-			cat(paste("\nChromosome:",chr))
+			cat( "Chromosome: ", chr, "\n", sep="")
 					
 			# subset data:
 			chr.feature = which(featureChromosomes(object)==chr)

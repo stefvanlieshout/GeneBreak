@@ -26,8 +26,8 @@ setMethod( "show",
         #cat( " Hi ", systemUser, "\n", sep = "")
         cat( "\n --- Object Info ---\n", sep="")
         cat( " This is an object of class ", class(object), "\n", sep = "" )
-        cat( " ", nrow( object@segmDiff ), " features by ", ncol( object@segmDiff ), " samples.\n", sep = "")
-        cat( " A total of ", sum( object@breakpoints ), " breakpoints\n", sep = "" )
+        cat( " ", nrow( object@segmDiff ), " features by ", ncol( object@segmDiff ), " samples\n", sep = "")
+        cat( " A total of ", sum( object@breakpoints ), " breakpoints present\n", sep = "" )
         if ( class(object) == "CopyNumberBreakPointGenes" && nrow(object@breakpointsPerGene) > 0){
             geneBreaksTotal <- sum( object@breakpointsPerGene )
             genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
