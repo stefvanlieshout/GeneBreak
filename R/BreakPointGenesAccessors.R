@@ -36,7 +36,7 @@ setMethod( "show",
                 cat( " A total of ", geneBreaksTotal, " gene breaks in ", genesBrokenTotal, " genes\n", sep = "" )
             }
             else{
-                cat( " Run bpGenes() to determine gene breakpoints\n", sep = "" )
+                cat( " See ?bpGenes for how to determine gene breakpoints\n", sep = "" )
             }
             
             ## recurrent breakpoints and recurent genes
@@ -45,7 +45,7 @@ setMethod( "show",
                 cat( " A total of ", signGenes, " recurrent breakpoint genes (FDR < 0.1)\n", sep = "" )
             }
             else{
-                cat( " Run bpStats() to determine breakpoint statistics\n", sep = "" )
+                cat( " See ?bpStats for how to determine breakpoint statistics\n", sep = "" )
             }
             if ( length( object@featureData$FDR ) ){
                 signGenes <- length( which( object@featureData$FDR < 0.1 ) )
@@ -131,11 +131,14 @@ setMethod( "geneData", "CopyNumberBreakPoints",
 #' @examples
 #' recurrentGenes( bpStats )
 setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
-    function(object, fdr.threshold=0.1){
+    function(object, fdr.threshold=0.1, summarize=TRUE, order.column="FDR"){
+        summaryColumns <- c("Gene","geneBreaks", "samplesWithGeneBreaks", "featureTotal", "pvalue", "FDR")
         if ( length( object@geneData$FDR ) ){
             idx <- which( object@geneData$FDR < fdr.threshold ) 
-            output <- cbind( object@geneAnnotation[idx,], object@geneData[idx,] )
             cat( " A total of ", length(idx), " recurrent breakpoint genes (at FDR < ", fdr.threshold,")\n", sep = "" )
+            output <- cbind( object@geneAnnotation[idx,], object@geneData[idx,] )
+            output <- output[ order( output[ ,order.column], decreasing=FALSE ), ]
+            if( summarize == TRUE ) output <- output[, summaryColumns]
             return( output )
         }else{
             cat( " No statistics information available in object, see ?bpStats\n", sep = "" )

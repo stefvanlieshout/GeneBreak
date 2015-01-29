@@ -1,5 +1,5 @@
 runWorkflow <- function( object, geneAnnotation ) {
-	cat( "Running workflow...\n", sep="" )
+	cat( "BreakPointGenes workflow started...\n", sep="" )
 	
 	## input checks
 	if ( (class( object ) != 'cghCall') && (class( object ) != 'QDNAseqSignals') )
@@ -693,10 +693,8 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 		chromosomesPresent <- unique( object@featureAnnotation$Chromosome )
 		chromosomesToPlot <- chromosomesPresent
 		if( !is.null( plot.chr) ){
-			for (chr in plot.chr){
-				if( !chr %in% chromosomesPresent ){
-					stop( "Chosen chromosome [", chr, "] not present in object-data\n", sep='' )
-				}
+			if( !all( plot.chr %in% chromosomesPresent ) ){
+				stop( "Chosen chromosome [", chr, "] not present in object-data\n", sep='' )
 			}
 			chromosomesToPlot <- plot.chr
 		}

@@ -40,7 +40,7 @@ setGeneric( "featuresPerGene", function(object, geneName) standardGeneric("featu
 setGeneric( "breakpointsPerGene", function(object) standardGeneric("breakpointsPerGene") )
 setGeneric( "featureChromosomes", function(object) standardGeneric("featureChromosomes") )
 setGeneric( "geneChromosomes", function(object) standardGeneric("geneChromosomes") )
-setGeneric( "recurrentGenes", function(object,fdr.threshold=0.1) standardGeneric("recurrentGenes") )
+setGeneric( "recurrentGenes", function(object, fdr.threshold=0.1, summarize=TRUE, order.column="FDR") standardGeneric("recurrentGenes") )
 
 ## output
 setGeneric( "bpPlot", function(object, plot.chr=NULL, plot.ylim=15, fdr.threshold=0.1) standardGeneric( "bpPlot" ))
