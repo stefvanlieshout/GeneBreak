@@ -11,7 +11,7 @@ An S4 class to represent a CopyNumberBreakPoints object.
 \section{Slots}{
 
 \describe{
-\item{\code{segDiff}}{A matrix}
+\item{\code{segmDiff}}{A matrix}
 
 \item{\code{callDiff}}{A matrix}
 

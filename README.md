@@ -22,9 +22,13 @@ The LGG150 data used in the example contains only one sample, which makes no sen
 ```R
 library( "BreakPointGenes" )
 
-# using build in data (CGHcall)
+# get better understanding of the package workflow
+vignette( "BreakPointGenes")
+# explore built-in data
+data( package="BreakPointGenes" )
+# load built-in dataset (CGHcall)
 data( "LGG150.data" )
-# using build in gene annotation data
+# load built-in gene annotation dataset
 data( gene.annotation.hg19 )
 # setup the breakpoint data
 bp <- getBreakpoints( data = LGG150.data )

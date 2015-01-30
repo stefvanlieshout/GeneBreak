@@ -1,5 +1,13 @@
+#' CopyNumber to BreakPoints
+#' @description
+#' Runs default settings for all workflow steps
+#' @param data A "CGHcall" object
+#' @return Output of bpStats() an object of class \code{CopyNumberBreakPointGenes}.
+#' @examples
+#' runWorkflow( cghCallObj )
 runWorkflow <- function( object, geneAnnotation ) {
-	cat( "BreakPointGenes workflow started...\n", sep="" )
+	startTime <- Sys.time()
+	cat( "BreakPointGenes workflow started at ", startTime,"\n", sep="" )
 	
 	## input checks
 	if ( (class( object ) != 'cghCall') && (class( object ) != 'QDNAseqSignals') )
@@ -10,6 +18,11 @@ runWorkflow <- function( object, geneAnnotation ) {
 	bp <- addGeneAnnotation( object = bp, geneAnnotation )
 	bp <- bpGenes( bp )
 	bp <- bpStats( bp )
+
+	endTime <- Sys.time()
+	timeDiff <- format( round( endTime - startTime, 3 ) )
+	cat( "Runtime: ", timeDiff, "\n", sep='')
+
 	return(bp)
 }
 
@@ -414,7 +427,7 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 # 	return( pv )
 # }
 
-.gilbertTest <- function( pvalues=NULL, cumgfs=NULL ){
+.gilbertTest <- function( pvalues=NULL, cumgfs=NULL, fdr.threshold=1 ){
 	
 	pvsrt <- sort( pvalues, index.return=T )
 	pvalssort <- pvsrt$x
@@ -442,7 +455,7 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 		cumgfscut <- cumgfscut[ ,1:elmax ]
 		i <- i + 1
 		#print(c(i,elmax,fdr))
-		if( fdr >= fdr_threshold ) fdrnot1 <- F
+		if( fdr >= fdr.threshold ) fdrnot1 <- F
 		fdrgilbert <- c( fdrgilbert, fdr )
 		fdrprev <- fdr
 	}
@@ -460,15 +473,15 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 #' @description
 #' Add description...
 #' @param object A "CopyNumberBreakPointGenes" object
-#' @param level The level
-#' @param method The method
+#' @param level The level ["all" or "gene"]
+#' @param method The method ["BH" or "Gilbert"]
 #' @return Object of same class of \code{object}.
 #' @examples
 #' bpStats( breakPointsGenes )
 #' @aliases bpStats
 setMethod( "bpStats", "CopyNumberBreakPoints",
 
-	function( object, level="gene", method="BH", fdr_threshold=1 ) {
+	function( object, level="gene", method="BH", fdr.threshold=1 ) {
 		
 		allowed.methods <- c( "Gilbert", "BH" )
 		allowed.levels <- c( "all", "gene" )
@@ -549,7 +562,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 				fdrs <- p.adjust( pvalues, method = "BH")
 			}
 			else if( method == "Gilbert" ) {
-				fdrs <- .gilbertTest( pvalues, cumgfs )
+				fdrs <- .gilbertTest( pvalues, cumgfs, fdr.threshold=fdr.threshold )
 			}
 			else{
 				stop( "Chosen method [", method, "] not supported...\n")

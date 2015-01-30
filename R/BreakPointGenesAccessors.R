@@ -125,11 +125,14 @@ setMethod( "geneData", "CopyNumberBreakPoints",
 )
 
 #' Show recurrent genes
-#' @param object
+#' @param object Output of bpStats(): a \code{CopyNumberBreakPointGenes} object
 #' @param fdr.threshold Genes with lower FDR are returned
-#' @return data.frame with gene annotation and data
+#' @param summarize If TRUE only certain columns are returned
+#' @param order.column Name of the column to sort output on
+#' @return data.frame with recurrent genes
 #' @examples
 #' recurrentGenes( bpStats )
+#' @aliases recurrentGenes
 setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
     function(object, fdr.threshold=0.1, summarize=TRUE, order.column="FDR"){
         summaryColumns <- c("Gene","geneBreaks", "samplesWithGeneBreaks", "featureTotal", "pvalue", "FDR")

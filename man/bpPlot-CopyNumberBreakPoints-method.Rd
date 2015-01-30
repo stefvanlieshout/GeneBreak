@@ -6,13 +6,13 @@
 \alias{bpPlot,CopyNumberBreakPoints-method}
 \title{bpPlot}
 \usage{
-\S4method{bpPlot}{CopyNumberBreakPoints}(object, chr = "all",
+\S4method{bpPlot}{CopyNumberBreakPoints}(object, plot.chr = NULL,
   plot.ylim = 15, fdr.threshold = 0.1)
 }
 \arguments{
 \item{object}{A "CopyNumberBreakPoint" object}
 
-\item{chr}{The chromosome(s) to plot}
+\item{plot.chr}{The chromosome(s) to plot}
 
 \item{plot.ylim}{The max y}
 
@@ -25,6 +25,6 @@ Nothing
 Add description...
 }
 \examples{
-bpPlot( breakPointsGenes )
+bpPlot( bp_stats, c(1,22) )
 }
 

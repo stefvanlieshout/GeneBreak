@@ -12,9 +12,9 @@
 \arguments{
 \item{object}{A "CopyNumberBreakPointGenes" object}
 
-\item{level}{The level}
+\item{level}{The level ["all" or "gene"]}
 
-\item{method}{The method}
+\item{method}{The method ["BH" or "Gilbert"]}
 }
 \value{
 Object of same class of \code{object}.
