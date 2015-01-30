@@ -1,5 +1,7 @@
 
-## --- define what is shown when object is called --- ##
+## ---------------
+## define access methods information
+## ---------------
 .dataAccessOptions = list(
     callData = "feature call values",
     segmentData = "feature segment values",
@@ -25,9 +27,9 @@ setMethod( "show",
         #systemUser <- system( "whoami", T )
         #cat( " Hi ", systemUser, "\n", sep = "")
         cat( "\n --- Object Info ---\n", sep="")
-        cat( " This is an object of class ", class(object), "\n", sep = "" )
+        cat( " This is an object of class \"", class(object), "\"\n", sep = "" )
         cat( " ", nrow( object@segmDiff ), " features by ", ncol( object@segmDiff ), " samples\n", sep = "")
-        cat( " A total of ", sum( object@breakpoints ), " breakpoints present\n", sep = "" )
+        cat( " A total of ", sum( object@breakpoints ), " breakpoints\n", sep = "" )
         if ( class(object) == "CopyNumberBreakPointGenes" && nrow(object@breakpointsPerGene) > 0){
             geneBreaksTotal <- sum( object@breakpointsPerGene )
             genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
@@ -44,35 +46,58 @@ setMethod( "show",
                 signGenes <- length( which( object@geneData$FDR < 0.1 ) )
                 cat( " A total of ", signGenes, " recurrent breakpoint genes (FDR < 0.1)\n", sep = "" )
             }
-            else{
-                cat( " See ?bpStats for how to determine breakpoint statistics\n", sep = "" )
-            }
-            if ( length( object@featureData$FDR ) ){
+            else if ( length( object@featureData$FDR ) ){
                 signGenes <- length( which( object@featureData$FDR < 0.1 ) )
                 cat( " A total of ", signGenes, " recurrent breakpoints (FDR < 0.1)\n", sep = "" )
             }
+            else{
+                cat( " See ?bpStats for how to determine breakpoint statistics\n", sep = "" )
+            }
         }
-        
-        cat( "\n --- Object Data Access Options ---\n", sep="")
-        for ( i in names(.dataAccessOptions) ){
-            cat( " ", i, "( obj ) => returns ", .dataAccessOptions[[ i ]],"\n", sep="")    
-        }
-        
-        ## extra options if class is CopyNumberBreakPointGenes
-        if ( class(object) == "CopyNumberBreakPointGenes" ){
-            for ( i in names(.dataAccessOptionsGene) ){
-                cat( " ", i, "( obj ) => returns ", .dataAccessOptionsGene[[ i ]],"\n", sep="")    
-            }   
-        }
+        cat( " See accessOptions(object) for how to access data in this object\n", sep = "" )
 
         cat( "\n" )
         invisible(NULL)
     }
 )
 
-## --- access to specific slots/data --- ##
+#' Access Object Data
+#' @param object An object of class \code{CopyNumberBreakPoints}
+#' @examples
+#' accessOptions( bp )
+#' accessOptions( bp_genes )
+#' accessOptions( bp_stats )
+#' # --- Object data access ---
+#' # This is an object of class "CopyNumberBreakPointGenes"
+#' # callData( obj ) => returns feature call values
+#' # segmentData( obj ) => returns feature segment values
+#' # breakpointData( obj ) => returns feature breakpoint values
+#' # sampleNames( obj ) => returns vector with sample names
+#' # etc...
+#' @aliases accessOptions
+setMethod( "accessOptions",
+    signature = "CopyNumberBreakPoints",
+    definition = function(object) {
+        cat( "\n --- Object data access ---\n", sep="")
+        cat( " This is an object of class \"", class(object), "\"\n", sep = "" )
+        for ( i in names(.dataAccessOptions) ){
+            cat( " ", i, "( obj ) => returns ", .dataAccessOptions[[ i ]],"\n", sep="")    
+        }
+        ## extra options if class is CopyNumberBreakPointGenes
+        if ( class(object) == "CopyNumberBreakPointGenes" ){
+            for ( i in names(.dataAccessOptionsGene) ){
+                cat( " ", i, "( obj ) => returns ", .dataAccessOptionsGene[[ i ]],"\n", sep="")    
+            }   
+        }
+        cat( "\n" )
+        invisible(NULL)
+    }
+)
 
-## CopyNumberBreakPoints
+
+## ---------------
+## CopyNumberBreakPoints specific slot access
+## ---------------
 setMethod( "callData", "CopyNumberBreakPoints",
 	function(object) object@calls
 )
@@ -98,7 +123,9 @@ setMethod( "featureChromosomes", "CopyNumberBreakPoints",
     function(object) object@featureAnnotation$Chromosome
 )
 
-## CopyNumberBreakPointGenes
+## ---------------
+## CopyNumberBreakPointGenes specific slot access
+## ---------------
 setMethod( "geneAnnotation", "CopyNumberBreakPointGenes",
     function(object) object@geneAnnotation
 )
@@ -131,7 +158,7 @@ setMethod( "geneData", "CopyNumberBreakPoints",
 #' @param order.column Name of the column to sort output on
 #' @return data.frame with recurrent genes
 #' @examples
-#' recurrentGenes( bpStats )
+#' recurrentGenes( bp_stats )
 #' @aliases recurrentGenes
 setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
     function(object, fdr.threshold=0.1, summarize=TRUE, order.column="FDR"){

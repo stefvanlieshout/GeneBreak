@@ -13,6 +13,7 @@ runWorkflow <- function( object, geneAnnotation ) {
 	if ( (class( object ) != 'cghCall') && (class( object ) != 'QDNAseqSignals') )
         stop( '[ERR] input data not a cghCall or QDNAseqSignals object...' )
 
+    ## perform all workflow steps
     bp <- getBreakpoints( data = object )
 	bp <- bpFilter( object = bp, filter = "deltaSeg", threshold = 0.2 )
 	bp <- addGeneAnnotation( object = bp, geneAnnotation )
@@ -21,7 +22,7 @@ runWorkflow <- function( object, geneAnnotation ) {
 
 	endTime <- Sys.time()
 	timeDiff <- format( round( endTime - startTime, 3 ) )
-	cat( "Runtime: ", timeDiff, "\n", sep='')
+	cat( "Workflow runtime: ", timeDiff, "\n", sep='')
 
 	return(bp)
 }
@@ -30,8 +31,8 @@ runWorkflow <- function( object, geneAnnotation ) {
 #' @description
 #' Builds the CopyNumberBreakPoints object with CGHcall data 
 #' @param data A "CGHcall" object
-#' @param first.rm Remove the first
-#' @return Object of class \code{CopyNumberBreakPoints}.
+#' @param first.rm Remove the first breakpoint for each chromosome
+#' @return Object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' getBreakpoints( cghCallObj )
 getBreakpoints <- function( data, first.rm=TRUE ) {
@@ -41,28 +42,25 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 	if ( class( data ) != 'cghCall' )
         stop( '[ERR] input data not a cghCall object...' )
 
-
-	breakpoints <- NULL; segmDiff <- NULL; callDiff <- NULL; startChr <- c()
-	featureAnnotation <- NULL;	probeDistance <- c()
-	
-	## slots are the same in object from packages CGHcall and QDNAseq
-	#segmData <- CGHbase::segmented(data)
-	#callData <- CGHbase::calls(data)
+    ## setup variables
+	## slots are the same for CGHcall and QDNAseq objects
 	segmData <- data@assayData$segmented
 	callData <- data@assayData$calls
 	bpChrs   <- data@featureData@data$Chromosome
 	bpStart  <- data@featureData@data$Start
-	bpEnd  <- data@featureData@data$End
-
+	bpEnd    <- data@featureData@data$End
 	featureNames <- rownames( segmData )
+
+	breakpoints <- NULL; segmDiff <- NULL; callDiff <- NULL; startChr <- c()
+	featureAnnotation <- NULL;	probeDistance <- c()
 	
 	segmDiff <- rbind( segmData[ 1, ], apply( segmData, 2, diff ) )	
 	callDiff <- rbind( callData[ 1, ], apply( callData, 2, diff ) )
 	rownames(segmDiff) <- featureNames
 	rownames(callDiff) <- featureNames
 	
-	# remove first chromosomal BP: make Bp value 0
-	if ( first.rm == T ) {
+	## remove first chromosomal BP if requested: set bp value to 0
+	if ( first.rm == TRUE ) {
 		startChr <- c( 1, which( diff( bpChrs ) == 1 ) + 1 )
 		segmDiff[ startChr, ] <- 0
 		callDiff[ startChr, ] <- 0
@@ -70,22 +68,20 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 	
 	featureAnnotation <- data.frame( 
 		Chromosome = bpChrs, 
-		#Start = bpstart(data), 
 		Start = bpStart,
-		#End = bpend(data), 
 		End = bpEnd,
 		row.names = featureNames 
 	)
 
-	# probe distance is needed for statistics
+	## probe distance is needed for statistics
 	probeDistance <- c( 0, diff( bpStart ) )
-	probeDistance[startChr] <- 0
+	probeDistance[ startChr ] <- 0
 	featureData <- data.frame( 
 		probeDistance = probeDistance, 
 		row.names = featureNames 
 	)
 	
-	# put everything in one object:
+	## create object with all required slots
 	output <- new( 'CopyNumberBreakPoints', 
 		segmDiff = segmDiff,
 		callDiff = callDiff,
@@ -98,62 +94,83 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
 	return( output )
 }
 
-createGeneAnnotations <- function( file, geneCount=0 ){
+#' Build Gene Annotations
+#' @description
+#' Builds the geneAnnotation data.frame from a text file
+#' @param file Path to a TAB delim file with gene annotations. Requires a header to be present with at least these fields: Gene, EnsID, Chromosome, Start, End
+#' @param geneCount Only use first geneCount genes (for testing purposes)
+#' @return Object of class \code{CopyNumberBreakPoints})
+#' @examples
+#' geneAnn <- createGeneAnnotations( "/path/to/annotation/file.tsv" )
+createGeneAnnotations <- function( file, geneCount=NULL ){
 	
-	#if ( )
-	tmp <- read.delim( file )
+	df <- read.delim( file )
 
 	## file speficic altering
-	tmp[,3] <- as.vector( tmp[,3] )
-	tmp$chromosome_name[ tmp$chromosome_name == "X"] <- "23"
-	tmp <- tmp[ which( tmp[,1] != "" & tmp[,3] %in% c(1:23)),]
-	colnames( tmp ) <- c( "Gene", "EnsID", "Chromosome", "Start", "End" )
-	tmp$Chromosome <- as.integer( tmp$Chromosome )
+	df[,3] <- as.vector( df[,3] )
+	df$chromosome_name[ df$chromosome_name == "X"] <- "23"
+	df <- df[ which( df[,1] != "" & df[,3] %in% c(1:23)), ]
+	colnames( df ) <- c( "Gene", "EnsID", "Chromosome", "Start", "End" )
+	df$Chromosome <- as.integer( df$Chromosome )
 
-	## make selection for speedup
-	if ( geneCount > 0 ){
-		tmp <- tmp[ 1:geneCount, ]
+	## make selection if geneCount is set
+	if ( !is.null( geneCount ) ){
+		df <- df[ 1:geneCount, ]
 	}
-	#AnnotatedDataFrame(data=tmp, varMetadata=metaData)
-	#tmp <- AnnotatedDataFrame(data=tmp) # rownames not unique error...
-	return( tmp )
+	return( df )
 }
 
+#' Filter Breakpoints
+#' @description
+#' Removes breakpoints by a minimum <ADD_TERM!> threshold
+#' @param filter Type of filter
+#' @return Object of class \code{CopyNumberBreakPoints})
+#' @examples
+#' bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
+#' @aliases bpFilter
 setMethod( "bpFilter", "CopyNumberBreakPoints",
-    function( object, filter, threshold=NULL) {
-    	data <- object
-        cat("Applying BP selection...\n")
-	
-		breakpoints_filtered <- NULL
+    function( object, filter="deltaSeg", threshold=0.2) {
+    	
+    	cat("Applying BP selection...\n")
+    	allowed.filters <- c( "deltaSeg", "deltaCall", "CNA-ass" )
+
+		## Check input params
+		if ( ! filter %in% allowed.filters ){
+			stop( "Parameter \"filter\" incorrect, options are: ", paste( allowed.filters, collapse=', ' ), "\n" )
+		}		
+		if ( ! is.numeric( threshold ) ){
+			stop( "Parameter \"threshold\" incorrect, should be numeric", "\n" )
+		}
 		
-		# (delta) seg value threshold:
+		## filter breakpoints based on type of filter
 		if( filter == "deltaSeg" ) {
-			# check whether threshold exsist... (error)
 			if( !is.null( threshold ) ){
-				breakpoints_filtered <- ifelse( abs(data@segmDiff) > threshold, 1, 0 )
+				breakpoints_filtered <- ifelse( abs( object@segmDiff ) > threshold, 1, 0 )
 			}else{
 				stop( "parameter \"threshold needed\" when deltaSeg chosen as filter" )
 			}
 		}
-		# delta call value:
 		else if( filter == "deltaCall" ) {
-			breakpoints_filtered <- ifelse( data@callDiff != 0, 1, 0 )
+			breakpoints_filtered <- ifelse( object@callDiff != 0, 1, 0 )
 		}
-		# CNA-associated breakpoints:
 		else if( filter == "CNA-ass" ) {
-			breakpoints_filtered <- ifelse(data@segmDiff != 0, 
-				ifelse( data@callDiff != 0 | data@calls != 0, 1, 0), 0)
+			breakpoints_filtered <- ifelse( 
+				object@segmDiff != 0, 
+				ifelse( object@callDiff != 0 | object@calls != 0, 1, 0), 
+				0
+			)
 		}
 		else{
 			stop( "parameter \"filter\" has incorrect value" )
 		}
 
-		# we can extent this with numerous filter steps...
-		data@breakpoints <- breakpoints_filtered
-        return(data)
+		## return updated object
+		object@breakpoints <- breakpoints_filtered
+        return( object )
     }
 )
 
+## maybe remove this method??
 setMethod( "bpSummary", "CopyNumberBreakPoints",
 	function( object ) {
 		if( nrow(object@breakpoints) > 0 ) {
@@ -176,8 +193,6 @@ setMethod( "bpSummary", "CopyNumberBreakPoints",
 setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	function( object, geneAnnotation ) {
 	
-	data <- object
-	
 	## setup gene information
 	geneData <- data.frame( geneLength = apply( geneAnnotation[, c("Start","End") ], 1, diff ) )
 	geneData$situation <- NA
@@ -186,11 +201,11 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	geneData$featureNames <- NA
 
 	geneCount <- nrow( geneData )
-	sampCount <- length( sampleNames(data) )
-
-	## setup probe / bin information
-	features <- cbind( data@featureAnnotation, idx=1:nrow( data@featureAnnotation ) )
-	#colnames(features)[5] <- "idx"
+	sampCount <- length( sampleNames(object) )
+	## setup feature (probe/bin) information
+	features <- cbind( object@featureAnnotation, idx=1:nrow( object@featureAnnotation ) )
+	## make list containing geneAnnotation with related featureAnnotation
+	gene_features <- list()
 
 	## define index of first and last chromosomal probe
 	start_endChr <- data.frame(
@@ -199,20 +214,14 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 		end_index   = c( which( diff( features$Chromosome ) == 1 ), length( features$Chromosome ) ) 
 	)
 	
-	## make list containing geneAnnotation with related featureAnnotation:
-	gene_features <- list()
-		
-	## loop through single geneAnnotation:
+	## Start analysis
 	cat( paste( "Adding of gene annotation started on ", geneCount, " genes by ", sampCount, " samples\n", sep=""))
 	
 	progress <- rep( NA, geneCount )
 	progress[ c( round( seq( 1, geneCount, by = ( geneCount/4))))] <- c("0%","25%","50%","75%")
-	
 	warning_Z <- c() # will be filled if unable to determine situation for one or more genes
 	
 	## Loop for all geneAnnotation
-	#print(head(genes))
-
 	for( gene_idx in 1:geneCount ) {
 
 		if( !is.na(progress[gene_idx])) { 
@@ -301,16 +310,16 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 	
 	## create output object
 	output <- new( 'CopyNumberBreakPointGenes', 
-		segmDiff     = data@segmDiff,
-		callDiff    = data@callDiff,
-		segments    = data@segments,
-		calls       = data@calls,
-		breakpoints = data@breakpoints,
-		featureAnnotation = data@featureAnnotation,
-		featureData = data@featureData,
-		geneAnnotation    = geneAnnotation, # same as input slot
-		geneData = geneData,
-		featuresPerGene   = gene_features # list of length nrow genes
+		segmDiff    = object@segmDiff,
+		callDiff    = object@callDiff,
+		segments    = object@segments,
+		calls       = object@calls,
+		breakpoints = object@breakpoints,
+		geneData    = geneData,
+		featureData = object@featureData,
+		featureAnnotation = object@featureAnnotation,
+		geneAnnotation    = geneAnnotation,
+		featuresPerGene   = gene_features
 	)
 	cat( "Adding gene annotation DONE\n" )
 	return(output)
@@ -331,23 +340,23 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 	function( object ){
 		
 		## variable setup
-		#breakpointdata <- object
 		fpg <- object@featuresPerGene
 		bps <- object@breakpoints
 		geneData <- object@geneData
 
-		sampleCount <- ncol(bps)
+		sampleCount <- ncol( bps )
 		geneCount <- nrow( geneData )
 		geneData$geneBreaks <- NA
 		geneData$samplesWithGeneBreaks <- NA
 		
-		## setup genes x samples matrix
 		geneBreakpoints <- matrix( data = 0, nrow = geneCount, ncol = sampleCount )
-
+		
+		## ---------------
+		## start analysis
+		## ---------------
+		cat( paste("Running bpGenes:", geneCount, "genes and", sampleCount, "samples\n"))
 		progress <- rep( NA, geneCount )
 		progress[ c( round( seq( 1, geneCount, by = (geneCount/4) ))) ] <- c("0%","25%","50%","75%")
-
-		cat( paste("Running bpGenes:", geneCount, "genes and", sampleCount, "samples\n"))
 		
 		gene_idx_loop <- which( sapply( fpg, function(x){ length(x[!is.na(x)])}) > 0 )
 		for( gene_idx in gene_idx_loop ) {
@@ -357,7 +366,7 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 			}
 
 			features <- fpg[[ gene_idx ]]
-			tmp_bps <- as.matrix( bps[ features, ] ) # as.matrix() in stead of rbind () ?
+			tmp_bps <- as.matrix( bps[ features, ] )
 			
 			# needs transpose at lenght 1 because of as.matrix behaviour
 			if( length( features ) == 1 ) tmp_bps <- t( tmp_bps ) 
@@ -369,8 +378,8 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 		
 		## add the extra slots in same object class
 		object@breakpointsPerGene <- geneBreakpoints
-		object@geneData <- geneData
-		geneBreaksTotal <- sum( object@breakpointsPerGene )
+		object@geneData  <- geneData
+		geneBreaksTotal  <- sum( object@breakpointsPerGene )
         genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
 		
 		cat( "bpGenes DONE\n" )
@@ -380,21 +389,15 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 	}
 )
 
-
-
 ## internal function
-## correction for co-variates (regression)
+## correction for co-variates (regression, qual filter)
+## lenst = gestandaardiseerde lengte van genen
 ## NOTE: could add more co-variates
 .glmbreak <- function( breakg, lenst = lenst, nprobes = nprobes ) {
 	nullmodel <- glm( breakg ~ lenst + nprobes, family = "binomial" )
 	pn <- predict( nullmodel, type = "response" )
 	return( pn )
 }
-# lenst = gestandaardiseerde lengte genen
-# regressie stap (qual filter)
-
-
-## internal function
 .cumgf <- function( probs ) {
 	p = probs #p: vector of probs P(Y_i=1)
 	k = length( probs )
@@ -409,24 +412,6 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 	}
 	rev( cumsum( rev(BS) ) )
 }
-
-# ## internal function
-# .pval_gene <- function( i, breakgene=breakgene, cumgfs=cumgfs ) {
-# 	#i<-1
-# 	#nr_idx <- length(i)
-# 	#cat( "NR idx", nr_idx, "\n" )
-# 	obs <- breakgene[i]
-# 	pv <- cumgfs[ i, obs + 1 ]
-# 	return( pv )
-# }
-
-# ## internal function
-# .pval_probe <- function( i, breakgene=breakgene, cumgfs=cumgfs ) {
-# 	obs <- breakgene[i]
-# 	pv <- cumgfs[ , obs + 1 ]
-# 	return( pv )
-# }
-
 .gilbertTest <- function( pvalues=NULL, cumgfs=NULL, fdr.threshold=1 ){
 	
 	pvsrt <- sort( pvalues, index.return=T )
@@ -454,7 +439,6 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 		elmax <- min( nc, max( largsmall[ 2,] ) )
 		cumgfscut <- cumgfscut[ ,1:elmax ]
 		i <- i + 1
-		#print(c(i,elmax,fdr))
 		if( fdr >= fdr.threshold ) fdrnot1 <- F
 		fdrgilbert <- c( fdrgilbert, fdr )
 		fdrprev <- fdr
@@ -462,7 +446,6 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 	
 	## all values above FDR threshold (fdr_threshold) are set to 1
 	fdrgilbertfull <- c( fdrgilbert, rep( 1, length(pvalssort) - length(fdrgilbert)))
-	
 	fdrs <- fdrgilbertfull[ order(pvsrt$ix) ]
 	return(fdrs)
 }
@@ -496,11 +479,10 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			stop( "Parameter \"level\" incorrect, options are: ", paste( allowed.levels, collapse=', ' ), "\n" )
 		}
 		
-
 		## copy main object
 		breakpointData <- object
 		
-		## --------------------		
+		## --------------------
 		## gene level analysis
 		## --------------------
 		if( level == "gene" ) {
@@ -513,11 +495,11 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			}
 
 			# setup data
-			bps <- breakpointData@breakpointsPerGene
+			bps <- object@breakpointsPerGene
 			# because of later sum() transform to 1
 			bps[ bps > 0 ] <- 1
 			# exclude situations A,B,X
-			exclude <- which( breakpointData@geneData$situation %in% c("A","B","X") )
+			exclude <- which( object@geneData$situation %in% c("A","B","X") )
 			bpt <- bps[ -exclude, ]
 
 			## start analysis
@@ -530,7 +512,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			breaktotal <- apply( bpt, 2, sum )
 			breakgene <- apply( bpt, 1, sum )
 			
-			geneAnn <- breakpointData@geneData
+			geneAnn <- object@geneData
 			len <- geneAnn$genelength_features[ -exclude ]
 			nprobes <- geneAnn$featureTotal[ -exclude ]
 			
@@ -575,8 +557,8 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			geneAnn$FDR <- NA
 			geneAnn$FDR[ -exclude ] <- fdrs
 			
-			breakpointData@geneData <- geneAnn
-			return(breakpointData)
+			object@geneData <- geneAnn
+			return( object )
 		}
 
 		## --------------------

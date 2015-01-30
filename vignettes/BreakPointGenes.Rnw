@@ -28,26 +28,32 @@ options("BreakPointGenes::verbose"=NA)
 options(width=40)
 @
 
-\subsection{Loading data from a cghCall object}
+\subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
 
-Then we need to obtain copy number data. These are available pre-calculated for
-genome build hg19 and bin sizes 1, 5, 10, 15, 30, 50, 100, 500, and 1000 kbp.
-They can be downloaded for example with:
+Then we need to obtain gene annotations (mainly for the location)
+For hg19 reference they can be downloaded with (NOT AVAILABLE YET):
 
 \begin{Schunk}
 \begin{Sinput}
-> bins <- getBinAnnotations(binSize=15)
-Downloading bin annotations for genome hg19, bin size 15kbp,
-and experiment type SR50 ...
+> geneAnnotations <- getGeneAnnotations()
+Downloading gene annotations for genome hg19
 \end{Sinput}
 \end{Schunk}
 
-After downloading, the bin annotations can be saved locally with
+After downloading, the gene annotations can be saved locally with
 \code{saveRDS}, and in the future be read from the local file with
 \code{loadRDS} instead of relying on downloading.
 
-If you are working with another genome build (or another species), see the
-section on generating the bin annotations.
+\subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
+
+Then we need to obtain copy number data. Because the \pkg{BreakPointGenes} package is an extension of the work done in packages CGHcall (for array data) and QDNAseq (for sequencing data), an object of class "cghCall" can be used as input.
+
+\begin{Schunk}
+\begin{Sinput}
+> bp <- getBreakpoints( data = cghCallObject )
+\end{Sinput}
+\end{Schunk}
+
 
 \subsection{Processing bam files}
 
@@ -55,31 +61,33 @@ Next step is to load the copy number data from a cghCall file or from a
 text file. This can be done for example with one of the commands below.
 
 <<eval=FALSE>>=
-breakPoints <- getBP( cghCallObject )
-# all files ending in .bam from the current working directory
+bp <- getBreakpoints( data = cghCallObject )
+# using the output of CGHcall or QDNAseq
 
 # or
 
-breakPoints <- getBP( "file.txt", type='txt' )
-# file 'file.txt' from the current working directory
+bp <- getBreakpoints( data = matrix(), data2 = matrix() )
+# providing segments and call values directly (NOT YET POSSIBLE)
 
 @
 
-This will return an object of class \code{CNBPgene}.
-
-For the purpose of this tutorial, we load an example data set of chromosomes
-7--10 of low grade glioma sample LGG150.
+This will return an object of class \code{CopyNumberBreakPoints}.
 
 <<>>=
-breakPoints <- "example_code"
-breakPoints
-@
+library( "BreakPointGenes" )
 
-Finally, for other downstream analyses, such as running CGHregions, it might be
-useful to convert to a cghCall object.
-
-<<>>=
-cgh <- matrix()
+# load built-in dataset (CGHcall)
+data( "LGG150.data" )
+# load built-in gene annotation dataset
+data( gene.annotation.hg19 )
+# setup the breakpoint data
+bp <- getBreakpoints( data = LGG150.data )
+# optionally filter the data
+bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
+# setup the gene data 
+bp <- addGeneAnnotation( bp, gene.annotation.hg19 )
+# perform gene analysis
+bp <- bpGenes( bp )
 @
 
 \clearpage

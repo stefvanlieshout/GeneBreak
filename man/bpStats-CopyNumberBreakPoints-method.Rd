@@ -7,7 +7,7 @@
 \title{bpStats}
 \usage{
 \S4method{bpStats}{CopyNumberBreakPoints}(object, level = "gene",
-  method = "BH", fdr_threshold = 1)
+  method = "BH", fdr.threshold = 1)
 }
 \arguments{
 \item{object}{A "CopyNumberBreakPointGenes" object}

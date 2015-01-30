@@ -9,10 +9,10 @@ getBreakpoints(data, first.rm = TRUE)
 \arguments{
 \item{data}{A "CGHcall" object}
 
-\item{first.rm}{Remove the first}
+\item{first.rm}{Remove the first breakpoint for each chromosome}
 }
 \value{
-Object of class \code{CopyNumberBreakPoints}.
+Object of class \code{CopyNumberBreakPoints}
 }
 \description{
 Builds the CopyNumberBreakPoints object with CGHcall data

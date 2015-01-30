@@ -14,33 +14,39 @@ options(width=40)
 
 
 ###################################################
-### code chunk number 3: BreakPointGenes.Rnw:57-65 (eval = FALSE)
+### code chunk number 3: BreakPointGenes.Rnw:63-71 (eval = FALSE)
 ###################################################
-## breakPoints <- getBP( cghCallObject )
-## # all files ending in .bam from the current working directory
+## bp <- getBreakpoints( data = cghCallObject )
+## # using the output of CGHcall or QDNAseq
 ## 
 ## # or
 ## 
-## breakPoints <- getBP( "file.txt", type='txt' )
-## # file 'file.txt' from the current working directory
+## bp <- getBreakpoints( data = matrix(), data2 = matrix() )
+## # providing segments and call values directly (NOT YET POSSIBLE)
 ## 
 
 
 ###################################################
-### code chunk number 4: BreakPointGenes.Rnw:73-75
+### code chunk number 4: BreakPointGenes.Rnw:76-90
 ###################################################
-breakPoints <- "example_code"
-breakPoints
+library( "BreakPointGenes" )
+
+# load built-in dataset (CGHcall)
+data( "LGG150.data" )
+# load built-in gene annotation dataset
+data( gene.annotation.hg19 )
+# setup the breakpoint data
+bp <- getBreakpoints( data = LGG150.data )
+# optionally filter the data
+bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
+# setup the gene data 
+bp <- addGeneAnnotation( bp, gene.annotation.hg19 )
+# perform gene analysis
+bp <- bpGenes( bp )
 
 
 ###################################################
-### code chunk number 5: BreakPointGenes.Rnw:81-82
-###################################################
-cgh <- matrix()
-
-
-###################################################
-### code chunk number 6: BreakPointGenes.Rnw:91-92
+### code chunk number 5: BreakPointGenes.Rnw:99-100
 ###################################################
 sessionInfo()
 
