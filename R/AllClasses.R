@@ -1,6 +1,3 @@
-## ---------------
-## Own way of things
-## ---------------
 #' An S4 class to represent a CopyNumberBreakPoints object.
 #'
 #' @slot segmDiff A matrix 
@@ -33,7 +30,8 @@ CopyNumberBreakPoints <- setClass(
 
 #' An S4 class to represent a CopyNumberBreakPointGenes object
 #'
-#' @slot geneAnnotation A data.frame with gene information
+#' @slot geneAnnotation A data.frame with originally given gene information
+#' @slot geneData A data.frame with gene information added by package methods
 #' @slot featuresPerGene A list with per gene the associated features
 #' @slot breakpointsPerGene A matrix with breakage status per gene
 CopyNumberBreakPointGenes <- setClass( 
@@ -52,5 +50,4 @@ CopyNumberBreakPointGenes <- setClass(
 		breakpointsPerGene = matrix()
 	)
 )
-
 # EOF

@@ -7,7 +7,7 @@
 #' runWorkflow( cghCallObj )
 runWorkflow <- function( object, geneAnnotation ) {
 	startTime <- Sys.time()
-	cat( "BreakPointGenes workflow started at ", startTime,"\n", sep="" )
+	cat( "BreakPointGenes workflow started at: ", format(startTime),"\n", sep="" )
 	
 	## input checks
 	if ( (class( object ) != 'cghCall') && (class( object ) != 'QDNAseqSignals') )
@@ -22,7 +22,7 @@ runWorkflow <- function( object, geneAnnotation ) {
 
 	endTime <- Sys.time()
 	timeDiff <- format( round( endTime - startTime, 3 ) )
-	cat( "Workflow runtime: ", timeDiff, "\n", sep='')
+	cat( "[Workflow runtime: ", timeDiff, "]\n", sep='')
 
 	return(bp)
 }
@@ -428,9 +428,9 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 		## snowfall on apply?
 		largsmall <- apply( cumgfscut, 1, function(ceegf) 
 		    {
-				ceegf <- c(ceegf,0)
-		    	el <- length(ceegf[ceegf>pvi]); 
-		    	return(c(ceegf[el+1],el+1))
+				ceegf <- c( ceegf, 0)
+		    	el <- length( ceegf[ ceegf > pvi ]); 
+		    	return( c( ceegf[ el+1 ], el + 1))
 		    }
 		)
 		npvsmall <- i
@@ -697,7 +697,7 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 		
 		### check whether chr is in data...
 		for( chr in chromosomesToPlot ) {
-			cat( "Chromosome: ", chr, "\n", sep="")
+			cat( "Plotting Chromosome: ", chr, "\n", sep="")
 					
 			# subset data:
 			chr.feature = which(featureChromosomes(object)==chr)

@@ -11,7 +11,9 @@ An S4 class to represent a CopyNumberBreakPointGenes object
 \section{Slots}{
 
 \describe{
-\item{\code{geneAnnotation}}{A data.frame with gene information}
+\item{\code{geneAnnotation}}{A data.frame with originally given gene information}
+
+\item{\code{geneData}}{A data.frame with gene information added by package methods}
 
 \item{\code{featuresPerGene}}{A list with per gene the associated features}
 
