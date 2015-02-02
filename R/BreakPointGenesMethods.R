@@ -15,7 +15,7 @@ runWorkflow <- function( object, geneAnnotation ) {
 
     ## perform all workflow steps
     bp <- getBreakpoints( data = object )
-	bp <- bpFilter( object = bp, filter = "deltaSeg", threshold = 0.2 )
+	bp <- bpFilter( object = bp )
 	bp <- addGeneAnnotation( object = bp, geneAnnotation )
 	bp <- bpGenes( bp )
 	bp <- bpStats( bp )
@@ -129,7 +129,7 @@ createGeneAnnotations <- function( file, geneCount=NULL ){
 #' bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
 #' @aliases bpFilter
 setMethod( "bpFilter", "CopyNumberBreakPoints",
-    function( object, filter="deltaSeg", threshold=0.2) {
+    function( object, filter="CNA-ass", threshold=NULL) {
     	
     	cat("Applying BP selection...\n")
     	allowed.filters <- c( "deltaSeg", "deltaCall", "CNA-ass" )
@@ -138,7 +138,7 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
 		if ( ! filter %in% allowed.filters ){
 			stop( "Parameter \"filter\" incorrect, options are: ", paste( allowed.filters, collapse=', ' ), "\n" )
 		}		
-		if ( ! is.numeric( threshold ) ){
+		if ( !is.null(threshold) & !is.numeric( threshold ) ){
 			stop( "Parameter \"threshold\" incorrect, should be numeric", "\n" )
 		}
 		
@@ -479,9 +479,6 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			stop( "Parameter \"level\" incorrect, options are: ", paste( allowed.levels, collapse=', ' ), "\n" )
 		}
 		
-		## copy main object
-		breakpointData <- object
-		
 		## --------------------
 		## gene level analysis
 		## --------------------
@@ -565,7 +562,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 		## feature level analysis
 		## --------------------
 		else if( level == "all" ) {
-			bpt <- breakpointData@breakpoints
+			bpt <- object@breakpoints
 			
 			cat( paste( 
 				"Applying statistical test over", ncol(bpt), 
@@ -583,18 +580,15 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 				probmat <- probuni %*% t( breaktotal )
 				cumgfs <- .cumgf( probmat[1,] ) # bij Gilbert zou dit ook anders moeten ws ???
 
-				pvalues <- sapply( 1:length(breakgene), function(i)
-					{ 
-						cumgfs[ breakgene[i] + 1 ] # got error; incorrect dimensions; not array but vector...
-					}
-				)
+				pvalues <- sapply( 1:length(breakgene), function(i){ cumgfs[ breakgene[i] + 1 ] } )
+				# got error; incorrect dimensions; not array but vector...
 				
 				padj <- p.adjust( pvalues, method="BH") #equivalent to fdr-gilbert, because each probe has the same null-distribution!!!!
 			}
 
 			else if( method == "Gilbert" ) {
 			
-				len <- breakpointData@featureData$probeDistance
+				len <- object@featureData$probeDistance
 				
 				mnlen <- mean( len )
 				sdlen <- sd( len )
@@ -606,12 +600,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 					{ 
 						.glmbreak( breakg = breakg, lenst = lenst, nprobes = nprobes) # nprobes changes into 1 (= always one feature)
 					} 
-				) 
-				### WARNINGS !!!
-				# Warning messages:
-				# 1: glm.fit: fitted probabilities numerically 0 or 1 occurred
-				# 2: glm.fit: algorithm did not converge
-				# 3: glm.fit: fitted probabilities numerically 0 or 1 occurred
+				)
 				
 				cumgfs <- t( apply( nms, 1, function(probs){ .cumgf( probs=probs ) }))
 				
@@ -627,13 +616,13 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 				stop( "Chosen method [", method, "] not supported...\n")
 			}
 			
-			currentData <- breakpointData@featureData
+			currentData <- object@featureData
 			currentData$nbreak <- breakgene
 			currentData$pval <- pvalues
 			currentData$FDR <- padj
-			breakpointData@featureData <- currentData
+			object@featureData <- currentData
 
-			return( breakpointData )
+			return( object )
 		}
 		else{
 			stop( "Chosen level [", level, "] not supported...\n")
@@ -678,8 +667,8 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 		}
 		
 		## set general parameters
-		nstudy = length(sampleNames(object))
-		ylim = ifelse(plot.ylim < 10, 10, plot.ylim)
+		nstudy = length( sampleNames(object) )
+		ylim = ifelse( plot.ylim < 10, 10, plot.ylim )
 		color.gene <- "darkred"
 		color.feature <- "black"
 		color.feature.chr <- color.feature
@@ -695,12 +684,14 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 		}
 		#chromosomesToPlot <- ifelse( plot.chr == "all", chromosomesPresent, plot.chr ) # possible to give vector with chromosomes
 		
+
+
 		### check whether chr is in data...
 		for( chr in chromosomesToPlot ) {
 			cat( "Plotting Chromosome: ", chr, "\n", sep="")
 					
 			# subset data:
-			chr.feature = which(featureChromosomes(object)==chr)
+			chr.feature = which( featureChromosomes(object) == chr )
 			featureBreakPerc <- apply( object@breakpoints, 1, function(x) { sum(x)/length(x)*100 } ) [chr.feature]
 			# featureBreakPerc <- object@featureData$samplesBreaks/nstudy*100 [chr.feature]  # deze kolom bestaat nog niet... 
 			recurrent.gene <- NULL
@@ -708,7 +699,8 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 			if( breakpointGene == 1 ) {
 				chr.gene = which(geneChromosomes(object)==chr)
 				start.feature <- object@featureAnnotation$Start[chr.feature]
-				geneBreakPerc <- apply( object@breakpointsPerGene, 1, function(x) { sum(x)/length(x)*100 } ) [chr.gene]
+				#geneBreakPerc <- apply( object@breakpointsPerGene, 1, function(x) { sum(x)/length(x)*100 } ) [chr.gene]
+				geneBreakPerc <- apply( object@breakpointsPerGene, 1, function(x) { x[x>1]<-1 ; sum(x)/length(x)*100 } ) [chr.gene] # CHANGED
 				# geneBreakPerc <- object@geneData$samplesWithGeneBreaks/nstudy*100 [chr.gene]
 				start.gene <- object@geneAnnotation$Start[chr.gene]
 				end.gene <- object@geneAnnotation$End[chr.gene]
@@ -736,12 +728,20 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 			if( breakpointGene == 1 ) {
 				above.ylim <- which(geneBreakPerc > ylim)
 
-				frame.plot=segments( start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ],lwd=4,col= color.gene) # gene(levels)
+				#frame.plot=segments( start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ],lwd=4,col= color.gene) # gene(levels)
+				if( any(above.ylim) ) { # CHANGED
+					frame.plot = segments( start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], lwd = 4, col = color.gene) # gene(levels)
+				} else {
+					frame.plot = segments( start.gene, geneBreakPerc, start.gene, geneBreakPerc,lwd=4,col= color.gene) # gene(levels)
+				}
+
 				
 				
 				if( stats.gene == 1 & any(recurrent.gene) ) {
 					text(x= end.gene[ recurrent.gene ], y=jitter( geneBreakPerc[ recurrent.gene ], factor=1.2,amount=0.2 ), name.gene[ recurrent.gene], cex=0.7, pos=2, col= color.gene, font=4)
 				}
+
+
 					
 				else if( any (above.ylim) ){
 					frame.plot = segments( start.gene[ above.ylim ], rep( ylim+1 ), end.gene[ above.ylim ], rep( ylim+1 ), lwd = 3, col = color.gene) # gene(levels above ylim)

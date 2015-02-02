@@ -20,7 +20,7 @@ setGeneric( "geneNames", function(object) standardGeneric("geneNames") )
 ## -----------------
 
 ## set
-setGeneric( "bpFilter", function(object, filter="deltaSeg", threshold=0.2 ) standardGeneric("bpFilter") )
+setGeneric( "bpFilter", function(object, filter="CNA-ass", threshold=NULL ) standardGeneric("bpFilter") )
 setGeneric( "bpSummary", function(object) standardGeneric("bpSummary") )
 setGeneric( "addGeneAnnotation", function(object, geneAnnotation ) standardGeneric("addGeneAnnotation") )
 setGeneric( "bpGenes", function(object) standardGeneric("bpGenes") )
