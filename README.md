@@ -26,16 +26,18 @@ library( "BreakPointGenes" )
 vignette( "BreakPointGenes")
 # explore built-in data
 data( package="BreakPointGenes" )
+# get more information about built-in data
+help( "copynumber.data.chr20" )
 # load built-in dataset (CGHcall)
-data( "LGG150.data" )
+data( "copynumber.data.chr20" )
 # load built-in gene annotation dataset
-data( gene.annotation.hg19 )
+data( gene.annotation.hg19.chr20 )
 # setup the breakpoint data
-bp <- getBreakpoints( data = LGG150.data )
+bp <- getBreakpoints( data = copynumber.data.chr20 )
 # optionally filter the data
-bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
+bp <- bpFilter( bp )
 # setup the gene data 
-bp <- addGeneAnnotation( bp, gene.annotation.hg19 )
+bp <- addGeneAnnotation( bp, gene.annotation.hg19.chr20 )
 # perform gene analysis
 bp <- bpGenes( bp )
 # get recurrent breakpoints
@@ -43,7 +45,7 @@ bp <- bpStats( bp )
 # list recurrently affected genes
 recurrentGenes( bp )
 # plot results of one chromosome
-bpPlot( bp, plot.chr=c(22) )
+bpPlot( bp, plot.chr=c(20) )
 ```
 
 More information or help

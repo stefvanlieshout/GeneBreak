@@ -12,7 +12,7 @@
 \arguments{
 \item{object}{A "CopyNumberBreakPointGenes" object}
 
-\item{level}{The level ["all" or "gene"]}
+\item{level}{The level ["gene" or "feature"]}
 
 \item{method}{The method ["BH" or "Gilbert"]}
 }
