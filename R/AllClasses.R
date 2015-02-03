@@ -6,26 +6,26 @@
 #' @slot calls A matrix
 #' @slot annotation A dataframe
 CopyNumberBreakPoints <- setClass( 
-	'CopyNumberBreakPoints', # name of classs
-	
-	slots = c( # contents
-		segmDiff     = "matrix",
-		callDiff    = "matrix",
-		calls       = "matrix",
-		segments    = "matrix",
-		breakpoints = "matrix",
-		featureAnnotation  = "data.frame",
-		featureData = "data.frame"
-	),
-	prototype=list( # set defaults
-		segmDiff     = matrix(),
-		callDiff    = matrix(),
-		calls       = matrix(),
-		segments    = matrix(),
-		breakpoints = matrix(),
-		featureAnnotation = data.frame(),
-		featureData = data.frame()
-	)
+    'CopyNumberBreakPoints', # name of classs
+    
+    slots = c( # contents
+        segmDiff     = "matrix",
+        callDiff    = "matrix",
+        calls       = "matrix",
+        segments    = "matrix",
+        breakpoints = "matrix",
+        featureAnnotation  = "data.frame",
+        featureData = "data.frame"
+    ),
+    prototype=list( # set defaults
+        segmDiff     = matrix(),
+        callDiff    = matrix(),
+        calls       = matrix(),
+        segments    = matrix(),
+        breakpoints = matrix(),
+        featureAnnotation = data.frame(),
+        featureData = data.frame()
+    )
 )
 
 #' An S4 class to represent a CopyNumberBreakPointGenes object
@@ -35,19 +35,19 @@ CopyNumberBreakPoints <- setClass(
 #' @slot featuresPerGene A list with per gene the associated features
 #' @slot breakpointsPerGene A matrix with breakage status per gene
 CopyNumberBreakPointGenes <- setClass( 
-	'CopyNumberBreakPointGenes', # name of classs
-	contains  = 'CopyNumberBreakPoints',
-	slots = c( # contents
-		geneAnnotation = "data.frame",
-		geneData = "data.frame",
-		featuresPerGene = "list",
-		breakpointsPerGene = "matrix"
-	),
-	prototype=list( # set defaults
-		geneAnnotation = data.frame(),
-		geneData = data.frame(),
-		featuresPerGene = list(),
-		breakpointsPerGene = matrix()
-	)
+    'CopyNumberBreakPointGenes', # name of classs
+    contains  = 'CopyNumberBreakPoints',
+    slots = c( # contents
+        geneAnnotation = "data.frame",
+        geneData = "data.frame",
+        featuresPerGene = "list",
+        breakpointsPerGene = "matrix"
+    ),
+    prototype=list( # set defaults
+        geneAnnotation = data.frame(),
+        geneData = data.frame(),
+        featuresPerGene = list(),
+        breakpointsPerGene = matrix()
+    )
 )
 # EOF

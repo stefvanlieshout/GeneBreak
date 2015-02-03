@@ -106,10 +106,10 @@ setMethod( "accessOptions",
 ## CopyNumberBreakPoints specific slot access
 ## ---------------
 setMethod( "callData", "CopyNumberBreakPoints",
-	function(object) object@calls
+    function(object) object@calls
 )
 setMethod( "segmentData", "CopyNumberBreakPoints",
-	function(object) object@segments
+    function(object) object@segments
 )
 setMethod( "featureData", "CopyNumberBreakPoints",
     function(object) object@featureData
@@ -118,7 +118,7 @@ setMethod( "breakpointData", "CopyNumberBreakPoints",
     function(object) object@breakpoints
 )
 setMethod( "featureAnnotation", "CopyNumberBreakPoints",
-	function(object) object@featureAnnotation
+    function(object) object@featureAnnotation
 )
 setMethod( "featureNames", "CopyNumberBreakPoints",
     function(object) rownames(object@breakpoints)
