@@ -24,13 +24,13 @@
 setMethod( "show",
     signature = "CopyNumberBreakPoints",
     definition = function(object) {
-        #systemUser <- system( "whoami", T )
-        #cat( " Hi ", systemUser, "\n", sep = "")
+        
         cat( "\n --- Object Info ---\n", sep="")
         cat( " This is an object of class \"", class(object), "\"\n", sep = "" )
         cat( " ", nrow( object@segmDiff ), " features by ", ncol( object@segmDiff ), " samples\n", sep = "")
         cat( " A total of ", sum( object@breakpoints ), " breakpoints\n", sep = "" )
         if ( class(object) == "CopyNumberBreakPointGenes" && nrow(object@breakpointsPerGene) > 0){
+            
             geneBreaksTotal <- sum( object@breakpointsPerGene )
             genesBrokenTotal <- length( which( rowSums( object@breakpointsPerGene ) > 0 ) )
 
@@ -42,17 +42,24 @@ setMethod( "show",
             }
             
             ## recurrent breakpoints and recurent genes
-            if ( length( object@geneData$FDR ) ){
-                signGenes <- length( which( object@geneData$FDR < 0.1 ) )
-                cat( " A total of ", signGenes, " recurrent breakpoint genes (FDR < 0.1)\n", sep = "" )
-            }
-            else if ( length( object@featureData$FDR ) ){
-                signGenes <- length( which( object@featureData$FDR < 0.1 ) )
-                cat( " A total of ", signGenes, " recurrent breakpoints (FDR < 0.1)\n", sep = "" )
-            }
-            else{
+            ## no statictics run if no FDR data present at all
+            geneFDRcount <- length( object@geneData$FDR )
+            featFDRcount <- length( object@featureData$FDR )
+
+            if ( geneFDRcount < 1 & featFDRcount < 1 ){    
                 cat( " See ?bpStats for how to determine breakpoint statistics\n", sep = "" )
             }
+            else{
+                if ( length( object@geneData$FDR ) ){
+                    signGenes <- length( which( object@geneData$FDR < 0.1 ) )
+                    cat( " A total of ", signGenes, " recurrent breakpoint genes (FDR < 0.1)\n", sep = "" )
+                }
+                if ( length( object@featureData$FDR ) ){
+                    signGenes <- length( which( object@featureData$FDR < 0.1 ) )
+                    cat( " A total of ", signGenes, " recurrent breakpoints (FDR < 0.1)\n", sep = "" )
+                }    
+            }
+
         }
         cat( " See accessOptions(object) for how to access data in this object\n", sep = "" )
 

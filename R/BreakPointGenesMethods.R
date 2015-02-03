@@ -456,7 +456,7 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 #' @description
 #' Add description...
 #' @param object A "CopyNumberBreakPointGenes" object
-#' @param level The level ["all" or "gene"]
+#' @param level The level ["gene" or "feature"]
 #' @param method The method ["BH" or "Gilbert"]
 #' @return Object of same class of \code{object}.
 #' @examples
@@ -467,7 +467,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 	function( object, level="gene", method="BH", fdr.threshold=1 ) {
 		
 		allowed.methods <- c( "Gilbert", "BH" )
-		allowed.levels <- c( "all", "gene" )
+		allowed.levels <- c( "feature", "gene" )
 
 		## --------------------
 		## Check input params
@@ -561,12 +561,12 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 		## --------------------
 		## feature level analysis
 		## --------------------
-		else if( level == "all" ) {
+		else if( level == "feature" ) {
 			bpt <- object@breakpoints
 			
 			cat( paste( 
 				"Applying statistical test over", ncol(bpt), 
-				"samples for:", level, 
+				"samples for", level, 
 				"breakpoints:", method, "test...\n"
 			))
 
@@ -583,7 +583,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 				pvalues <- sapply( 1:length(breakgene), function(i){ cumgfs[ breakgene[i] + 1 ] } )
 				# got error; incorrect dimensions; not array but vector...
 				
-				padj <- p.adjust( pvalues, method="BH") #equivalent to fdr-gilbert, because each probe has the same null-distribution!!!!
+				padj <- p.adjust( pvalues, method = "BH") #equivalent to fdr-gilbert, because each probe has the same null-distribution!!!!
 			}
 
 			else if( method == "Gilbert" ) {
