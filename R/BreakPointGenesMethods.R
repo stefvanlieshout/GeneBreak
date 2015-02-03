@@ -496,8 +496,10 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			# because of later sum() transform to 1
 			bps[ bps > 0 ] <- 1
 			# exclude situations A,B,X
-			exclude <- which( object@geneData$situation %in% c("A","B","X") )
-			bpt <- bps[ -exclude, ]
+			include <- which( !object@geneData$situation %in% c("A","B","X") )
+			if ( length(include) < 1 ) stop( "No breakpoint associated genes present, please check...")
+
+			bpt <- bps[ include, ]
 
 			## start analysis
 			cat( paste(
@@ -510,8 +512,8 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			breakgene <- apply( bpt, 1, sum )
 			
 			geneAnn <- object@geneData
-			len <- geneAnn$genelength_features[ -exclude ]
-			nprobes <- geneAnn$featureTotal[ -exclude ]
+			len <- geneAnn$genelength_features[ include ]
+			nprobes <- geneAnn$featureTotal[ include ]
 			
 			mnlen <- mean( len )
 			sdlen <- sd( len )
@@ -548,11 +550,11 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 			}
 			
 			geneAnn$glength_stand <- NA
-			geneAnn$glength_stand[ -exclude ] <- lenst
+			geneAnn$glength_stand[ include ] <- lenst
 			geneAnn$pvalue <- NA
-			geneAnn$pvalue[ -exclude ] <- pvalues
+			geneAnn$pvalue[ include ] <- pvalues
 			geneAnn$FDR <- NA
-			geneAnn$FDR[ -exclude ] <- fdrs
+			geneAnn$FDR[ include ] <- fdrs
 			
 			object@geneData <- geneAnn
 			return( object )
