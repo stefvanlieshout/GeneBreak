@@ -27,26 +27,47 @@ library( "BreakPointGenes" )
 
 # get better understanding of the package workflow
 vignette( "BreakPointGenes")
+
 # explore built-in data
 data( package="BreakPointGenes" )
+
 # get more information about built-in data
 help( "copynumber.data.chr20" )
+
 # load built-in dataset (CGHcall)
 data( "copynumber.data.chr20" )
+
 # load built-in gene annotation dataset
 data( gene.annotation.hg19.chr20 )
+
 # setup the breakpoint data
 bp <- getBreakpoints( data = copynumber.data.chr20 )
+
 # optionally filter the data
 bp <- bpFilter( bp )
+
 # setup the gene data 
 bp <- addGeneAnnotation( bp, gene.annotation.hg19.chr20 )
+
 # perform gene analysis
 bp <- bpGenes( bp )
+
 # get recurrent breakpoints
 bp <- bpStats( bp )
+
+# print object information
+bp
+# --- Object Info ---
+# This is an object of class "CopyNumberBreakPointGenes"
+# 3653 features by 200 samples
+# A total of 985 breakpoints
+# A total of 1029 gene breaks in 241 genes
+# A total of 14 recurrent breakpoint genes (FDR < 0.1)
+# See accessOptions(object) for how to access data in this object
+
 # list recurrently affected genes
 recurrentGenes( bp )
+
 # plot results of one chromosome
 bpPlot( bp, plot.chr=c(20) )
 ```
