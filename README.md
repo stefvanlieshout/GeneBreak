@@ -15,9 +15,12 @@ devtools::install_github( "stefvanlieshout/BreakPointGenes" )
 Sample workflow
 ---------------------
 
-This package builds on to the Copy Number analysis workflows of CGHcall (for cgh data) and QDNAseq (for NGS data). The objects created in those packages can serve as the input of BreakPointGenes (importing other data-sources will be added later).
+This package builds on to the Copy Number analysis workflows of [CGHcall] for cgh data and [QDNAseq] for NGS data. The objects created in those packages can serve as the input of BreakPointGenes (importing other data-sources will be added later).
 
-The LGG150 data used in the example contains only one sample, which makes no sense in the context of searching for recurrently affected genes. We will add a example dataset with more samples later.
+The test-data used in the example contains only one chromosome, but a total of 200 samples.
+
+[CGHcall]: http://www.bioconductor.org/packages/release/bioc/html/CGHcall.html
+[QDNAseq]: http://www.bioconductor.org/packages/release/bioc/html/QDNAseq.html
 
 ```R
 library( "BreakPointGenes" )
