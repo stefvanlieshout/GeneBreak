@@ -17,8 +17,32 @@ importFrom( utils, packageVersion, read.table, write.table )
 # EXPORTS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-export( "runWorkflow", "getBreakpoints", "createGeneAnnotations", "bpFilter", "bpSummary", "addGeneAnnotation" )
-export( "callData", "segmentData", "breakpointData", "featureAnnotation", "featureData", "featureChromosomes", "geneAnnotation", "geneData", "geneChromosomes", "featuresPerGene", "breakpointsPerGene" )
-export( "bpGenes", "bpStats", "bpPlot", "recurrentGenes", "sampleNames", "accessOptions" )
+## main workflow steps
+export( "getBreakpoints" )
+export( "bpFilter" )
+export( "addGeneAnnotation" )
+export( "bpGenes" )
+export( "bpStats" )
+
+## extra workflow steps
+export( "runWorkflow" )
+export( "createGeneAnnotations" )
+export( "recurrentGenes" )
+export( "bpPlot" )
+
+## accessors
+export( "accessOptions" )
+export( "callData" )
+export( "segmentData" )
+export( "breakpointData" )
+export( "featureChromosomes" )
+export( "geneChromosomes" )
+export( "featureInfo" )
+export( "featuresPerGene" )
+export( "breakpointsPerGene" )
+export( "bpSummary" )
+export( "sampleNames" )
+export( "featureNames" )
+export( "bpSummary" )
 
 # EOF

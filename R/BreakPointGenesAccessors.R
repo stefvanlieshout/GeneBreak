@@ -8,14 +8,12 @@
     breakpointData = "feature breakpoint values",
     sampleNames = "vector with sample names",
     featureNames = "vector with feature names",
-    featureAnnotation = "feature annotation",
     featureChromosomes = "vector of feature chromosomes",
-    featureData = "feature data"
+    featureInfo = "feature data/information"
 )
 .dataAccessOptionsGene = list(
-    geneAnnotation = "gene annotation",
     geneChromosomes = "vector of gene chromosomes",
-    geneData = "gene data",
+    geneInfo = "gene data/information",
     featuresPerGene = "a list of genes with coupled features",
     breakpointsPerGene = "gene break status",
     recurrentGenes = "recurrently broken genes"
@@ -88,12 +86,12 @@ setMethod( "accessOptions",
         cat( "\n --- Object data access ---\n", sep="")
         cat( " This is an object of class \"", class(object), "\"\n", sep = "" )
         for ( i in names(.dataAccessOptions) ){
-            cat( " ", i, "( obj ) => returns ", .dataAccessOptions[[ i ]],"\n", sep="")    
+            cat( " ", i, "( object ) => returns ", .dataAccessOptions[[ i ]],"\n", sep="")    
         }
         ## extra options if class is CopyNumberBreakPointGenes
         if ( class(object) == "CopyNumberBreakPointGenes" ){
             for ( i in names(.dataAccessOptionsGene) ){
-                cat( " ", i, "( obj ) => returns ", .dataAccessOptionsGene[[ i ]],"\n", sep="")    
+                cat( " ", i, "( object ) => returns ", .dataAccessOptionsGene[[ i ]],"\n", sep="")    
             }   
         }
         cat( "\n" )
@@ -111,14 +109,8 @@ setMethod( "callData", "CopyNumberBreakPoints",
 setMethod( "segmentData", "CopyNumberBreakPoints",
     function(object) object@segments
 )
-setMethod( "featureData", "CopyNumberBreakPoints",
-    function(object) object@featureData
-)
 setMethod( "breakpointData", "CopyNumberBreakPoints",
     function(object) object@breakpoints
-)
-setMethod( "featureAnnotation", "CopyNumberBreakPoints",
-    function(object) object@featureAnnotation
 )
 setMethod( "featureNames", "CopyNumberBreakPoints",
     function(object) rownames(object@breakpoints)
@@ -133,9 +125,6 @@ setMethod( "featureChromosomes", "CopyNumberBreakPoints",
 ## ---------------
 ## CopyNumberBreakPointGenes specific slot access
 ## ---------------
-setMethod( "geneAnnotation", "CopyNumberBreakPointGenes",
-    function(object) object@geneAnnotation
-)
 setMethod( "featuresPerGene", "CopyNumberBreakPointGenes",
     function(object, geneName=NULL){
         if ( !is.null(geneName) ){
@@ -153,9 +142,6 @@ setMethod( "breakpointsPerGene", "CopyNumberBreakPointGenes",
 )
 setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
     function(object) object@geneAnnotation$Chromosome
-)
-setMethod( "geneData", "CopyNumberBreakPoints",
-    function(object) object@geneData
 )
 
 #' Show recurrent genes
@@ -183,3 +169,39 @@ setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
     } 
 )
 
+#' Gather Gene information
+#' @param object of class \code{CopyNumberBreakPointGenes}
+#' @return data.frame
+#' @examples
+#' geneInfo( bp_genes )
+#' @aliases geneInfo
+setMethod( "geneInfo", "CopyNumberBreakPointGenes",
+    function( object ){
+        ## the gene info is located in two data.frames
+        annCount <- nrow(object@geneAnnotation)
+        datCount <- nrow(object@geneData)
+        if( annCount != datCount ){
+            stop( "Somehow different amount of rows in annotations [", annCount, "] and data [", datCount, "]\n" )
+        }
+        output <- cbind( object@geneAnnotation, object@geneData )
+        return( output )
+    } 
+)
+#' Gather Feature information
+#' @param object of class \code{CopyNumberBreakPoints}
+#' @return data.frame
+#' @examples
+#' featureInfo( bp )
+#' @aliases featureInfo
+setMethod( "featureInfo", "CopyNumberBreakPoints",
+    function( object ){
+        ## the gene info is located in two data.frames of same nrow
+        annCount <- nrow(object@featureAnnotation)
+        datCount <- nrow(object@featureData)
+        if( annCount != datCount ){
+            stop( "Somehow different amount of rows in annotations [", annCount, "] and data [", datCount, "]\n" )
+        }
+        output <- cbind( object@featureAnnotation, object@featureData )
+        return( output )
+    } 
+)
