@@ -42,6 +42,6 @@ setGeneric( "geneInfo", function(object) standardGeneric("geneInfo") )
 setGeneric( "featureInfo", function(object) standardGeneric("featureInfo") )
 
 ## output
-setGeneric( "bpPlot", function(object, plot.chr=NULL, plot.ylim=15, fdr.threshold=0.1) standardGeneric( "bpPlot" ))
+setGeneric( "bpPlot", function(object, plot.chr=NULL, plot.ylim=15, fdr.threshold=0.1, add.jitter=FALSE) standardGeneric( "bpPlot" ))
 
 # EOF

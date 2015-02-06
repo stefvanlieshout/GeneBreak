@@ -637,7 +637,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 #' @aliases bpPlot
 setMethod( "bpPlot", "CopyNumberBreakPoints",
     
-    function( object, plot.chr=NULL, plot.ylim=15, fdr.threshold=0.1 ) {
+    function( object, plot.chr=NULL, plot.ylim=15, fdr.threshold=0.1, add.jitter=FALSE ) {
         cat( paste("Plotting breakpoint frequencies ...\n") )
         
         ### input checks
@@ -686,15 +686,12 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             # subset data:
             chr.feature = which( featureChromosomes(object) == chr )
             featureBreakPerc <- apply( object@breakpoints, 1, function(x) { sum(x)/length(x)*100 } ) [chr.feature]
-            # featureBreakPerc <- object@featureData$samplesBreaks/nstudy*100 [chr.feature]  # deze kolom bestaat nog niet... 
             recurrent.gene <- NULL
             
             if( breakpointGene == 1 ) {
                 chr.gene = which(geneChromosomes(object)==chr)
                 start.feature <- object@featureAnnotation$Start[chr.feature]
-                #geneBreakPerc <- apply( object@breakpointsPerGene, 1, function(x) { sum(x)/length(x)*100 } ) [chr.gene]
-                geneBreakPerc <- apply( object@breakpointsPerGene, 1, function(x) { x[x>1]<-1 ; sum(x)/length(x)*100 } ) [chr.gene] # CHANGED
-                # geneBreakPerc <- object@geneData$samplesWithGeneBreaks/nstudy*100 [chr.gene]
+                geneBreakPerc <- apply( object@breakpointsPerGene, 1, function(x) { x[x>1]<-1 ; sum(x)/length(x)*100 } ) [chr.gene]
                 start.gene <- object@geneAnnotation$Start[chr.gene]
                 end.gene <- object@geneAnnotation$End[chr.gene]
                 name.gene <- object@geneAnnotation$Gene[chr.gene]
@@ -704,7 +701,7 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
                 recurrent.gene <- which( object@geneData$FDR[chr.gene] < fdr.threshold )
             }
             
-            if(stats.feature == 1 ) {
+            if( stats.feature == 1 ) {
                 # color recurrent breakpoints (feature level); this may be a bit overdone
                 recurrent.feature <- which( object@featureData$FDR[chr.gene] < fdr.threshold )
                 color.feature.chr <- rep( color.feature, length(featureBreakPerc) )
@@ -713,7 +710,8 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             
             # xlim = c(startPlot,endPlot) extra zoomin function ?
             
-            plot(start.feature, featureBreakPerc, ylim=c(0, ylim+1), axes=T, type="h", xlab="chromosomal position (Mb)", ylab="breakpoint frequencies (%)", main=paste("BP frequencyPlot\nchromosome", chr), xaxt="n", yaxt="n",cex.lab=1.3, col= color.feature.chr)
+            plot(start.feature, featureBreakPerc, ylim=c(0, ylim+1), axes=T, type="h", xlab="chromosomal position (Mb)", ylab="breakpoint frequencies (%)", main=paste("BreakPoint frequencyPlot\nchromosome", chr), xaxt="n", yaxt="n",cex.lab=1.3, col= color.feature.chr)
+            mtext( "recurrent breakpoint genes are named", side=3, col=color.gene )
             axis( 1, at=as.vector(axis(1, labels=F)), labels=(as.vector(axis(1, labels=F)))/10^6 ) # x-axis in MBs
             axis( 2, at=0:(ylim+1), labels=c(0:(ylim), paste(">", ylim)), las=2 )
             abline( h=c(0,ylim), lty=c(1,5) )
@@ -731,7 +729,9 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
                 
                 
                 if( stats.gene == 1 & any(recurrent.gene) ) {
-                    text(x= end.gene[ recurrent.gene ], y=jitter( geneBreakPerc[ recurrent.gene ], factor=1.2,amount=0.2 ), name.gene[ recurrent.gene], cex=0.7, pos=2, col= color.gene, font=4)
+                    yvals <- geneBreakPerc[ recurrent.gene ]
+                    if ( add.jitter == TRUE) yvals <- jitter( yvals, factor=1.2,amount=0.2 )
+                    text( x=end.gene[ recurrent.gene ], y=yvals, name.gene[ recurrent.gene], cex=0.7, pos=2, col=color.gene, font=4 )
                 }
 
 
