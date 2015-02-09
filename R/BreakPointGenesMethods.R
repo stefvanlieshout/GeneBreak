@@ -736,7 +736,7 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
 
 
                     
-                else if( any (above.ylim) ){
+                if( any (above.ylim) ){
                     frame.plot = segments( start.gene[ above.ylim ], rep( ylim+1 ), end.gene[ above.ylim ], rep( ylim+1 ), lwd = 3, col = color.gene) # gene(levels above ylim)
                     text( x=end.gene[ above.ylim ], y=rep(ylim+1), paste( name.gene[ above.ylim ]," (", round(geneBreakPerc[ above.ylim ], 1), ")", sep=""), cex=0.4, pos=4, col=color.gene, font=4)
                 }
