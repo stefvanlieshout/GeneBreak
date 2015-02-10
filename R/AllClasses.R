@@ -1,14 +1,15 @@
 #' An S4 class to represent a CopyNumberBreakPoints object.
 #'
-#' @slot segmDiff A matrix 
+#' @slot segmDiff A matrix
 #' @slot callDiff A matrix
 #' @slot segments A matrix
 #' @slot calls A matrix
-#' @slot annotation A dataframe
+#' @slot featureAnnotation A dataframe
+#' @slot featureData A dataframe
 CopyNumberBreakPoints <- setClass( 
-    'CopyNumberBreakPoints', # name of classs
+    'CopyNumberBreakPoints',
     
-    slots = c( # contents
+    slots = c(
         segmDiff     = "matrix",
         callDiff    = "matrix",
         calls       = "matrix",
@@ -17,7 +18,7 @@ CopyNumberBreakPoints <- setClass(
         featureAnnotation  = "data.frame",
         featureData = "data.frame"
     ),
-    prototype=list( # set defaults
+    prototype=list(
         segmDiff     = matrix(),
         callDiff    = matrix(),
         calls       = matrix(),
@@ -30,20 +31,20 @@ CopyNumberBreakPoints <- setClass(
 
 #' An S4 class to represent a CopyNumberBreakPointGenes object
 #'
-#' @slot geneAnnotation A data.frame with originally given gene information
+#' @slot geneAnnotation A data.frame with original gene annotation input
 #' @slot geneData A data.frame with gene information added by package methods
-#' @slot featuresPerGene A list with per gene the associated features
+#' @slot featuresPerGene A list with the associated features per gene
 #' @slot breakpointsPerGene A matrix with breakage status per gene
 CopyNumberBreakPointGenes <- setClass( 
-    'CopyNumberBreakPointGenes', # name of classs
+    'CopyNumberBreakPointGenes',
     contains  = 'CopyNumberBreakPoints',
-    slots = c( # contents
+    slots = c(
         geneAnnotation = "data.frame",
         geneData = "data.frame",
         featuresPerGene = "list",
         breakpointsPerGene = "matrix"
     ),
-    prototype=list( # set defaults
+    prototype=list(
         geneAnnotation = data.frame(),
         geneData = data.frame(),
         featuresPerGene = list(),

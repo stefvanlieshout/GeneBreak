@@ -7,7 +7,7 @@
 \title{bpPlot}
 \usage{
 \S4method{bpPlot}{CopyNumberBreakPoints}(object, plot.chr = NULL,
-  plot.ylim = 15, fdr.threshold = 0.1)
+  plot.ylim = 15, fdr.threshold = 0.1, add.jitter = FALSE)
 }
 \arguments{
 \item{object}{A "CopyNumberBreakPoint" object}

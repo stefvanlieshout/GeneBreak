@@ -1,3 +1,5 @@
+.SEP_CHAR <- ','
+
 #' CopyNumber to BreakPoints
 #' @description
 #' Runs default settings for all workflow steps
@@ -52,7 +54,7 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
     featureNames <- rownames( segmData )
 
     breakpoints <- NULL; segmDiff <- NULL; callDiff <- NULL; startChr <- c()
-    featureAnnotation <- NULL;  probeDistance <- c()
+    featureAnnotation <- NULL;  featureInterval <- c()
     
     segmDiff <- rbind( segmData[ 1, ], apply( segmData, 2, diff ) ) 
     callDiff <- rbind( callData[ 1, ], apply( callData, 2, diff ) )
@@ -74,13 +76,22 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
     )
 
     ## probe distance is needed for statistics
-    probeDistance <- c( 0, diff( bpStart ) )
-    probeDistance[ startChr ] <- 0
+    featureInterval <- c( 0, diff( bpStart ) )
+    featureInterval[ startChr ] <- 0
     featureData <- data.frame( 
-        probeDistance = probeDistance, 
+        featureInterval = featureInterval, 
         row.names = featureNames 
     )
-    
+    breakpoints <- ifelse( segmDiff != 0, 1, 0 )
+
+    ## NOTE: still to change name!! and remove in bpStats
+    featureData$sampleCount <- apply( breakpoints, 1, sum )
+
+    samplesListed <- apply( breakpoints, 1, function(x){ (names(x)[ x>0 ]) })
+    featureData$sampleNamesWithBreakpoints <- sapply( samplesListed, function( x ) { 
+        ifelse( any( is.na(x) ), NA, paste( x, collapse = .SEP_CHAR ) )
+    } )
+
     ## create object with all required slots
     output <- new( 'CopyNumberBreakPoints', 
         segmDiff = segmDiff,
@@ -89,7 +100,7 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
         featureData = featureData,
         calls = callData,
         segments = segmData,
-        breakpoints = ifelse( segmDiff != 0, 1, 0 )
+        breakpoints = breakpoints
     )
     return( output )
 }
@@ -195,7 +206,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 
     ## setup gene information
     geneData <- data.frame( geneLength = apply( geneAnnotation[, c("Start","End") ], 1, diff ) )
-    geneData$situation <- NA
+    geneData$remarks <- NA
     geneData$genelength_features <- NA
     geneData$featureTotal <- NA
     geneData$featureNames <- NA
@@ -245,7 +256,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
                 features_E <- start_endChr[ which( start_endChr$chr == geneAnnotation$Chromosome[ gene_idx ] ), "end_index"] # make features_E last probe on chr
                 geneRelatedFeatures <- rownames(features)[ features_S:features_E ]
 
-                geneData$situation[gene_idx] <- "E"
+                geneData$remarks[gene_idx] <- "E"
                 geneData$genelength_features[ gene_idx ] <- features$Start[ features_E ] - features$Start[ features_S - 1 ]
                 gene_features[[ gene_idx ]] <- geneRelatedFeatures
 
@@ -254,12 +265,12 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
                 geneRelatedFeatures <- rownames( features )[ features_S:features_E ]
 
                 if( length( geneRelatedFeatures ) == 1 & features_S == start_endChr[ which( start_endChr$chr == geneAnnotation$Chromosome[ gene_idx ]),"start_index"]) {
-                    geneData$situation[gene_idx] <- "A"
+                    geneData$remarks[gene_idx] <- "A"
                     gene_features[[ gene_idx ]] <- geneRelatedFeatures
                 }           
 
-                else if( is.na(geneData$situation[ gene_idx ]) & length(geneRelatedFeatures) > 1 ) {
-                    geneData$situation[gene_idx] <- "D"
+                else if( is.na(geneData$remarks[ gene_idx ]) & length(geneRelatedFeatures) > 1 ) {
+                    geneData$remarks[gene_idx] <- "D"
                     start_pos_feature <- features$Start[ features_E ]
                     end_pos_feature <- NA
 
@@ -275,21 +286,21 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
                     gene_features[[ gene_idx ]] <- geneRelatedFeatures
                 }
 
-                else if(is.na( geneData$situation[ gene_idx ]) & features_S == features_E) {
-                    geneData$situation[gene_idx] <- "C"
+                else if(is.na( geneData$remarks[ gene_idx ]) & features_S == features_E) {
+                    geneData$remarks[gene_idx] <- "C"
                     geneData$genelength_features[ gene_idx ] <- features$Start[ features_E ] - features$Start[ features_S - 1 ]
                     gene_features[[ gene_idx ]] <- geneRelatedFeatures
                 }
 
                 else {
-                    geneData$situation[ gene_idx ] <- "Z"
+                    geneData$remarks[ gene_idx ] <- "Z"
                     warning_Z <- c( "Uncategorized situations (Z) were observed" )
                 }
             }
         } 
         else{ # is.na( features_S) or chr not in primary data
-            ifelse( any( feature_idx_chr), geneData$situation[ gene_idx ] <- "B", geneData$situation[ gene_idx ] <- "X")
-            if( geneData$situation[ gene_idx ] == "B" ){
+            ifelse( any( feature_idx_chr), geneData$remarks[ gene_idx ] <- "B", geneData$remarks[ gene_idx ] <- "X")
+            if( geneData$remarks[ gene_idx ] == "B" ){
                 geneRelatedFeatures <- rownames( features )[ start_endChr[ which(start_endChr$chr == geneAnnotation$Chromosome[ gene_idx ]),"end_index"] ] # make features_E last probe on chr
             } 
             else{ 
@@ -302,7 +313,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
     ## collapse the featurenames per gene to add to geneData dataframe
     ## any() is used to return only one paste result
     geneData$featureNames <- sapply( gene_features, function( x ) { 
-        ifelse( any( is.na(x) ), NA, paste( x, collapse = "|" ) ) 
+        ifelse( any( is.na(x) ), NA, paste( x, collapse = .SEP_CHAR ) ) 
     } )
     geneData$featureTotal <- sapply( gene_features, function(x){ length( x[!is.na(x)] )})
 
@@ -345,12 +356,14 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
         bps <- object@breakpoints
         geneData <- object@geneData
 
+        sampleNames <- colnames( bps )
         sampleCount <- ncol( bps )
         geneCount <- nrow( geneData )
-        geneData$geneBreaks <- NA
-        geneData$samplesWithGeneBreaks <- NA
+        geneData$nrOfBreakLocations <- NA
+        geneData$sampleCount <- NA
 
         geneBreakpoints <- matrix( data = 0, nrow = geneCount, ncol = sampleCount )
+        colnames(geneBreakpoints) <- sampleNames
 
         ## ---------------
         ## start analysis
@@ -373,9 +386,15 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
             if( length( features ) == 1 ) tmp_bps <- t( tmp_bps ) 
 
             geneBreakpoints[ gene_idx, ] <- as.vector( colSums(tmp_bps) )
-            geneData$geneBreaks[ gene_idx ] <- length( which( rowSums(tmp_bps) > 0 ) )
+            geneData$nrOfBreakLocations[ gene_idx ] <- length( which( rowSums(tmp_bps) > 0 ) )
         }
-        geneData$samplesWithGeneBreaks <- apply( geneBreakpoints, 1, function(x){ length( which( x > 0 ) )} )
+        geneData$sampleCount <- apply( geneBreakpoints, 1, function(x){ length( which( x > 0 ) )} )
+
+        ## add a string with affected samples for each gene
+        samplesListed <- apply( geneBreakpoints, 1, function(x){ (names(x)[x>0]) })
+        geneData$sampleNamesWithBreakpoints <- sapply( samplesListed, function( x ) { 
+            ifelse( any( is.na(x) ), NA, paste( x, collapse = .SEP_CHAR ) )
+        } )
 
         ## add the extra slots in same object class
         object@breakpointsPerGene <- geneBreakpoints
@@ -495,7 +514,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
             # because of later sum() transform to 1
             bps[ bps > 0 ] <- 1
             # exclude situations A,B,X
-            include <- which( !object@geneData$situation %in% c("A","B","X") )
+            include <- which( !object@geneData$remark %in% c("A","B","X") )
             if ( length(include) < 1 ) stop( "No breakpoint associated genes present, please check...")
 
             bpt <- bps[ include, ]
@@ -585,7 +604,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 
             else if( method == "Gilbert" ) {
 
-                len <- object@featureData$probeDistance
+                len <- object@featureData$featureInterval
 
                 mnlen <- mean( len )
                 sdlen <- sd( len )
@@ -610,8 +629,8 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
             }
 
             currentData <- object@featureData
-            currentData$nbreak <- breakgene
-            currentData$pval <- pvalues
+            currentData$nrOfBreakLocations <- breakgene
+            currentData$pvalue <- pvalues
             currentData$FDR <- padj
             object@featureData <- currentData
 
@@ -640,12 +659,12 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
     function( object, plot.chr=NULL, plot.ylim=15, fdr.threshold=0.1, add.jitter=FALSE ) {
         cat( paste("Plotting breakpoint frequencies ...\n") )
         
-        ### input checks
         breakpointGene <- 1
         stats.gene <- 1
         stats.feature <- 1 
 
-        if( !exists( "samplesWithGeneBreaks", where=object@geneData ) ) { 
+        ### input checks
+        if( !exists( "sampleNamesWithBreakpoints", where=object@geneData ) ) { 
             breakpointGene <- 0
             cat("Breakpoint gene data is not available yet.\n")
         }
@@ -675,9 +694,6 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             }
             chromosomesToPlot <- plot.chr
         }
-        #chromosomesToPlot <- ifelse( plot.chr == "all", chromosomesPresent, plot.chr ) # possible to give vector with chromosomes
-        
-
 
         ### check whether chr is in data...
         for( chr in chromosomesToPlot ) {
@@ -711,7 +727,7 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             # xlim = c(startPlot,endPlot) extra zoomin function ?
             
             plot(start.feature, featureBreakPerc, ylim=c(0, ylim+1), axes=T, type="h", xlab="chromosomal position (Mb)", ylab="breakpoint frequencies (%)", main=paste("BreakPoint frequencyPlot\nchromosome", chr), xaxt="n", yaxt="n",cex.lab=1.3, col= color.feature.chr)
-            mtext( "recurrent breakpoint genes are named", side=3, col=color.gene )
+            mtext( "recurrent breakpoint genes are labeled with gene name", side=3, col=color.gene )
             axis( 1, at=as.vector(axis(1, labels=F)), labels=(as.vector(axis(1, labels=F)))/10^6 ) # x-axis in MBs
             axis( 2, at=0:(ylim+1), labels=c(0:(ylim), paste(">", ylim)), las=2 )
             abline( h=c(0,ylim), lty=c(1,5) )
@@ -719,14 +735,12 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             if( breakpointGene == 1 ) {
                 above.ylim <- which(geneBreakPerc > ylim)
 
-                #frame.plot=segments( start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ],lwd=4,col= color.gene) # gene(levels)
-                if( any(above.ylim) ) { # CHANGED
+                if( any(above.ylim) ) {
                     frame.plot = segments( start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], lwd = 4, col = color.gene) # gene(levels)
-                } else {
+                } 
+                else {
                     frame.plot = segments( start.gene, geneBreakPerc, start.gene, geneBreakPerc,lwd=4,col= color.gene) # gene(levels)
                 }
-
-                
                 
                 if( stats.gene == 1 & any(recurrent.gene) ) {
                     yvals <- geneBreakPerc[ recurrent.gene ]
@@ -734,10 +748,8 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
                     text( x=end.gene[ recurrent.gene ], y=yvals, name.gene[ recurrent.gene], cex=0.7, pos=2, col=color.gene, font=4 )
                 }
 
-
-                    
                 if( any (above.ylim) ){
-                    frame.plot = segments( start.gene[ above.ylim ], rep( ylim+1 ), end.gene[ above.ylim ], rep( ylim+1 ), lwd = 3, col = color.gene) # gene(levels above ylim)
+                    frame.plot = segments( start.gene[ above.ylim ], rep( ylim+1 ), end.gene[ above.ylim ], rep( ylim+1 ), lwd = 3, col = color.gene)
                     text( x=end.gene[ above.ylim ], y=rep(ylim+1), paste( name.gene[ above.ylim ]," (", round(geneBreakPerc[ above.ylim ], 1), ")", sep=""), cex=0.4, pos=4, col=color.gene, font=4)
                 }
             }

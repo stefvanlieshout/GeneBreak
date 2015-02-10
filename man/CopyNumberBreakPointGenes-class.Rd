@@ -11,11 +11,11 @@ An S4 class to represent a CopyNumberBreakPointGenes object
 \section{Slots}{
 
 \describe{
-\item{\code{geneAnnotation}}{A data.frame with originally given gene information}
+\item{\code{geneAnnotation}}{A data.frame with original gene annotation input}
 
 \item{\code{geneData}}{A data.frame with gene information added by package methods}
 
-\item{\code{featuresPerGene}}{A list with per gene the associated features}
+\item{\code{featuresPerGene}}{A list with the associated features per gene}
 
 \item{\code{breakpointsPerGene}}{A matrix with breakage status per gene}
 }}

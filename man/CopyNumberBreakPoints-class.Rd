@@ -19,6 +19,8 @@ An S4 class to represent a CopyNumberBreakPoints object.
 
 \item{\code{calls}}{A matrix}
 
-\item{\code{annotation}}{A dataframe}
+\item{\code{featureAnnotation}}{A dataframe}
+
+\item{\code{featureData}}{A dataframe}
 }}
 

@@ -155,7 +155,7 @@ setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
 #' @aliases recurrentGenes
 setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
     function(object, fdr.threshold=0.1, summarize=TRUE, order.column="FDR"){
-        summaryColumns <- c("Gene","geneBreaks", "samplesWithGeneBreaks", "featureTotal", "pvalue", "FDR")
+        summaryColumns <- c("Gene","sampleCount", "featureTotal", "pvalue", "FDR")
         if ( length( object@geneData$FDR ) ){
             idx <- which( object@geneData$FDR < fdr.threshold ) 
             cat( " A total of ", length(idx), " recurrent breakpoint genes (at FDR < ", fdr.threshold,")\n", sep = "" )
