@@ -611,7 +611,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 
                 lenst <- sapply( len, function(x) ( x - mnlen ) / sdlen )
 
-                nprobes <- rep(1,nprobe)
+                nprobes <- rep(0,nprobe)
                 nms <- apply( bpt, 2, function( breakg ){ 
                     .glmbreak( breakg = breakg, lenst = lenst, nprobes = nprobes) # nprobes changes into 1 (= always one feature)
                 })
