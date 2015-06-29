@@ -66,14 +66,14 @@ bp
 # See accessOptions(object) for how to access data in this object
 
 # print some information of top 5 recurrently affected genes
-recurrentGenes( bp )[ 1:5, c(1,3,6) ]
+recurrentGenes( bp )[ 1:5, ]
 #  A total of 14 recurrent breakpoint genes (at FDR < 0.1)
-#           Gene samplesWithGeneBreaks           FDR
-# 25468   PCMTD2                    64 8.899035e-101
-# 25481 C20orf69                    33  1.819595e-41
-# 14751    BFSP1                     8  8.658045e-05
-# 16066   ABHD12                    10  9.483605e-03
-# 15305 C20orf26                     7  3.622843e-02
+#           Gene sampleCount featureTotal        pvalue           FDR
+# 25468   PCMTD2          64            4 1.350385e-103 8.899035e-101
+# 25481 C20orf69          33            3  5.522293e-44  1.819595e-41
+# 14751    BFSP1           8            5  3.941447e-07  8.658045e-05
+# 16066   ABHD12          10            9  5.756361e-05  9.483605e-03
+# 15305 C20orf26           7           18  2.748743e-04  3.622843e-02
 
 # plot results of one chromosome
 bpPlot( bp, plot.chr=c(20) )
