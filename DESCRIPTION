@@ -3,9 +3,9 @@ Version: 0.0.1
 Title: Breakpoint Genes Detection
 Author: Evert van den Broek / Stef van Lieshout
 Maintainer: Stef van Lieshout <s.vanLieshout@vumc.nl>
-Depends:
+Depends: 
     R (>= 2.15.0)
-Imports:
+Imports: 
     graphics,
     methods,
     stats,
@@ -16,14 +16,16 @@ Imports:
     CGHbase (>= 1.18.0),
     CGHcall (>= 2.18.0),
     DNAcopy (>= 1.32.0)
-Suggests:
+Suggests: 
     R.cache (>= 0.9.0),
     digest,
     snowfall,
     BSgenome,
     GenomeInfoDb,
-    GenomicRanges
+    GenomicRanges,
+    knitr
 Description: Breakpoint Genes Detection on Copy Number Aberration data
 biocViews: CopyNumberVariation, DNASeq, Genetics, Sequencing
 License: GPL
 LazyData: FALSE
+VignetteBuilder: knitr

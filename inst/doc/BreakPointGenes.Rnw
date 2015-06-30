@@ -5,6 +5,7 @@
   hyperref}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \newcommand{\pkg}[1]{\texttt{#1}}
 \newcommand{\code}[1]{\texttt{#1}}
@@ -15,9 +16,7 @@
 
 \section{Running BreakPointGenes}
 
-This is a short tutorial on how to use the \pkg{BreakPointGenes} package. It covers an
-example run using the included data set of chromosomes 7--10 of a
-low grade glioma (LGG) sample. First step is naturally to load the package.
+This is a short tutorial on how to use the \pkg{BreakPointGenes} package. It covers an example run using included copy number data of one chromosome from 200 samples. The samples are part of the CAIRO study described in REF. Let's start by loading the package.
 
 <<>>=
 library(BreakPointGenes)
@@ -28,21 +27,35 @@ options("BreakPointGenes::verbose"=NA)
 options(width=40)
 @
 
-\subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
+\subsection{Loading copy number data}
 
-Then we need to obtain gene annotations (mainly for the location)
-For hg19 reference they can be downloaded with (NOT AVAILABLE YET):
+Copy number data can be loaded in two ways. Either from a cghCall/QDNAseq object (ouput of bioconductor packages CGHcall or QDNAseq) or by providing a data.frame with 4 columns: Region-name (usually probe identifier), Chromosome, Start and End. In this tutorial we load a built-in dataset:
+
+<<>>=
+data( "copynumber.data.chr20" )
+@
+
+Printing this we see that it is an R object of class "cghCall" and that it contains data of 200 samples.
 
 \begin{Schunk}
 \begin{Sinput}
-> geneAnnotations <- getGeneAnnotations()
-Downloading gene annotations for genome hg19
+> copynumber.data.chr20
+cghCall (storageMode: lockedEnvironment)
+assayData: 3653 features, 200 samples 
+  element names: calls, copynumber, probamp, probgain, probloss, probnorm, segmented 
+protocolData: none
+phenoData
+  sampleNames: sample_1 sample_2 ... sample_200 (200 total)
+  varLabels: Cellularity
+  varMetadata: labelDescription
+featureData
+  featureNames: A_16_P03469195 A_14_P136138 ... A_18_P13856091 (3653 total)
+  fvarLabels: Chromosome Start End
+  fvarMetadata: labelDescription
+experimentData: use 'experimentData(object)'
+Annotation: 
 \end{Sinput}
 \end{Schunk}
-
-After downloading, the gene annotations can be saved locally with
-\code{saveRDS}, and in the future be read from the local file with
-\code{loadRDS} instead of relying on downloading.
 
 \subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
 
@@ -54,41 +67,70 @@ Then we need to obtain copy number data. Because the \pkg{BreakPointGenes} packa
 \end{Sinput}
 \end{Schunk}
 
+\subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
+
+Then we need to obtain gene annotations. For hg18 and hg19 reference sequence these are included and can be loaded:
+
+<<>>=
+data( gene.annotation.hg19.chr20 )
+@
+
+\begin{Schunk}
+\begin{Sinput}
+> head( gene.annotation.hg19.chr20 )
+         Gene           EnsID Chromosome    Start      End
+2752     RNU7 ENSG00000210768         20 49954915 49954976
+8454   RPL7P2 ENSG00000220880         20  2004201  2004468
+8455  RPL19P1 ENSG00000217306         20  2709260  2709687
+8456 UBE2V1P1 ENSG00000218621         20  3290527  3290971
+8458  SF3A3P1 ENSG00000217305         20  3418176  3419652
+8463  RPS18P1 ENSG00000217102         20  5461524  5461981
+\end{Sinput}
+\end{Schunk}
 
 \subsection{Processing bam files}
 
 Next step is to load the copy number data from a cghCall file or from a
 text file. This can be done for example with one of the commands below.
 
+Next up is the detection of breakpoints 
+
+<<>>=
+bp <- getBreakpoints( data = copynumber.data.chr20 )
+@
+
+Next we filter breakpoints. Different filters can be set with different threshold. Default here is "deltaSeg" filter with a threshold of 0.2. This means that only breakpoints which... 
+
+<<>>=
+bp <- bpFilter( bp )
+@
+
+Next we will add the gene annotation information to the BreakPointGenes object. No analysis is done here yet.
+
+<<>>=
+bp <- addGeneAnnotation( bp, gene.annotation.hg19.chr20 )
+@
+
+Next we perform the gene analysis. This overlaps the genomic locations of the genes with the copy number data to find breakpoints within genes.
+
+<<>>=
+bp <- bpGenes( bp )
+@
+
+Next we determine the significantly recurring breakpoints. This be done at the "gene" or "feature" level and using one of two different methods ("Benjamini Hochberg" or "Gilbert"). The advantage of using...
+
+<<>>=
+bp <- bpStats( bp )
+@
+
+
 <<eval=FALSE>>=
-bp <- getBreakpoints( data = cghCallObject )
-# using the output of CGHcall or QDNAseq
-
-# or
-
-bp <- getBreakpoints( data = matrix(), data2 = matrix() )
-# providing segments and call values directly (NOT YET POSSIBLE)
-
+bp
 @
 
 This will return an object of class \code{CopyNumberBreakPoints}.
 
-<<>>=
-library( "BreakPointGenes" )
 
-# load built-in dataset (CGHcall)
-data( "LGG150.data" )
-# load built-in gene annotation dataset
-data( gene.annotation.hg19 )
-# setup the breakpoint data
-bp <- getBreakpoints( data = LGG150.data )
-# optionally filter the data
-bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
-# setup the gene data 
-bp <- addGeneAnnotation( bp, gene.annotation.hg19 )
-# perform gene analysis
-bp <- bpGenes( bp )
-@
 
 \clearpage
 
