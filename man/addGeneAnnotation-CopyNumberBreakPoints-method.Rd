@@ -9,15 +9,24 @@
 \S4method{addGeneAnnotation}{CopyNumberBreakPoints}(object, geneAnnotation)
 }
 \arguments{
-\item{object}{A "CopyNumberBreakPoints" object [output of getBreakpoints()]}
+\item{object}{An object of class "CopyNumberBreakPoints"}
+
+\item{geneAnnotation}{A dataframe with at least four column (Gene, Chromosome, Start, End)}
 }
 \value{
 Object of same class of \code{object}.
 }
 \description{
-Add description...
+Maps features to genes locations
+}
+\details{
+For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. It also possible to create your own gene annotations by creating a dataframe with at least four columns.
 }
 \examples{
-addGeneAnnotation( breakPointsFiltered, geneAnnotation )
+data( copynumber.data.chr20 )
+data( gene.annotation.hg19 )
+bp <- getBreakpoints( copynumber.data.chr20 )
+bp <- bpFilter( bp )
+bp <- addGeneAnnotation( bp, gene.annotation.hg19 )
 }
 

@@ -17,9 +17,17 @@
 Object of same class of \code{object}.
 }
 \description{
-Add description...
+Indentifies genes involved in breakpoint locations.
+}
+\details{
+This step requires gene annotation to be added to the breakpoints object (see ?addGeneAnnotation).
 }
 \examples{
-bpGenes( breakPointsGenes, gene.annotations.hg19 )
+data( copynumber.data.chr20 )
+data( ens.gene.ann.hg18 )
+bp <- getBreakpoints( copynumber.data.chr20 )
+bp <- bpFilter( bp )
+bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+bp <- bpGenes( bp )
 }
 

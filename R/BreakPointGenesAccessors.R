@@ -59,6 +59,10 @@ setMethod( "show",
             }
 
         }
+        ## --- this does not work here while it does in terminal R ---
+        #inputVariableName <- deparse(substitute(object))
+        #cat( " See accessOptions(",inputVariableName,") for how to access data in this object\n", sep = "" )
+        ## --- 
         cat( " See accessOptions(object) for how to access data in this object\n", sep = "" )
 
         cat( "\n" )
@@ -151,7 +155,7 @@ setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
 #' @param order.column Name of the column to sort output on
 #' @return data.frame with recurrent genes
 #' @examples
-#' recurrentGenes( bp_stats )
+#' recurrentGenes( breakpointStatistics )
 #' @aliases recurrentGenes
 setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
     function(object, fdr.threshold=0.1, summarize=TRUE, order.column="FDR"){

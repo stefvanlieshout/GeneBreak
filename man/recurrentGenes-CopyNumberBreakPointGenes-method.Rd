@@ -25,6 +25,6 @@ data.frame with recurrent genes
 Show recurrent genes
 }
 \examples{
-recurrentGenes( bp_stats )
+recurrentGenes( breakpointStatistics )
 }
 

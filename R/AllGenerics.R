@@ -1,23 +1,7 @@
-##setGeneric("applyFilters", function(object, residual=TRUE, blacklist=TRUE,
-##    mappability=NA, bases=NA, chromosomes=c("X", "Y"))
-##    standardGeneric("applyFilters"))
-
-#setGeneric("BreakPointGenes", function(object, ...) standardGeneric("BreakPointGenes"))
-
+## --------------------
 ## NOTES:
 ## any "new" method defined need a generic here too
-
-#setGeneric( "counts", function(object) standardGeneric("counts") )
-#setGeneric( "mCounts", function(object) standardGeneric("mCounts") )
-#setGeneric( "multiplyCounts", function(object, mFactor=2) standardGeneric("multiplyCounts") )
-#setGeneric( "addMultipliedCounts", function(object, mFactor=2) standardGeneric("addMultipliedCounts") )
-
-setGeneric( "sampleNames", function(object) standardGeneric("sampleNames") )
-setGeneric( "geneNames", function(object) standardGeneric("geneNames") )
-
-## -----------------
-## CNBPgene generics
-## -----------------
+## --------------------
 
 ## set
 setGeneric( "bpFilter", function(object, filter="CNA-ass", threshold=NULL ) standardGeneric("bpFilter") )
@@ -28,6 +12,8 @@ setGeneric( "bpStats", function(object, level="gene", method="BH", fdr.threshold
 
 ## get
 setGeneric( "accessOptions", function(object) standardGeneric("accessOptions") )
+setGeneric( "sampleNames", function(object) standardGeneric("sampleNames") )
+setGeneric( "geneNames", function(object) standardGeneric("geneNames") )
 setGeneric( "callDiff", function(object) standardGeneric("callDiff") )
 setGeneric( "segDiff", function(object) standardGeneric("segDiff") )
 setGeneric( "callData", function(object) standardGeneric("callData") )

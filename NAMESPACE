@@ -26,7 +26,6 @@ export( "bpStats" )
 
 ## extra workflow steps
 export( "runWorkflow" )
-export( "createGeneAnnotations" )
 export( "recurrentGenes" )
 export( "bpPlot" )
 

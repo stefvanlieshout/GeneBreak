@@ -11,16 +11,16 @@ An S4 class to represent a CopyNumberBreakPoints object.
 \section{Slots}{
 
 \describe{
-\item{\code{segmDiff}}{A matrix}
+\item{\code{segmDiff}}{A matrix with breakpoints based on segment values}
 
-\item{\code{callDiff}}{A matrix}
+\item{\code{callDiff}}{A matrix with breakpoints based on call values}
 
-\item{\code{segments}}{A matrix}
+\item{\code{segments}}{A matrix with segmented copy number values}
 
-\item{\code{calls}}{A matrix}
+\item{\code{calls}}{A matrix with copy number calls}
 
-\item{\code{featureAnnotation}}{A dataframe}
+\item{\code{featureAnnotation}}{A dataframe with predefined information about the features (usually probes or bins)}
 
-\item{\code{featureData}}{A dataframe}
+\item{\code{featureData}}{A dataframe with calculated information about the features (usually probes or bins)}
 }}
 

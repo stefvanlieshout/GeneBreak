@@ -15,9 +15,11 @@ getBreakpoints(data, first.rm = TRUE)
 Object of class \code{CopyNumberBreakPoints}
 }
 \description{
-Builds the CopyNumberBreakPoints object with CGHcall data
+Builds the CopyNumberBreakPoints object from CGHcall data
 }
 \examples{
-getBreakpoints( cghCallObj )
+data( copynumber.data.chr20 )
+data( gene.annotation.hg19 )
+breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 }
 

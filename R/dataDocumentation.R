@@ -14,100 +14,138 @@
 #' @format An object of class "cghCall"
 NULL
 
+#' Gene Annotation hg18
+#'
+#' A dataset containing the gene locations
+#'  required for the BreakPointGenes package.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name ens.gene.ann.hg18
+#' @usage data( ens.gene.ann.hg18 )
+#' head( ens.gene.ann.hg18 )
+#' @format A data.frame
+#' @details Dataframe with 5 columns:
+#' \itemize{
+#'   \item Gene: ensembl gene name
+#'   \item EnsID: ensembl gene id
+#'   \item Chromosome: Genomic Chromosome
+#'   \item Start: Genomic start of gene
+#'   \item End: Genomic end of gene
+#' }
+NULL
+
 #' Gene Annotation hg19
 #'
 #' A dataset containing the gene locations
 #'  required for the BreakPointGenes package.
 #'
+#' @docType data
+#' @keywords datasets
+#' @name ens.gene.ann.hg19
+#' @usage data( ens.gene.ann.hg19 )
+#' @format A data.frame
+#' @details Dataframe with 5 columns:
 #' \itemize{
-#'   \item Gene (gene name)
-#'   \item EnsID (ensembl gene id)
-#'   \item Chromosome
-#'   \item Start (Genomic start of gene)
-#'   \item End (Genomic end of gene)
+#'   \item Gene: ensembl gene name
+#'   \item EnsID: ensembl gene id
+#'   \item Chromosome: Genomic Chromosome
+#'   \item Start: Genomic start of gene
+#'   \item End: Genomic end of gene
 #' }
-#'
-#' @docType data
-#' @keywords datasets
-#' @name gene.annotation.hg19
-#' @usage data( gene.annotation.hg19 )
-#' @format A data.frame
 NULL
 
-#' Gene Annotation hg19 chr18
+#' Gene Annotation hg38
 #'
 #' A dataset containing the gene locations
 #'  required for the BreakPointGenes package.
 #'
-#' See help( gene.annotation.hg19 ) for more info on contents
 #' @docType data
 #' @keywords datasets
-#' @name gene.annotation.hg19.chr18
-#' @usage data( gene.annotation.hg19.chr18 )
+#' @name ens.gene.ann.hg38
+#' @usage data( ens.gene.ann.hg38 )
 #' @format A data.frame
+#' @details Dataframe with 5 columns:
+#' \itemize{
+#'   \item Gene: ensembl gene name
+#'   \item EnsID: ensembl gene id
+#'   \item Chromosome: Genomic Chromosome
+#'   \item Start: Genomic start of gene
+#'   \item End: Genomic end of gene
+#' }
 NULL
 
-#' Gene Annotation hg19 chr20
+#' Gene Annotation hg18 chr18
 #'
-#' A dataset containing the gene locations
+#' A test dataset containing the gene locations of chr18
 #'  required for the BreakPointGenes package.
 #'
-#' See help( gene.annotation.hg19 ) for more info on contents
 #' @docType data
 #' @keywords datasets
-#' @name gene.annotation.hg19.chr20
-#' @usage data( gene.annotation.hg19.chr20 )
+#' @name ens.gene.ann.hg18.chr18
+#' @usage data( ens.gene.ann.hg18.chr18 )
 #' @format A data.frame
+#' @details See help( ens.gene.ann.hg18 ) for more info on contents
 NULL
 
-#' Gene Annotation hg19 chr21
+#' Gene Annotation hg18 chr20
 #'
-#' A dataset containing the gene locations
+#' A test dataset containing the gene locations of chr20
 #'  required for the BreakPointGenes package.
 #'
-#' See help( gene.annotation.hg19 ) for more info on contents
 #' @docType data
 #' @keywords datasets
-#' @name gene.annotation.hg19.chr21
-#' @usage data( gene.annotation.hg19.chr21 )
+#' @name ens.gene.ann.hg19.chr20
+#' @usage data( ens.gene.ann.hg18.chr20 )
 #' @format A data.frame
+#' @details See help( ens.gene.ann.hg18 ) for more info on contents
 NULL
 
-#' CGHcall CAIRO data hg19 chr18
+#' Gene Annotation hg18 chr21
 #'
-#' A test dataset containing chr18 copynumber data
-#'  for the BreakPointGenes package. For more info about the
-#'  CAIRO study see...
+#' A test dataset containing the gene locations of chr21
+#'  required for the BreakPointGenes package.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name ens.gene.ann.hg19.chr21
+#' @usage data( ens.gene.ann.hg19.chr21 )
+#' @format A data.frame
+#' @details See help( ens.gene.ann.hg18 ) for more info on contents
+NULL
+
+#' CGHcall CAIRO data hg18 chr18
+#' @description A test dataset containing chr18 copynumber data
+#'  for the BreakPointGenes package.
 #'
 #' @docType data
 #' @keywords datasets
 #' @name copynumber.data.chr18
 #' @usage data( copynumber.data.chr18 )
 #' @format A data.frame
+#' @details For more info about the CAIRO study see...
 NULL
 
-#' CGHcall CAIRO data hg19 chr20
-#'
-#' A test dataset containing chr20 copynumber data
-#'  for the BreakPointGenes package. For more info about the
-#'  CAIRO study see...
+#' CGHcall CAIRO data hg18 chr20
+#' @description A test dataset containing chr20 copynumber data
+#'  for the BreakPointGenes package.
 #'
 #' @docType data
 #' @keywords datasets
 #' @name copynumber.data.chr20
 #' @usage data( copynumber.data.chr20 )
 #' @format A data.frame
+#' @details For more info about the CAIRO study see...
 NULL
 
-#' CGHcall CAIRO data hg19 chr21
-#'
-#' A test dataset containing chr21 copynumber data
-#'  for the BreakPointGenes package. For more info about the
-#'  CAIRO study see...
+#' CGHcall CAIRO data hg18 chr21
+#' @description A test dataset containing chr21 copynumber data
+#'  for the BreakPointGenes package.
 #'
 #' @docType data
 #' @keywords datasets
 #' @name copynumber.data.chr21
 #' @usage data( copynumber.data.chr21 )
 #' @format A data.frame
+#' @details For more info about the CAIRO study see...
 NULL

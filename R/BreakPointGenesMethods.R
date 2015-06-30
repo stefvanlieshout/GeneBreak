@@ -31,17 +31,19 @@ runWorkflow <- function( object, geneAnnotation ) {
 
 #' CopyNumber to BreakPoints
 #' @description
-#' Builds the CopyNumberBreakPoints object with CGHcall data 
+#' Builds the CopyNumberBreakPoints object from CGHcall data 
 #' @param data A "CGHcall" object
 #' @param first.rm Remove the first breakpoint for each chromosome
 #' @return Object of class \code{CopyNumberBreakPoints}
 #' @examples
-#' getBreakpoints( cghCallObj )
+#' data( copynumber.data.chr20 )
+#' data( gene.annotation.hg19 )
+#' breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 getBreakpoints <- function( data, first.rm=TRUE ) {
     cat( "Breakpoint detection started...", ncol(data), " samples\n", sep="" )
     
     ## input checks
-    if ( class( data ) != 'cghCall' )
+    if ( class( data ) != 'cghCall' ) 
         stop( '[ERR] input data not a cghCall object...' )
 
     ## setup variables
@@ -105,38 +107,20 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
     return( output )
 }
 
-#' Build Gene Annotations
-#' @description
-#' Builds the geneAnnotation data.frame from a text file
-#' @param file Path to a TAB delim file with gene annotations. Requires a header to be present with at least these fields: Gene, EnsID, Chromosome, Start, End
-#' @param geneCount Only use first geneCount genes (for testing purposes)
-#' @return Object of class \code{CopyNumberBreakPoints})
-#' @examples
-#' geneAnn <- createGeneAnnotations( "/path/to/annotation/file.tsv" )
-createGeneAnnotations <- function( file, geneCount=NULL ){
-    
-    df <- read.delim( file )
-
-    ## file speficic altering
-    df[,3] <- as.vector( df[,3] )
-    df$chromosome_name[ df$chromosome_name == "X"] <- "23"
-    df <- df[ which( df[,1] != "" & df[,3] %in% c(1:23)), ]
-    colnames( df ) <- c( "Gene", "EnsID", "Chromosome", "Start", "End" )
-    df$Chromosome <- as.integer( df$Chromosome )
-
-    ## make selection if geneCount is set
-    if ( !is.null( geneCount ) ){
-        df <- df[ 1:geneCount, ]
-    }
-    return( df )
-}
-
 #' Filter Breakpoints
 #' @description
-#' Removes breakpoints by a minimum <ADD_TERM!> threshold
-#' @param filter Type of filter
+#' Selects breakpoints by criteria options.
+#' @param filter Type of filter. This can be either "deltaSeg", "deltaCall" or "CNA-ass".
+#' \itemize{
+#'   \item CNA-ass: copy number based
+#'   \item deltaSeg: 
+#'   \item deltaCall:
+#' } \cr
 #' @return Object of class \code{CopyNumberBreakPoints})
+#' @details Iets
 #' @examples
+#' data( copynumber.data.chr20 )
+#' bp <- getBreakpoints( copynumber.data.chr20 )
 #' bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
 #' @aliases bpFilter
 setMethod( "bpFilter", "CopyNumberBreakPoints",
@@ -174,9 +158,20 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
         else{
             stop( "parameter \"filter\" has incorrect value" )
         }
-
-        ## return updated object
+        
+        ## replace breakpoint data
         object@breakpoints <- breakpoints_filtered
+        
+        ## recalculate the number of samples that have a breakpoint after filtering
+        object@featureData$sampleCount <- apply( object@breakpoints, 1, sum )
+        
+        ## same for samplenames
+        samplesListed <- apply( object@breakpoints, 1, function(x){ (names(x)[ x>0 ]) })
+        object@featureData$sampleNamesWithBreakpoints <- sapply( samplesListed, function( x ) { 
+          ifelse( any( is.na(x) ), NA, paste( x, collapse = .SEP_CHAR ) )
+        } )
+        
+        ## return updated object
         return( object )
     }
 )
@@ -195,14 +190,32 @@ setMethod( "bpSummary", "CopyNumberBreakPoints",
 #' addGeneAnnotation
 #' 
 #' @description
-#' Add description...
-#' @param object A "CopyNumberBreakPoints" object [output of getBreakpoints()]
+#' Maps features to genes locations
+#' @param object An object of class "CopyNumberBreakPoints"
+#' @param geneAnnotation A dataframe with at least four column (Gene, Chromosome, Start, End)
 #' @return Object of same class of \code{object}.
+#' @details For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. It also possible to create your own gene annotations by creating a dataframe with at least four columns.
 #' @examples
-#' addGeneAnnotation( breakPointsFiltered, geneAnnotation )
+#' data( copynumber.data.chr20 )
+#' data( gene.annotation.hg19 )
+#' bp <- getBreakpoints( copynumber.data.chr20 )
+#' bp <- bpFilter( bp ) 
+#' bp <- addGeneAnnotation( bp, gene.annotation.hg19 )
 #' @aliases addGeneAnnotation
 setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
     function( object, geneAnnotation ) {
+
+    ## sanity checks
+    requiredColnames <- c("Gene", "Chromosome", "Start", "End")
+    for (colName in requiredColnames ){
+        if( ! colName %in% colnames(geneAnnotation) ){
+            stop( "Missing column ", colName, " in geneAnnotation dataframe", "\n" )
+        }
+    }
+
+    ## check data chromosomes and remove others from gene annotation
+    dataChrs <- names(table( featureChromosomes(breakpointsFiltered) ))
+    geneAnnotation <- geneAnnotation[ which( geneAnnotation$Chromosome %in% dataChrs ), ]
 
     ## setup gene information
     geneData <- data.frame( geneLength = apply( geneAnnotation[, c("Start","End") ], 1, diff ) )
@@ -340,12 +353,18 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 #' bpGenes
 #' 
 #' @description
-#' Add description...
+#' Indentifies genes involved in breakpoint locations.
 #' @param object A "CopyNumberBreakPointGenes" object
 #' @param geneAnnotations data.frame with gene annotations
 #' @return Object of same class of \code{object}.
+#' @details This step requires gene annotation to be added to the breakpoints object (see ?addGeneAnnotation).
 #' @examples
-#' bpGenes( breakPointsGenes, gene.annotations.hg19 )
+#' data( copynumber.data.chr20 )
+#' data( ens.gene.ann.hg18 )
+#' bp <- getBreakpoints( copynumber.data.chr20 )
+#' bp <- bpFilter( bp )
+#' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+#' bp <- bpGenes( bp )
 #' @aliases bpGenes
 setMethod( "bpGenes", "CopyNumberBreakPointGenes",
     
@@ -472,13 +491,20 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 #' bpStats
 #' 
 #' @description
-#' Add description...
+#' Applies cohort based statistics to identify genes and/or features that are recurrently affected by breakpoint locations.
 #' @param object A "CopyNumberBreakPointGenes" object
-#' @param level The level ["gene" or "feature"]
-#' @param method The method ["BH" or "Gilbert"]
+#' @param level The level at which to operate, this can be either "gene" (adjusting for gene size) or "feature" (per probe/bin)
+#' @param method The FDR correction method to apply. This can be "BH" (applies Benjamini Hochberg) or "Gilbert" (for dedicated Benjamini Hochberg)
 #' @return Object of same class of \code{object}.
+#' @details To be added...
 #' @examples
-#' bpStats( breakPointsGenes )
+#' data( copynumber.data.chr20 )
+#' data( ens.gene.ann.hg18 )
+#' bp <- getBreakpoints( dcopynumber.data.chr20 )
+#' bp <- bpFilter( bp )
+#' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+#' bp <- bpGenes( bp )
+#' bp <- bpStats( bp )
 #' @aliases bpStats
 setMethod( "bpStats", "CopyNumberBreakPoints",
 
@@ -502,8 +528,8 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
         ## --------------------
         if( level == "gene" ) {
 
-            if ( ncol( object@breakpointsPerGene ) < 2 ){
-                stop( "A minimum of 2 samples is required for statistical testing...", "\n" )
+            if ( ncol( object@breakpointsPerGene ) < 5 ){
+                stop( "A minimum of 5 samples is required for statistical testing...", "\n" )
             }
             if ( level == "gene" & class( object ) != "CopyNumberBreakPointGenes" ){
                 stop( "Object of type \"CopyNumberBreakPointGenes\" required for analysis per gene ...", "\n" )
@@ -611,7 +637,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 
                 lenst <- sapply( len, function(x) ( x - mnlen ) / sdlen )
 
-                nprobes <- rep(0,nprobe)
+                nprobes <- rep( 1, nprobe )
                 nms <- apply( bpt, 2, function( breakg ){ 
                     .glmbreak( breakg = breakg, lenst = lenst, nprobes = nprobes) # nprobes changes into 1 (= always one feature)
                 })
@@ -645,14 +671,15 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 #' bpPlot
 #' 
 #' @description
-#' Add description...
+#' Plots breakpoint frequencies per chromosome
 #' @param object A "CopyNumberBreakPoint" object
 #' @param plot.chr The chromosome(s) to plot
 #' @param plot.ylim The max y
 #' @param fdr.threshold The FDR threshold
+#' @details The plot includes breakpoints locations and frequencies. Genes that are recurrently affected are labeled with their gene name.
 #' @return Nothing
 #' @examples
-#' bpPlot( bp_stats, c(1,22) )
+#' bpPlot( bp, c(1:4) )
 #' @aliases bpPlot
 setMethod( "bpPlot", "CopyNumberBreakPoints",
     
@@ -689,8 +716,10 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
         chromosomesPresent <- unique( object@featureAnnotation$Chromosome )
         chromosomesToPlot <- chromosomesPresent
         if( !is.null( plot.chr) ){
-            if( !all( plot.chr %in% chromosomesPresent ) ){
-                stop( "Chosen chromosome [", chr, "] not present in object-data\n", sep='' )
+            for (chr in plot.chr){
+                if( ! chr %in% chromosomesPresent ){
+                    stop( "Chosen chromosome [", chr, "] not present in object-data\n", sep='' )
+                }
             }
             chromosomesToPlot <- plot.chr
         }
@@ -726,31 +755,49 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             
             # xlim = c(startPlot,endPlot) extra zoomin function ?
             
-            plot(start.feature, featureBreakPerc, ylim=c(0, ylim+1), axes=T, type="h", xlab="chromosomal position (Mb)", ylab="breakpoint frequencies (%)", main=paste("BreakPoint frequencyPlot\nchromosome", chr), xaxt="n", yaxt="n",cex.lab=1.3, col= color.feature.chr)
-            mtext( "recurrent breakpoint genes are labeled with gene name", side=3, col=color.gene )
+            plot( start.feature, featureBreakPerc, ylim=c(0, ylim+1), axes=T, type="h", xlab="chromosomal position (Mb)", ylab="breakpoint frequencies (%)", main=paste("BreakPoint frequencyPlot\nchromosome", chr), xaxt="n", yaxt="n",cex.lab=1.3, col= color.feature.chr)
+            mtext( paste( "recurrent breakpoint genes are labeled with gene name (FDR<", fdr.threshold, ")", sep=""), side=3, col=color.gene )
             axis( 1, at=as.vector(axis(1, labels=F)), labels=(as.vector(axis(1, labels=F)))/10^6 ) # x-axis in MBs
             axis( 2, at=0:(ylim+1), labels=c(0:(ylim), paste(">", ylim)), las=2 )
             abline( h=c(0,ylim), lty=c(1,5) )
             
             if( breakpointGene == 1 ) {
                 above.ylim <- which(geneBreakPerc > ylim)
-
+                
                 if( any(above.ylim) ) {
                     frame.plot = segments( start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], start.gene[ -above.ylim ], geneBreakPerc[ -above.ylim ], lwd = 4, col = color.gene) # gene(levels)
+                    if( stats.gene == 1 & any(recurrent.gene) ) {
+                        recurrent.gene.beneath.ylim <- recurrent.gene[ which( !(recurrent.gene %in% above.ylim) ) ]
+                        yvals <- geneBreakPerc[ recurrent.gene.beneath.ylim ]
+                        if ( add.jitter == TRUE) yvals <- jitter( yvals, factor=1.2,amount=0.2 )
+                        text( x=end.gene[ recurrent.gene.beneath.ylim ], y=yvals, name.gene[ recurrent.gene.beneath.ylim ], cex=0.7, pos=2, col=color.gene, font=4 )
+                    }
                 } 
                 else {
                     frame.plot = segments( start.gene, geneBreakPerc, start.gene, geneBreakPerc,lwd=4,col= color.gene) # gene(levels)
+                    if( stats.gene == 1 & any(recurrent.gene) ) {
+                        yvals <- geneBreakPerc[ recurrent.gene ]
+                        if ( add.jitter == TRUE) yvals <- jitter( yvals, factor=1.2,amount=0.2 )
+                        text( x=end.gene[ recurrent.gene ], y=yvals, name.gene[ recurrent.gene ], cex=0.7, pos=2, col=color.gene, font=4 )
+                    }
                 }
                 
-                if( stats.gene == 1 & any(recurrent.gene) ) {
-                    yvals <- geneBreakPerc[ recurrent.gene ]
-                    if ( add.jitter == TRUE) yvals <- jitter( yvals, factor=1.2,amount=0.2 )
-                    text( x=end.gene[ recurrent.gene ], y=yvals, name.gene[ recurrent.gene], cex=0.7, pos=2, col=color.gene, font=4 )
-                }
+#                if( stats.gene == 1 & any(recurrent.gene) ) {
+#                    yvals <- geneBreakPerc[ recurrent.gene ]
+#                    if ( add.jitter == TRUE) yvals <- jitter( yvals, factor=1.2, amount=0.2 )
+#                    text( x=end.gene[ recurrent.gene ], y=yvals, name.gene[ recurrent.gene], cex=0.7, pos=2, col=color.gene, font=4 )
+#                }
 
                 if( any (above.ylim) ){
+                    non.recurrent.gene.above.ylim <- above.ylim[ which( !(above.ylim %in% recurrent.gene) ) ]
+                    sign <- rep("", length(geneBreakPerc) )
+                    sign[ non.recurrent.gene.above.ylim ] <- "*"
                     frame.plot = segments( start.gene[ above.ylim ], rep( ylim+1 ), end.gene[ above.ylim ], rep( ylim+1 ), lwd = 3, col = color.gene)
-                    text( x=end.gene[ above.ylim ], y=rep(ylim+1), paste( name.gene[ above.ylim ]," (", round(geneBreakPerc[ above.ylim ], 1), ")", sep=""), cex=0.4, pos=4, col=color.gene, font=4)
+                    text( x=end.gene[ above.ylim ], y=rep(ylim+1), paste( name.gene[ above.ylim ]," (", round(geneBreakPerc[ above.ylim ], 1), ")", sign[ above.ylim ], sep=""), cex=0.7, pos=4, col=color.gene, font=4)
+                  
+                    if ( any(non.recurrent.gene.above.ylim) ) { 
+                        mtext("* not significant", side=3, adj=1, cex=0.8) 
+                    }
                 }
             }
         }

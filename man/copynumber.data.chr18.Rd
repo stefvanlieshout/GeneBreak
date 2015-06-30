@@ -3,15 +3,17 @@
 \docType{data}
 \name{copynumber.data.chr18}
 \alias{copynumber.data.chr18}
-\title{CGHcall CAIRO data hg19 chr18}
+\title{CGHcall CAIRO data hg18 chr18}
 \format{A data.frame}
 \usage{
 data( copynumber.data.chr18 )
 }
 \description{
 A test dataset containing chr18 copynumber data
- for the BreakPointGenes package. For more info about the
- CAIRO study see...
+ for the BreakPointGenes package.
+}
+\details{
+For more info about the CAIRO study see...
 }
 \keyword{datasets}
 

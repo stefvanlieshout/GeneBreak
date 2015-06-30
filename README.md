@@ -25,7 +25,7 @@ The test-data used in the example contains only one chromosome, but a total of 2
 ```R
 library( "BreakPointGenes" )
 
-# get better understanding of the package workflow
+# read vignette for more explanation about the workflow
 vignette( "BreakPointGenes")
 
 # explore built-in data
@@ -34,39 +34,41 @@ data( package="BreakPointGenes" )
 # get more information about built-in data
 help( "copynumber.data.chr20" )
 
-# load built-in dataset (CGHcall)
-data( "copynumber.data.chr20" )
+# load built-in dataset (cghCall object)
+data( copynumber.data.chr20 )
 
-# load built-in gene annotation dataset
-data( gene.annotation.hg19.chr20 )
+# load built-in gene annotation dataset (hg19 and hg38 are also availabe)
+data( ens.gene.ann.hg18 )
 
 # setup the breakpoint data
-bp <- getBreakpoints( data = copynumber.data.chr20 )
+breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
+
+# print some information about the object
+breakpoints
+
+# take a peek at the data access options
+accessOptions(breakpoints)
 
 # optionally filter the data
-bp <- bpFilter( bp )
+breakpointsFiltered <- bpFilter( breakpoints )
 
-# setup the gene data 
-bp <- addGeneAnnotation( bp, gene.annotation.hg19.chr20 )
+# add/setup the gene data 
+breakpointsFiltered <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg18 )
 
 # perform gene analysis
-bp <- bpGenes( bp )
+breakpointGenes <- bpGenes( breakpointsFiltered )
 
 # get recurrent breakpoints
-bp <- bpStats( bp )
+breakpointStatistics <- bpStats( breakpointGenes )
+
+# plot breakpoint frequencies
+bpPlot( breakpointStatistics )
 
 # print object information
-bp
-# --- Object Info ---
-# This is an object of class "CopyNumberBreakPointGenes"
-# 3653 features by 200 samples
-# A total of 985 breakpoints
-# A total of 1029 gene breaks in 241 genes
-# A total of 14 recurrent breakpoint genes (FDR < 0.1)
-# See accessOptions(object) for how to access data in this object
+breakpointStatistics
 
 # print some information of top 5 recurrently affected genes
-recurrentGenes( bp )[ 1:5, ]
+head( recurrentGenes( breakpointStatistics ) )
 #  A total of 14 recurrent breakpoint genes (at FDR < 0.1)
 #           Gene sampleCount featureTotal        pvalue           FDR
 # 25468   PCMTD2          64            4 1.350385e-103 8.899035e-101
@@ -74,9 +76,10 @@ recurrentGenes( bp )[ 1:5, ]
 # 14751    BFSP1           8            5  3.941447e-07  8.658045e-05
 # 16066   ABHD12          10            9  5.756361e-05  9.483605e-03
 # 15305 C20orf26           7           18  2.748743e-04  3.622843e-02
+# 3493      HAO1           5            5  6.528175e-04  3.961727e-02
 
 # plot results of one chromosome
-bpPlot( bp, plot.chr=c(20) )
+bpPlot( breakpointStatistics, plot.chr=c(20) )
 ```
 
 More information or help

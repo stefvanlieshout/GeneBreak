@@ -1,11 +1,11 @@
 #' An S4 class to represent a CopyNumberBreakPoints object.
 #'
-#' @slot segmDiff A matrix
-#' @slot callDiff A matrix
-#' @slot segments A matrix
-#' @slot calls A matrix
-#' @slot featureAnnotation A dataframe
-#' @slot featureData A dataframe
+#' @slot segmDiff A matrix with breakpoints based on segment values
+#' @slot callDiff A matrix with breakpoints based on call values
+#' @slot segments A matrix with segmented copy number values
+#' @slot calls A matrix with copy number calls
+#' @slot featureAnnotation A dataframe with predefined information about the features (usually probes or bins)
+#' @slot featureData A dataframe with calculated information about the features (usually probes or bins)
 CopyNumberBreakPoints <- setClass( 
     'CopyNumberBreakPoints',
     

@@ -10,15 +10,25 @@
   threshold = NULL)
 }
 \arguments{
-\item{filter}{Type of filter}
+\item{filter}{Type of filter. This can be either "deltaSeg", "deltaCall" or "CNA-ass".
+\itemize{
+  \item CNA-ass: copy number based
+  \item deltaSeg:
+  \item deltaCall:
+} \cr}
 }
 \value{
 Object of class \code{CopyNumberBreakPoints})
 }
 \description{
-Removes breakpoints by a minimum <ADD_TERM!> threshold
+Selects breakpoints by criteria options.
+}
+\details{
+Iets
 }
 \examples{
+data( copynumber.data.chr20 )
+bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
 }
 

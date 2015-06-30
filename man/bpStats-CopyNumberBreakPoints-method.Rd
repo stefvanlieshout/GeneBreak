@@ -12,17 +12,26 @@
 \arguments{
 \item{object}{A "CopyNumberBreakPointGenes" object}
 
-\item{level}{The level ["gene" or "feature"]}
+\item{level}{The level at which to operate, this can be either "gene" (adjusting for gene size) or "feature" (per probe/bin)}
 
-\item{method}{The method ["BH" or "Gilbert"]}
+\item{method}{The FDR correction method to apply. This can be "BH" (applies Benjamini Hochberg) or "Gilbert" (for dedicated Benjamini Hochberg)}
 }
 \value{
 Object of same class of \code{object}.
 }
 \description{
-Add description...
+Applies cohort based statistics to identify genes and/or features that are recurrently affected by breakpoint locations.
+}
+\details{
+To be added...
 }
 \examples{
-bpStats( breakPointsGenes )
+data( copynumber.data.chr20 )
+data( ens.gene.ann.hg18 )
+bp <- getBreakpoints( dcopynumber.data.chr20 )
+bp <- bpFilter( bp )
+bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+bp <- bpGenes( bp )
+bp <- bpStats( bp )
 }
 

@@ -22,9 +22,12 @@
 Nothing
 }
 \description{
-Add description...
+Plots breakpoint frequencies per chromosome
+}
+\details{
+The plot includes breakpoints locations and frequencies. Genes that are recurrently affected are labeled with their gene name.
 }
 \examples{
-bpPlot( bp_stats, c(1,22) )
+bpPlot( bp, c(1:4) )
 }
 
