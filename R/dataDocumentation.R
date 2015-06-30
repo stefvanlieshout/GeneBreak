@@ -95,7 +95,7 @@ NULL
 #'
 #' @docType data
 #' @keywords datasets
-#' @name ens.gene.ann.hg19.chr20
+#' @name ens.gene.ann.hg18.chr20
 #' @usage data( ens.gene.ann.hg18.chr20 )
 #' @format A data.frame
 #' @details See help( ens.gene.ann.hg18 ) for more info on contents
@@ -108,8 +108,8 @@ NULL
 #'
 #' @docType data
 #' @keywords datasets
-#' @name ens.gene.ann.hg19.chr21
-#' @usage data( ens.gene.ann.hg19.chr21 )
+#' @name ens.gene.ann.hg18.chr21
+#' @usage data( ens.gene.ann.hg18.chr21 )
 #' @format A data.frame
 #' @details See help( ens.gene.ann.hg18 ) for more info on contents
 NULL
