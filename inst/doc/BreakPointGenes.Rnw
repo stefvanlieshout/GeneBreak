@@ -35,7 +35,7 @@ Copy number data can be loaded in two ways. Either from a cghCall/QDNAseq object
 data( "copynumber.data.chr20" )
 @
 
-Printing this we see that it is an R object of class "cghCall" and that it contains data of 200 samples.
+By inspecting the just loaded dataset, we see that we are dealing with an R object of class "cghCall" with 3653 features (aCGH probes in this case) and 200 samples.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -72,12 +72,12 @@ Then we need to obtain copy number data. Because the \pkg{BreakPointGenes} packa
 Then we need to obtain gene annotations. For hg18 and hg19 reference sequence these are included and can be loaded:
 
 <<>>=
-data( gene.annotation.hg19.chr20 )
+data( ens.gene.ann.hg18.chr20 )
 @
 
 \begin{Schunk}
 \begin{Sinput}
-> head( gene.annotation.hg19.chr20 )
+> head( ens.gene.ann.hg18.chr20 )
          Gene           EnsID Chromosome    Start      End
 2752     RNU7 ENSG00000210768         20 49954915 49954976
 8454   RPL7P2 ENSG00000220880         20  2004201  2004468
@@ -108,7 +108,7 @@ bp <- bpFilter( bp )
 Next we will add the gene annotation information to the BreakPointGenes object. No analysis is done here yet.
 
 <<>>=
-bp <- addGeneAnnotation( bp, gene.annotation.hg19.chr20 )
+bp <- addGeneAnnotation( bp, ens.gene.ann.hg18.chr20 )
 @
 
 Next we perform the gene analysis. This overlaps the genomic locations of the genes with the copy number data to find breakpoints within genes.

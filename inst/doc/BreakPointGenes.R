@@ -22,7 +22,7 @@ data( "copynumber.data.chr20" )
 ###################################################
 ### code chunk number 4: BreakPointGenes.Rnw:74-75
 ###################################################
-data( gene.annotation.hg19.chr20 )
+data( ens.gene.ann.hg18.chr20 )
 
 
 ###################################################
@@ -40,7 +40,7 @@ bp <- bpFilter( bp )
 ###################################################
 ### code chunk number 7: BreakPointGenes.Rnw:110-111
 ###################################################
-bp <- addGeneAnnotation( bp, gene.annotation.hg19.chr20 )
+bp <- addGeneAnnotation( bp, ens.gene.ann.hg18.chr20 )
 
 
 ###################################################

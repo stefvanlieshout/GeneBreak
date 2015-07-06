@@ -39,7 +39,7 @@ runWorkflow <- function( object, geneAnnotation ) {
 #' data( copynumber.data.chr20 )
 #' data( gene.annotation.hg19 )
 #' breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
-getBreakpoints <- function( data, first.rm=TRUE ) {
+getBreakpointsOld <- function( data, first.rm=TRUE ) {
     
     ## input checks
     if ( (class( data ) != 'cghCall') && (class( data ) != 'QDNAseqSignals') )
@@ -55,6 +55,107 @@ getBreakpoints <- function( data, first.rm=TRUE ) {
     bpStart  <- data@featureData@data$Start
     bpEnd    <- data@featureData@data$End
     featureNames <- rownames( segmData )
+
+    breakpoints <- NULL; segmDiff <- NULL; callDiff <- NULL; startChr <- c()
+    featureAnnotation <- NULL;  featureInterval <- c()
+    
+    segmDiff <- rbind( segmData[ 1, ], apply( segmData, 2, diff ) ) 
+    callDiff <- rbind( callData[ 1, ], apply( callData, 2, diff ) )
+    rownames(segmDiff) <- featureNames
+    rownames(callDiff) <- featureNames
+    
+    ## remove first chromosomal BP if requested: set bp value to 0
+    if ( first.rm == TRUE ) {
+        startChr <- c( 1, which( diff( bpChrs ) == 1 ) + 1 )
+        segmDiff[ startChr, ] <- 0
+        callDiff[ startChr, ] <- 0
+    }
+    
+    featureAnnotation <- data.frame( 
+        Chromosome = bpChrs, 
+        Start = bpStart,
+        End = bpEnd,
+        row.names = featureNames 
+    )
+
+    ## probe distance is needed for statistics
+    featureInterval <- c( 0, diff( bpStart ) )
+    featureInterval[ startChr ] <- 0
+    featureData <- data.frame( 
+        featureInterval = featureInterval, 
+        row.names = featureNames 
+    )
+    breakpoints <- ifelse( segmDiff != 0, 1, 0 )
+
+    ## NOTE: still to change name!! and remove in bpStats
+    featureData$sampleCount <- apply( breakpoints, 1, sum )
+
+    samplesListed <- apply( breakpoints, 1, function(x){ (names(x)[ x>0 ]) })
+    featureData$sampleNamesWithBreakpoints <- sapply( samplesListed, function( x ) { 
+        ifelse( any( is.na(x) ), NA, paste( x, collapse = .SEP_CHAR ) )
+    } )
+
+    ## create object with all required slots
+    output <- new( 'CopyNumberBreakPoints', 
+        segmDiff = segmDiff,
+        callDiff = callDiff,
+        featureAnnotation = featureAnnotation,
+        featureData = featureData,
+        calls = callData,
+        segments = segmData,
+        breakpoints = breakpoints
+    )
+    return( output )
+}
+
+getBreakpoints <- function( data, data2=NULL, first.rm=TRUE ) {
+    
+    ## input checks
+    if ( (class( data ) == 'cghCall') || (class( data ) == 'QDNAseqCopyNumbers') ){
+	    ## slots are the same for CGHcall and QDNAseq objects
+	    segmData <- data@assayData$segmented
+	    bpChrs   <- data@featureData@data$Chromosome
+	    bpStart  <- data@featureData@data$Start
+	    bpEnd    <- data@featureData@data$End
+	    featureNames <- rownames( segmData )
+	    callData <- matrix( data=NA, ncol=ncol(segmData), nrow=nrow(segmData) )
+
+	    ## check slot
+	    if ( exists( "calls", data@assayData ) ) callData <- data@assayData$calls
+
+    }
+    else if ( class(data) == "data.frame" ){
+    	requiredColnames <- c( "Chromosome", "Start", "End", "FeatureName" )
+    	## check if all required columns are present in data
+    	for (col in requiredColnames){
+    		if ( ! col %in% colnames(data) ){
+    			stop( '[ERR] input data is a data.frame but missing column "', col, '"' )		
+    		}
+    	}
+
+    	## all ok: prepare segmented data
+    	bpChrs <- data$Chromosome
+    	bpStart <- data$Start
+    	bpEnd <- data$End
+    	featureNames <- data$FeatureName
+    	segmData <- as.matrix( data[, 5:ncol(data) ] )
+    	callData <- matrix( data=NA, ncol=ncol(segmData), nrow=nrow(segmData) )
+
+    	## now check if data2 with calls is set
+    	if ( !is.null(data2) ){
+    		if ( class(data2) != "data.frame" ) stop( '[ERR] param data2 can only be a data.frame')
+    		if ( ! identical( data[,1:4], data2[, 1:4] ) ) stop( '[ERR] data and data2 differ in annotation columns (column 1 to 4)')
+    		callData <- as.matrix( data2[, 5:ncol(data2) ] )
+    	}
+    	rownames( segmData ) <- featureNames
+    	rownames( callData ) <- featureNames
+    }
+    else {
+    	stop( '[ERR] input data not a cghCall/QDNAseqSignals object nor a data.frame...' )
+    }
+
+    cat( "Breakpoint detection started...\n", sep="" )
+
 
     breakpoints <- NULL; segmDiff <- NULL; callDiff <- NULL; startChr <- c()
     featureAnnotation <- NULL;  featureInterval <- c()
