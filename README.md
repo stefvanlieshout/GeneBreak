@@ -15,9 +15,9 @@ devtools::install_github( "stefvanlieshout/BreakPointGenes" )
 Sample workflow
 ---------------------
 
-This package builds on to the Copy Number analysis workflows of [CGHcall] for cgh data and [QDNAseq] for NGS data. The objects created in those packages can serve as the input of BreakPointGenes (importing other data-sources will be added later).
+Output from the Copy Number analysis workflows of [CGHcall] for cgh data and [QDNAseq] for NGS data can serve as input for the analysis of BreakPointGenes.
 
-The test-data used in the example contains only one chromosome, but a total of 200 samples.
+The test-data used in this example contains data from one chromosome for a total of 200 samples.
 
 [CGHcall]: http://www.bioconductor.org/packages/release/bioc/html/CGHcall.html
 [QDNAseq]: http://www.bioconductor.org/packages/release/bioc/html/QDNAseq.html
@@ -34,8 +34,8 @@ data( package="BreakPointGenes" )
 # get more information about built-in data
 help( "copynumber.data.chr20" )
 
-# load built-in dataset (cghCall object)
-data( copynumber.data.chr20 )
+# load built-in dataset (object from CGHcall)
+data( "copynumber.data.chr20" )
 
 # load built-in gene annotation dataset (hg19 and hg38 are also availabe)
 data( ens.gene.ann.hg18 )
@@ -47,7 +47,7 @@ breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 breakpoints
 
 # take a peek at the data access options
-accessOptions(breakpoints)
+accessOptions( breakpoints )
 
 # optionally filter the data
 breakpointsFiltered <- bpFilter( breakpoints )
@@ -61,10 +61,7 @@ breakpointGenes <- bpGenes( breakpointsFiltered )
 # get recurrent breakpoints
 breakpointStatistics <- bpStats( breakpointGenes )
 
-# plot breakpoint frequencies
-bpPlot( breakpointStatistics )
-
-# print object information
+# print object information to screen
 breakpointStatistics
 
 # print some information of top 5 recurrently affected genes
@@ -78,7 +75,7 @@ head( recurrentGenes( breakpointStatistics ) )
 # 15305 C20orf26           7           18  2.748743e-04  3.622843e-02
 # 3493      HAO1           5            5  6.528175e-04  3.961727e-02
 
-# plot results of one chromosome
+# plot breakpoint frequencies of one chromosome
 bpPlot( breakpointStatistics, plot.chr=c(20) )
 ```
 

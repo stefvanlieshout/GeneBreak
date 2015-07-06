@@ -40,11 +40,12 @@ runWorkflow <- function( object, geneAnnotation ) {
 #' data( gene.annotation.hg19 )
 #' breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 getBreakpoints <- function( data, first.rm=TRUE ) {
-    cat( "Breakpoint detection started...", ncol(data), " samples\n", sep="" )
     
     ## input checks
-    if ( class( data ) != 'cghCall' ) 
-        stop( '[ERR] input data not a cghCall object...' )
+    if ( (class( data ) != 'cghCall') && (class( data ) != 'QDNAseqSignals') )
+        stop( '[ERR] input data not a cghCall or QDNAseqSignals object...' )
+
+    cat( "Breakpoint detection started...", ncol(data), " samples\n", sep="" )
 
     ## setup variables
     ## slots are the same for CGHcall and QDNAseq objects
