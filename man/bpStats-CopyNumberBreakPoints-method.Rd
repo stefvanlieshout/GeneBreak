@@ -10,20 +10,20 @@
   method = "BH", fdr.threshold = 1)
 }
 \arguments{
-\item{object}{A "CopyNumberBreakPointGenes" object}
+\item{object}{An object of class \code{CopyNumberBreakPointGenes}}
 
-\item{level}{The level at which to operate, this can be either "gene" (adjusting for gene size) or "feature" (per probe/bin)}
+\item{level}{The level at which to operate, this can be either "gene" (correcting for gene length) or "feature" (per probe/bin)}
 
-\item{method}{The FDR correction method to apply. This can be "BH" (applies Benjamini Hochberg) or "Gilbert" (for dedicated Benjamini Hochberg)}
+\item{method}{The FDR correction method to apply. This can be "BH" (applies Benjamini-Hochberg-type FDR correction) or "Gilbert" (for dedicated Benjamini-Hochberg-type FDR correction)}
 }
 \value{
-Object of same class of \code{object}.
+Returns an object of class \code{CopyNumberBreakPointGenes} with cohort based statistics added.
 }
 \description{
-Applies cohort based statistics to identify genes and/or features that are recurrently affected by breakpoint locations.
+Applies cohort-based statistics to identify genes and/or chromosomal locations that are recurrently affected by breakpoints.
 }
 \details{
-To be added...
+The statistical method on gene-level corrects for covariates that may influence the probability to be a breakpoint gene including number of breakpoints in a profile, number of gene-associated features and gene length by gene-associated feature coverage. The statistical analysis includes multiple testing where standard Benjamini-Hochberg-type FDR correction will be performed by default. This less computational intensive method assumes a similar null-distribution for all candidate breakpoint events and satisfies for analysis on breakpoint location-level. For statistics on gene-level however, we recommend to apply the more comprehensive and powerful dedicated Benjamini-Hochberg-type FDR correction that accounts for discreteness in null-distribution (Gilbert, 2005) following correction for covariates that may influence the probability to be a breakpoint gene including number of breakpoints in a profile, number of gene-associated features and gene length by gene-associated feature coverage.
 }
 \examples{
 data( copynumber.data.chr20 )
@@ -33,5 +33,8 @@ bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )
 bp <- bpStats( bp )
+}
+\references{
+Gilbert,P.B. (2005) A modified false discovery rate multiple-comparisons procedure for discrete data, applied to human immunodeficiency virus genetics. Journal of the Royal Statistical Society Series C-Applied Statistics, 54, 143-158.
 }
 

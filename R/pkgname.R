@@ -7,5 +7,5 @@
 #' how to format the documentation.
 #'
 #' @docType package
-#' @name PackageName
+#' @name GeneBreak
 NULL

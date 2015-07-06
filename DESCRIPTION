@@ -1,4 +1,4 @@
-Package: BreakPointGenes
+Package: GeneBreak
 Version: 0.0.1
 Title: Breakpoint Genes Detection
 Author: Evert van den Broek / Stef van Lieshout
@@ -16,10 +16,7 @@ Imports:
     CGHbase (>= 1.18.0),
     CGHcall (>= 2.18.0),
     DNAcopy (>= 1.32.0)
-Suggests: 
-    knitr
-Description: Breakpoint Genes Detection on Copy Number Aberration data
+Description: Recurrent breakpoint gene detection on copy number aberration profiles
 biocViews: CopyNumberVariation, DNASeq, Genetics, Sequencing
 License: GPL
 LazyData: FALSE
-VignetteBuilder: knitr

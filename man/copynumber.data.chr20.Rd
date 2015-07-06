@@ -3,7 +3,7 @@
 \docType{data}
 \name{copynumber.data.chr20}
 \alias{copynumber.data.chr20}
-\title{CGHcall CAIRO data hg18 chr20}
+\title{CGHcall Example data hg18 chr20}
 \format{A data.frame}
 \usage{
 data( copynumber.data.chr20 )
@@ -11,9 +11,6 @@ data( copynumber.data.chr20 )
 \description{
 A test dataset containing chr20 copynumber data
  for the BreakPointGenes package.
-}
-\details{
-For more info about the CAIRO study see...
 }
 \keyword{datasets}
 

@@ -4,8 +4,6 @@
 #'  data for chromosomes 7, 8, 9 and 10 of a Low Grade 
 #'  Glioma sample (LGG150).
 #'
-#' For more info on the cghCall class, see the package
-#'  "CGHcall"
 #'
 #' @docType data
 #' @keywords datasets
@@ -114,7 +112,7 @@ NULL
 #' @details See help( ens.gene.ann.hg18 ) for more info on contents
 NULL
 
-#' CGHcall CAIRO data hg18 chr18
+#' CGHcall Example data hg18 chr18
 #' @description A test dataset containing chr18 copynumber data
 #'  for the BreakPointGenes package.
 #'
@@ -123,10 +121,9 @@ NULL
 #' @name copynumber.data.chr18
 #' @usage data( copynumber.data.chr18 )
 #' @format A data.frame
-#' @details For more info about the CAIRO study see...
 NULL
 
-#' CGHcall CAIRO data hg18 chr20
+#' CGHcall Example data hg18 chr20
 #' @description A test dataset containing chr20 copynumber data
 #'  for the BreakPointGenes package.
 #'
@@ -135,10 +132,9 @@ NULL
 #' @name copynumber.data.chr20
 #' @usage data( copynumber.data.chr20 )
 #' @format A data.frame
-#' @details For more info about the CAIRO study see...
 NULL
 
-#' CGHcall CAIRO data hg18 chr21
+#' CGHcall Example data hg18 chr21
 #' @description A test dataset containing chr21 copynumber data
 #'  for the BreakPointGenes package.
 #'
@@ -147,5 +143,4 @@ NULL
 #' @name copynumber.data.chr21
 #' @usage data( copynumber.data.chr21 )
 #' @format A data.frame
-#' @details For more info about the CAIRO study see...
 NULL

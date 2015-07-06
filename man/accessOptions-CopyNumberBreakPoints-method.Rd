@@ -24,6 +24,5 @@ accessOptions( bp_stats )
 # segmentData( obj ) => returns feature segment values
 # breakpointData( obj ) => returns feature breakpoint values
 # sampleNames( obj ) => returns vector with sample names
-# etc...
 }
 

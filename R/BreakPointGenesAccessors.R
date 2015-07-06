@@ -82,7 +82,6 @@ setMethod( "show",
 #' # segmentData( obj ) => returns feature segment values
 #' # breakpointData( obj ) => returns feature breakpoint values
 #' # sampleNames( obj ) => returns vector with sample names
-#' # etc...
 #' @aliases accessOptions
 setMethod( "accessOptions",
     signature = "CopyNumberBreakPoints",

@@ -2,24 +2,43 @@
 % Please edit documentation in R/BreakPointGenesMethods.R
 \name{getBreakpoints}
 \alias{getBreakpoints}
-\title{CopyNumber to BreakPoints}
+\title{getBreakpoints}
 \usage{
-getBreakpoints(data, first.rm = TRUE)
+getBreakpoints(data, data2 = NULL, first.rm = TRUE)
 }
 \arguments{
-\item{data}{A "CGHcall" object}
+\item{data}{An object of class \code{CGHcall} or an object of class \code{QDNAseqCopyNumbers} or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).}
 
-\item{first.rm}{Remove the first breakpoint for each chromosome}
+\item{data2}{A "data.frame" containing copy number calls following feature annotations with the four columns ("Chromosome", "Start", "End", "FeatureName", ...). This is optional and allows CNA-associated breakpoint filtering. (see ?bpFilter)}
+
+\item{first.rm}{Remove the first 'artificial' breakpoint of the first DNA segment for each chromosome (default: first.rm=TRUE)}
 }
 \value{
-Object of class \code{CopyNumberBreakPoints}
+Returns an object of class \code{CopyNumberBreakPoints}.
 }
 \description{
 Builds the CopyNumberBreakPoints object from CGHcall data
 }
+\details{
+The accuracy of chromosomal breakpoint locations depends on the quality and genomic resolution of processed copy number data. For CNA input data, we recommend to use established computational methods for CNA detection such as 'CGHcall' (Van De Wiel et al., 2007) for array-CGH or 'QDNAseq' (Scheinin et al., 2014) for MPS data, which both use the implemented Circular Binary Segmentation algorithm (Olshen et al. 2004).
+}
 \examples{
 data( copynumber.data.chr20 )
-data( gene.annotation.hg19 )
 breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
+
+library(CGHcall)
+cgh <- copynumber.data.chr20
+segmented <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
+  End=bpend(cgh), FeatureName=featureNames(cgh), segmented(cgh))
+called <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
+  End=bpend(cgh), FeatureName=featureNames(cgh), calls(cgh))
+breakpoints <- getBreakpoints( data = segmented, data2 = called )
+}
+\references{
+Van De Wiel, M.A. et al. (2007) CGHcall: calling aberrations for array CGH tumor profiles. Bioinformatics, 23, 892-894.
+
+Scheinin, I. et al. (2014) DNA copy number analysis of fresh and formalin-fixed specimens by shallow whole-genome sequencing with identification and exclusion of problematic regions in the genome assembly. Genome Research, 24, 2022-2032.
+
+Olshen, A.B. et al. (2004) Circular binary segmentation for the analysis of array-based DNA copy number data. 5, 557-572.
 }
 

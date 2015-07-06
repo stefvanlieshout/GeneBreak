@@ -9,22 +9,21 @@
 \S4method{bpGenes}{CopyNumberBreakPointGenes}(object)
 }
 \arguments{
-\item{object}{A "CopyNumberBreakPointGenes" object}
-
-\item{geneAnnotations}{data.frame with gene annotations}
+\item{object}{An object of class \code{CopyNumberBreakPointGenes}}
 }
 \value{
-Object of same class of \code{object}.
+Returns an object of class \code{CopyNumberBreakPointGenes} with gene-breakpoint information
 }
 \description{
-Indentifies genes involved in breakpoint locations.
+Indentifies genes affected by breakpoint locations.
 }
 \details{
-This step requires gene annotation to be added to the breakpoints object (see ?addGeneAnnotation).
+This step requires feature-to-gene annotations added to the object of class "CopyNumberBreakPointGenes" (see ?addGeneAnnotation).
 }
 \examples{
 data( copynumber.data.chr20 )
 data( ens.gene.ann.hg18 )
+
 bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )

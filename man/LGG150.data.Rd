@@ -13,9 +13,5 @@ A dataset containing the copynumber, segment and call
  data for chromosomes 7, 8, 9 and 10 of a Low Grade
  Glioma sample (LGG150).
 }
-\details{
-For more info on the cghCall class, see the package
- "CGHcall"
-}
 \keyword{datasets}
 

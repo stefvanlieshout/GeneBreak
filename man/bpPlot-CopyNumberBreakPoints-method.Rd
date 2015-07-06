@@ -10,22 +10,21 @@
   plot.ylim = 15, fdr.threshold = 0.1, add.jitter = FALSE)
 }
 \arguments{
-\item{object}{A "CopyNumberBreakPoint" object}
+\item{object}{An object of class \code{CopyNumberBreakPoints} or \code{CopyNumberBreakPointGenes}}
 
-\item{plot.chr}{The chromosome(s) to plot}
+\item{plot.chr}{A vector with chromosome(s) to plot. All chromosomes will be plotted when NULL is used.}
 
-\item{plot.ylim}{The max y}
+\item{plot.ylim}{An integer giving the max y coordinate.}
 
-\item{fdr.threshold}{The FDR threshold}
-}
-\value{
-Nothing
+\item{fdr.threshold}{The FDR threshold to label recurrent breakpoint genes with their gene name}
+
+\item{add.jitter}{Logical. If TRUE, function jitter will be used for the y position of gene labels}
 }
 \description{
 Plots breakpoint frequencies per chromosome
 }
 \details{
-The plot includes breakpoints locations and frequencies. Genes that are recurrently affected are labeled with their gene name.
+The plot includes breakpoint locations and breakpoint gene frequencies. Genes that are recurrently affected are labeled with their gene name.
 }
 \examples{
 bpPlot( bp, c(1:4) )

@@ -9,24 +9,29 @@
 \S4method{addGeneAnnotation}{CopyNumberBreakPoints}(object, geneAnnotation)
 }
 \arguments{
-\item{object}{An object of class "CopyNumberBreakPoints"}
+\item{object}{An object of class \code{CopyNumberBreakPoints}}
 
-\item{geneAnnotation}{A dataframe with at least four column (Gene, Chromosome, Start, End)}
+\item{geneAnnotation}{A dataframe with at least four columns ("Gene", "Chromosome", "Start", "End")}
 }
 \value{
-Object of same class of \code{object}.
+Returns an object of class \code{CopyNumberBreakPointGenes} with gene annotation added.
 }
 \description{
-Maps features to genes locations
+Maps features to gene locations
 }
 \details{
-For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. It also possible to create your own gene annotations by creating a dataframe with at least four columns.
+The end of the first feature after gene start location up to and including the first feature after gene end location will be defined as gene-associated feaures. For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. In stead of using the built-in gene annotion files, feature-to-gene mapping can be based on an user-defined annotion file. The dataframe should contain at least these four columns: "Gene", "Chromosome", "Start" and "End".
 }
 \examples{
 data( copynumber.data.chr20 )
-data( gene.annotation.hg19 )
+data( ens.gene.ann.hg18 )
+
+# data( ens.gene.ann.hg19 )
+# data( ens.gene.ann.hg38 )
+
 bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
-bp <- addGeneAnnotation( bp, gene.annotation.hg19 )
+# input copynumber.data.chr20 is hg18 based
+bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 }
 
