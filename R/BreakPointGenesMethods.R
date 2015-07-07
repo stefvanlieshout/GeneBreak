@@ -165,7 +165,6 @@ getBreakpoints <- function( data, data2=NULL, first.rm=TRUE ) {
 #' bp <- getBreakpoints( copynumber.data.chr20 )
 #' bp <- bpFilter( bp, filter = "CNA-ass" )
 #' bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
-#' @rdname bpFilter-methods
 #' @aliases bpFilter
 setMethod( "bpFilter", "CopyNumberBreakPoints",
     function( object, filter="CNA-ass", threshold=NULL) {
