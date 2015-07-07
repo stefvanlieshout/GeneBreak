@@ -10,14 +10,14 @@
   method = "BH", fdr.threshold = 1)
 }
 \arguments{
-\item{object}{An object of class \code{CopyNumberBreakPointGenes}}
+\item{object}{An object of class \linkS4class{CopyNumberBreakPointGenes}}
 
 \item{level}{The level at which to operate, this can be either "gene" (correcting for gene length) or "feature" (per probe/bin)}
 
 \item{method}{The FDR correction method to apply. This can be "BH" (applies Benjamini-Hochberg-type FDR correction) or "Gilbert" (for dedicated Benjamini-Hochberg-type FDR correction)}
 }
 \value{
-Returns an object of class \code{CopyNumberBreakPointGenes} with cohort based statistics added.
+Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with cohort based statistics added.
 }
 \description{
 Applies cohort-based statistics to identify genes and/or chromosomal locations that are recurrently affected by breakpoints.

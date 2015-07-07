@@ -10,7 +10,7 @@
   plot.ylim = 15, fdr.threshold = 0.1, add.jitter = FALSE)
 }
 \arguments{
-\item{object}{An object of class \code{CopyNumberBreakPoints} or \code{CopyNumberBreakPointGenes}}
+\item{object}{An object of class \linkS4class{CopyNumberBreakPoints} or \linkS4class{CopyNumberBreakPointGenes}}
 
 \item{plot.chr}{A vector with chromosome(s) to plot. All chromosomes will be plotted when NULL is used.}
 

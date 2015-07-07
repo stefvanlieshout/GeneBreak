@@ -1,17 +1,3 @@
-#' LGG150 cghCall object
-#'
-#' A dataset containing the copynumber, segment and call
-#'  data for chromosomes 7, 8, 9 and 10 of a Low Grade 
-#'  Glioma sample (LGG150).
-#'
-#'
-#' @docType data
-#' @keywords datasets
-#' @name LGG150.data
-#' @usage data( LGG150.data )
-#' @format An object of class "cghCall"
-NULL
-
 #' Gene Annotation hg18
 #'
 #' A dataset containing the gene locations
@@ -73,46 +59,7 @@ NULL
 #' }
 NULL
 
-#' Gene Annotation hg18 chr18
-#'
-#' A test dataset containing the gene locations of chr18
-#'  required for the BreakPointGenes package.
-#'
-#' @docType data
-#' @keywords datasets
-#' @name ens.gene.ann.hg18.chr18
-#' @usage data( ens.gene.ann.hg18.chr18 )
-#' @format A data.frame
-#' @details See help( ens.gene.ann.hg18 ) for more info on contents
-NULL
-
-#' Gene Annotation hg18 chr20
-#'
-#' A test dataset containing the gene locations of chr20
-#'  required for the BreakPointGenes package.
-#'
-#' @docType data
-#' @keywords datasets
-#' @name ens.gene.ann.hg18.chr20
-#' @usage data( ens.gene.ann.hg18.chr20 )
-#' @format A data.frame
-#' @details See help( ens.gene.ann.hg18 ) for more info on contents
-NULL
-
-#' Gene Annotation hg18 chr21
-#'
-#' A test dataset containing the gene locations of chr21
-#'  required for the BreakPointGenes package.
-#'
-#' @docType data
-#' @keywords datasets
-#' @name ens.gene.ann.hg18.chr21
-#' @usage data( ens.gene.ann.hg18.chr21 )
-#' @format A data.frame
-#' @details See help( ens.gene.ann.hg18 ) for more info on contents
-NULL
-
-#' CGHcall Example data hg18 chr18
+#' CGHcall Example copynumber data hg18 chr18
 #' @description A test dataset containing chr18 copynumber data
 #'  for the BreakPointGenes package.
 #'
@@ -120,10 +67,10 @@ NULL
 #' @keywords datasets
 #' @name copynumber.data.chr18
 #' @usage data( copynumber.data.chr18 )
-#' @format A data.frame
+#' @format An object of class \linkS4class{cghCall}
 NULL
 
-#' CGHcall Example data hg18 chr20
+#' CGHcall Example copynumber data hg18 chr20
 #' @description A test dataset containing chr20 copynumber data
 #'  for the BreakPointGenes package.
 #'
@@ -131,10 +78,10 @@ NULL
 #' @keywords datasets
 #' @name copynumber.data.chr20
 #' @usage data( copynumber.data.chr20 )
-#' @format A data.frame
+#' @format An object of class \linkS4class{cghCall}
 NULL
 
-#' CGHcall Example data hg18 chr21
+#' CGHcall Example copynumber data hg18 chr21
 #' @description A test dataset containing chr21 copynumber data
 #'  for the BreakPointGenes package.
 #'
@@ -142,5 +89,20 @@ NULL
 #' @keywords datasets
 #' @name copynumber.data.chr21
 #' @usage data( copynumber.data.chr21 )
-#' @format A data.frame
+#' @format An object of class \linkS4class{cghCall}
+NULL
+
+#' LGG150 cghCall object
+#'
+#' A dataset containing the copynumber, segment and call
+#'  data for chromosomes 7, 8, 9 and 10 of a Low Grade 
+#'  Glioma sample (LGG150). This data was processed with
+#'  package QDNAseq.
+#'
+#'
+#' @docType data
+#' @keywords datasets
+#' @name LGG150.data
+#' @usage data( LGG150.data )
+#' @format An object of class \linkS4class{cghCall}
 NULL

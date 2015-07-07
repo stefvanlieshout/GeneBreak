@@ -29,13 +29,13 @@ options(width=40)
 
 \subsection{Loading copy number data}
 
-Copy number data can be loaded in two ways. Either from a cghCall/QDNAseq object (ouput of bioconductor packages CGHcall or QDNAseq) or by providing a data.frame with 4 columns: Region-name (usually probe identifier), Chromosome, Start and End. In this tutorial we load a built-in dataset:
+Copy number data can be loaded in two ways. Either from a cghCall/QDNAseq object (ouput of bioconductor packages CGHcall or QDNAseq) or by providing a data.frame with at least 5 columns: Chromosome, Start, End and FeatureName (usually probe identifier). Note: when using the data.frame input the column names must be exactly as described here and in the same order! In this tutorial we will use a built-in dataset of chromosome 20:
 
 <<>>=
 data( "copynumber.data.chr20" )
 @
 
-By inspecting the just loaded dataset, we see that we are dealing with an R object of class "cghCall" with 3653 features (aCGH probes in this case) and 200 samples.
+By inspecting the dataset, we see that we are dealing with an R object of class "cghCall" with 3653 features (aCGH probes in this case) and 200 samples.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -59,78 +59,116 @@ Annotation:
 
 \subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
 
-Then we need to obtain copy number data. Because the \pkg{BreakPointGenes} package is an extension of the work done in packages CGHcall (for array data) and QDNAseq (for sequencing data), an object of class "cghCall" can be used as input.
+Then we need to obtain copy number data.
 
 \begin{Schunk}
 \begin{Sinput}
-> bp <- getBreakpoints( data = cghCallObject )
+> breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 \end{Sinput}
 \end{Schunk}
 
-\subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
+\subsection{Loading gene annotation data}
 
-Then we need to obtain gene annotations. For hg18 and hg19 reference sequence these are included and can be loaded:
+Then we need to obtain gene annotations. For hg18 (and hg19, hg38) reference sequence these are included and can be loaded:
 
 <<>>=
-data( ens.gene.ann.hg18.chr20 )
+data( "ens.gene.ann.hg18" )
 @
+
+Inspect the annotation.
 
 \begin{Schunk}
 \begin{Sinput}
-> head( ens.gene.ann.hg18.chr20 )
-         Gene           EnsID Chromosome    Start      End
-2752     RNU7 ENSG00000210768         20 49954915 49954976
-8454   RPL7P2 ENSG00000220880         20  2004201  2004468
-8455  RPL19P1 ENSG00000217306         20  2709260  2709687
-8456 UBE2V1P1 ENSG00000218621         20  3290527  3290971
-8458  SF3A3P1 ENSG00000217305         20  3418176  3419652
-8463  RPS18P1 ENSG00000217102         20  5461524  5461981
+> head( ens.gene.ann.hg18 )
+      Gene           EnsID Chromosome  Start    End   band strand
+MIRN1302-2 ENSG00000221311          1  20229  20366 p36.33      1
+   FAM138E ENSG00000222027          1  24417  25944 p36.33     -1
+   FAM138E ENSG00000222003          1  24417  25944 p36.33     -1
+   FAM138A ENSG00000222003          1  24417  25944 p36.33     -1
+     OR4F5 ENSG00000177693          1  58954  59871 p36.33      1
+    OR4F29 ENSG00000177799          1 357522 358460 p36.33      1
 \end{Sinput}
 \end{Schunk}
 
-\subsection{Processing bam files}
-
-Next step is to load the copy number data from a cghCall file or from a
-text file. This can be done for example with one of the commands below.
-
-Next up is the detection of breakpoints 
-
-<<>>=
-bp <- getBreakpoints( data = copynumber.data.chr20 )
-@
+\subsection{Filtering}
 
 Next we filter breakpoints. Different filters can be set with different threshold. Default here is "deltaSeg" filter with a threshold of 0.2. This means that only breakpoints which... 
 
 <<>>=
-bp <- bpFilter( bp )
+breakpointsFiltered <- bpFilter( breakpoints )
 @
 
 Next we will add the gene annotation information to the BreakPointGenes object. No analysis is done here yet.
 
 <<>>=
-bp <- addGeneAnnotation( bp, ens.gene.ann.hg18.chr20 )
+breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg18 )
 @
 
 Next we perform the gene analysis. This overlaps the genomic locations of the genes with the copy number data to find breakpoints within genes.
 
 <<>>=
-bp <- bpGenes( bp )
+breakpointGenes <- bpGenes( breakpointsAnnotated )
 @
 
 Next we determine the significantly recurring breakpoints. This be done at the "gene" or "feature" level and using one of two different methods ("Benjamini Hochberg" or "Gilbert"). The advantage of using...
 
 <<>>=
-bp <- bpStats( bp )
+breakpointStats <- bpStats( breakpointGenes )
 @
 
 
 <<eval=FALSE>>=
-bp
+breakpointStats
 @
 
-This will return an object of class \code{CopyNumberBreakPoints}.
+This will return an object of class \code{CopyNumberBreakPointGenes}.
 
+By using recurrentGenes() we can observe the recurrent affected genes.
 
+<<>>=
+head( recurrentGenes( breakpointStatistics ) )
+@
+
+\clearpage
+
+\section{Gene Annotation creation}
+
+The steps below are a description of how the gene annotations in this package were created.
+
+<<eval=FALSE>>=
+# gene annotations obtained via Biomart. 
+# HUGO gene names (HGNC symbol), Ensembl_ID and chromosomal location
+
+# Used (and most) recent releases:
+# HG18: release54
+# HG19: release75
+# HG38: release80 (date: 150629)
+
+library(biomaRt)
+
+ensembl54 = useMart( host='may2009.archive.ensembl.org', biomart='ENSEMBL_MART_ENSEMBL', dataset="hsapiens_gene_ensembl" )
+ensembl75 = useMart( host='feb2014.archive.ensembl.org', biomart='ENSEMBL_MART_ENSEMBL', dataset="hsapiens_gene_ensembl" )
+ensembl80 = useMart( "ensembl", dataset="hsapiens_gene_ensembl" )
+
+createAnnotationFile <- function( biomartVersion ) {
+  biomart_result <- getBM(attributes =  c("hgnc_symbol", "ensembl_gene_id", "chromosome_name",  "start_position", "end_position", "band", "strand"), mart = biomartVersion)
+
+  biomart_result[ ,3] <- as.vector( biomart_result[ ,3] )
+  biomart_result$chromosome_name[ biomart_result$chromosome_name=="X" ] <- "23"
+  biomart_result$chromosome_name[ biomart_result$chromosome_name=="Y" ] <- "24"
+  
+  biomart_genes <-biomart_result[ which(biomart_result[ ,1]!="" & biomart_result[ ,3] %in% c(1:24)) , ]
+  colnames(biomart_genes)[1:5]<-c("Gene","EnsID","Chromosome","Start","End")
+  
+  cat( c("Biomart version:", biomartVersion@host, "including:", dim(biomart_genes)[1], "genes\n") ) 
+  return( biomart_genes )
+}
+
+ens.gene.ann.hg18 <- createAnnotationFile( ensembl54 )
+ens.gene.ann.hg19 <- createAnnotationFile( ensembl75 )
+ens.gene.ann.hg38 <- createAnnotationFile( ensembl80 )
+
+@
 
 \clearpage
 

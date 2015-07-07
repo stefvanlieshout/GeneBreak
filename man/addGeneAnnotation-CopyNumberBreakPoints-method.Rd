@@ -9,12 +9,12 @@
 \S4method{addGeneAnnotation}{CopyNumberBreakPoints}(object, geneAnnotation)
 }
 \arguments{
-\item{object}{An object of class \code{CopyNumberBreakPoints}}
+\item{object}{An object of class \linkS4class{CopyNumberBreakPoints}}
 
 \item{geneAnnotation}{A dataframe with at least four columns ("Gene", "Chromosome", "Start", "End")}
 }
 \value{
-Returns an object of class \code{CopyNumberBreakPointGenes} with gene annotation added.
+Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene annotation added.
 }
 \description{
 Maps features to gene locations

@@ -9,16 +9,16 @@
 \S4method{bpGenes}{CopyNumberBreakPointGenes}(object)
 }
 \arguments{
-\item{object}{An object of class \code{CopyNumberBreakPointGenes}}
+\item{object}{An object of class \linkS4class{CopyNumberBreakPointGenes}}
 }
 \value{
-Returns an object of class \code{CopyNumberBreakPointGenes} with gene-breakpoint information
+Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene-breakpoint information
 }
 \description{
 Indentifies genes affected by breakpoint locations.
 }
 \details{
-This step requires feature-to-gene annotations added to the object of class "CopyNumberBreakPointGenes" (see ?addGeneAnnotation).
+This step requires feature-to-gene annotations added to the input object (see ?addGeneAnnotation).
 }
 \examples{
 data( copynumber.data.chr20 )

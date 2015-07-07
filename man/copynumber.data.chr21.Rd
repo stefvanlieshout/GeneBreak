@@ -3,8 +3,8 @@
 \docType{data}
 \name{copynumber.data.chr21}
 \alias{copynumber.data.chr21}
-\title{CGHcall Example data hg18 chr21}
-\format{A data.frame}
+\title{CGHcall Example copynumber data hg18 chr21}
+\format{An object of class \linkS4class{cghCall}}
 \usage{
 data( copynumber.data.chr21 )
 }

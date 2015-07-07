@@ -1,6 +1,6 @@
-Package: GeneBreak
+Package: BreakPointGenes
 Version: 0.0.1
-Title: Breakpoint Genes Detection
+Title: Breakpoint Gene Detection
 Author: Evert van den Broek / Stef van Lieshout
 Maintainer: Stef van Lieshout <s.vanLieshout@vumc.nl>
 Depends: 
@@ -10,13 +10,9 @@ Imports:
     methods,
     stats,
     utils,
-    matrixStats (>= 0.9.4),
-    R.utils (>= 1.28.4),
-    Biobase (>= 2.18.0),
     CGHbase (>= 1.18.0),
-    CGHcall (>= 2.18.0),
-    DNAcopy (>= 1.32.0)
+    CGHcall (>= 2.18.0)
 Description: Recurrent breakpoint gene detection on copy number aberration profiles
-biocViews: CopyNumberVariation, DNASeq, Genetics, Sequencing
+biocViews: aCGH, CopyNumberVariation, DNASeq, Genetics, Sequencing
 License: GPL
 LazyData: FALSE

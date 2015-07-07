@@ -4,14 +4,15 @@
 \name{LGG150.data}
 \alias{LGG150.data}
 \title{LGG150 cghCall object}
-\format{An object of class "cghCall"}
+\format{An object of class \linkS4class{cghCall}}
 \usage{
 data( LGG150.data )
 }
 \description{
 A dataset containing the copynumber, segment and call
  data for chromosomes 7, 8, 9 and 10 of a Low Grade
- Glioma sample (LGG150).
+ Glioma sample (LGG150). This data was processed with
+ package QDNAseq.
 }
 \keyword{datasets}
 
