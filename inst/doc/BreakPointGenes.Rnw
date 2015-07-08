@@ -109,7 +109,7 @@ Next we perform the gene analysis. This overlaps the genomic locations of the ge
 \begin{figure}[htbp]
 \centering
 \includegraphics [width = 360pt]{figure_SI.pdf}
-\caption{\textit{pwOmics} geneAnnotation }
+\caption{\textit{BreakPointGenes} geneAnnotation }
 \label{fig:geneAnnotation}
 \end{figure}
 
