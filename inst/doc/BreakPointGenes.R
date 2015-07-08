@@ -38,31 +38,31 @@ breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg1
 
 
 ###################################################
-### code chunk number 7: BreakPointGenes.Rnw:109-110
+### code chunk number 7: BreakPointGenes.Rnw:116-117
 ###################################################
 breakpointGenes <- bpGenes( breakpointsAnnotated )
 
 
 ###################################################
-### code chunk number 8: BreakPointGenes.Rnw:115-116
+### code chunk number 8: BreakPointGenes.Rnw:122-123
 ###################################################
 breakpointStats <- bpStats( breakpointGenes )
 
 
 ###################################################
-### code chunk number 9: BreakPointGenes.Rnw:120-121 (eval = FALSE)
+### code chunk number 9: BreakPointGenes.Rnw:127-128 (eval = FALSE)
 ###################################################
 ## breakpointStats
 
 
 ###################################################
-### code chunk number 10: BreakPointGenes.Rnw:128-129
+### code chunk number 10: BreakPointGenes.Rnw:135-136
 ###################################################
 head( recurrentGenes( breakpointStatistics ) )
 
 
 ###################################################
-### code chunk number 11: BreakPointGenes.Rnw:138-170 (eval = FALSE)
+### code chunk number 11: BreakPointGenes.Rnw:145-177 (eval = FALSE)
 ###################################################
 ## # gene annotations obtained via Biomart. 
 ## # HUGO gene names (HGNC symbol), Ensembl_ID and chromosomal location
@@ -99,7 +99,7 @@ head( recurrentGenes( breakpointStatistics ) )
 
 
 ###################################################
-### code chunk number 12: BreakPointGenes.Rnw:179-180
+### code chunk number 12: BreakPointGenes.Rnw:186-187
 ###################################################
 sessionInfo()
 

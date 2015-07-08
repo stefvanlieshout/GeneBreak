@@ -106,6 +106,13 @@ breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg1
 
 Next we perform the gene analysis. This overlaps the genomic locations of the genes with the copy number data to find breakpoints within genes.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics [width = 360pt]{figure_SI.pdf}
+\caption{\textit{pwOmics} geneAnnotation }
+\label{fig:geneAnnotation}
+\end{figure}
+
 <<>>=
 breakpointGenes <- bpGenes( breakpointsAnnotated )
 @
