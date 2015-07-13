@@ -15,6 +15,8 @@
 \item{level}{The level at which to operate, this can be either "gene" (correcting for gene length) or "feature" (per probe/bin)}
 
 \item{method}{The FDR correction method to apply. This can be "BH" (applies Benjamini-Hochberg-type FDR correction) or "Gilbert" (for dedicated Benjamini-Hochberg-type FDR correction)}
+
+\item{fdr.threshold}{The threshold for FDR correction'}
 }
 \value{
 Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with cohort based statistics added.
@@ -28,7 +30,7 @@ The statistical method on gene-level corrects for covariates that may influence 
 \examples{
 data( copynumber.data.chr20 )
 data( ens.gene.ann.hg18 )
-bp <- getBreakpoints( dcopynumber.data.chr20 )
+bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )

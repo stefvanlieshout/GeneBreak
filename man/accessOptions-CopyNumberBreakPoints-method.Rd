@@ -15,14 +15,10 @@
 Access Object Data
 }
 \examples{
+data( copynumber.data.chr20 )
+bp <- getBreakpoints( copynumber.data.chr20 )
 accessOptions( bp )
-accessOptions( bp_genes )
-accessOptions( bp_stats )
-# --- Object data access ---
-# This is an object of class "CopyNumberBreakPointGenes"
-# callData( obj ) => returns feature call values
-# segmentData( obj ) => returns feature segment values
-# breakpointData( obj ) => returns feature breakpoint values
-# sampleNames( obj ) => returns vector with sample names
+# accessOptions( breakpointGenes )
+# accessOptions( breakpointStatistics )
 }
 

@@ -4,7 +4,7 @@
 \name{LGG150.data}
 \alias{LGG150.data}
 \title{LGG150 cghCall object}
-\format{An object of class \linkS4class{cghCall}}
+\format{An object of class cghCall}
 \usage{
 data( LGG150.data )
 }

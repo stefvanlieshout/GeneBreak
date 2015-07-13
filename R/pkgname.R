@@ -9,7 +9,7 @@
 #' @section GeneBreak functions:
 #' Analysis starts with the function \code{\link{getBreakpoints}} and continues with:\cr
 #' \code{\link{bpFilter}} to exclude certain breakpoints from the analysis\cr
-#' \code{\link{addGeneAnnoation}} to add gene location information\cr
+#' \code{\link{addGeneAnnotation}} to add gene location information\cr
 #' \code{\link{bpGenes}} to determine which features (probes/bins) are related to which genes\cr
 #' \code{\link{bpStats}} to determine which gene breaks are recurrent in the cohort\cr
 #'

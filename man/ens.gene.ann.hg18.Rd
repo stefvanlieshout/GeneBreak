@@ -7,7 +7,6 @@
 \format{A data.frame}
 \usage{
 data( ens.gene.ann.hg18 )
-head( ens.gene.ann.hg18 )
 }
 \description{
 A dataset containing the gene locations

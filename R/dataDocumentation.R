@@ -7,7 +7,6 @@
 #' @keywords datasets
 #' @name ens.gene.ann.hg18
 #' @usage data( ens.gene.ann.hg18 )
-#' head( ens.gene.ann.hg18 )
 #' @format A data.frame
 #' @details Dataframe with 5 columns:
 #' \itemize{
@@ -67,7 +66,7 @@ NULL
 #' @keywords datasets
 #' @name copynumber.data.chr18
 #' @usage data( copynumber.data.chr18 )
-#' @format An object of class \linkS4class{cghCall}
+#' @format An object of class cghCall
 NULL
 
 #' CGHcall Example copynumber data hg18 chr20
@@ -78,7 +77,8 @@ NULL
 #' @keywords datasets
 #' @name copynumber.data.chr20
 #' @usage data( copynumber.data.chr20 )
-#' @format An object of class \linkS4class{cghCall}
+#' @format An object of class cghCall
+
 NULL
 
 #' CGHcall Example copynumber data hg18 chr21
@@ -89,7 +89,7 @@ NULL
 #' @keywords datasets
 #' @name copynumber.data.chr21
 #' @usage data( copynumber.data.chr21 )
-#' @format An object of class \linkS4class{cghCall}
+#' @format An object of class cghCall
 NULL
 
 #' LGG150 cghCall object
@@ -104,5 +104,5 @@ NULL
 #' @keywords datasets
 #' @name LGG150.data
 #' @usage data( LGG150.data )
-#' @format An object of class \linkS4class{cghCall}
+#' @format An object of class cghCall
 NULL

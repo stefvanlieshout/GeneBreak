@@ -1,15 +1,14 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # IMPORTS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#importClassesFrom( methods, character, logical, matrix, missing, numeric )
+importClassesFrom( methods, character, logical, matrix, missing, numeric )
 #importMethodsFrom( Biobase, featureNames )
 #importMethodsFrom( CGHbase, regions )
-#importMethodsFrom( methods, coerce, initialize, show )
+importMethodsFrom( methods, coerce, initialize, show )
 
 #importFrom( CGHcall, CGHcall, ExpandCGHcall, postsegnormalize )
-#importFrom( graphics, abline, axis, box, mtext, par,
-#    points, rect, segments, text )
-#importFrom( methods, callNextMethod, new )
+importFrom( graphics, abline, axis, box, mtext, par, points, rect, segments, text )
+importFrom( methods, callNextMethod, new )
 #importFrom( R.utils, downloadFile )
 #importFrom( utils, packageVersion, read.table, write.table )
 
@@ -25,7 +24,6 @@ export( "bpGenes" )
 export( "bpStats" )
 
 ## extra workflow steps
-export( "runWorkflow" )
 export( "recurrentGenes" )
 export( "bpPlot" )
 
@@ -37,11 +35,10 @@ export( "breakpointData" )
 export( "featureChromosomes" )
 export( "geneChromosomes" )
 export( "featureInfo" )
+export( "geneInfo" )
 export( "featuresPerGene" )
 export( "breakpointsPerGene" )
-export( "bpSummary" )
 export( "sampleNames" )
 export( "featureNames" )
-export( "bpSummary" )
 
 # EOF

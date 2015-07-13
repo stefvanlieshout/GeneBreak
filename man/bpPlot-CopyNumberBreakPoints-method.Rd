@@ -27,6 +27,13 @@ Plots breakpoint frequencies per chromosome
 The plot includes breakpoint locations and breakpoint gene frequencies. Genes that are recurrently affected are labeled with their gene name.
 }
 \examples{
-bpPlot( bp, c(1:4) )
+data( copynumber.data.chr20 )
+data( ens.gene.ann.hg18 )
+bp <- getBreakpoints( copynumber.data.chr20 )
+bp <- bpFilter( bp )
+bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+bp <- bpGenes( bp )
+bp <- bpStats( bp )
+bpPlot( bp, c(20) )
 }
 

@@ -1,32 +1,10 @@
 .SEP_CHAR <- ','
 
-runWorkflow <- function( object, geneAnnotation ) {
-    startTime <- Sys.time()
-    cat( "GeneBreak workflow started at: ", format(startTime),"\n", sep="" )
-    
-    ## input checks
-    if ( (class( object ) != 'cghCall') && (class( object ) != 'QDNAseqSignals') )
-        stop( '[ERR] input data not a cghCall or QDNAseqSignals object...' )
-
-    ## perform all workflow steps
-    bp <- getBreakpoints( data = object )
-    bp <- bpFilter( object = bp )
-    bp <- addGeneAnnotation( object = bp, geneAnnotation )
-    bp <- bpGenes( bp )
-    bp <- bpStats( bp )
-
-    endTime <- Sys.time()
-    timeDiff <- format( round( endTime - startTime, 3 ) )
-    cat( "[Workflow runtime: ", timeDiff, "]\n", sep='')
-
-    return(bp)
-}
-
 #' getBreakpoints
 #' 
 #' @description
 #' Builds the  \linkS4class{CopyNumberBreakPoints} object from copynumber data 
-#' @param data An object of class \linkS4class{cghCall} or an object of class \linkS4class{QDNAseqCopyNumbers} or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).
+#' @param data An object of class "cghCall" or an object of class QDNAseqCopyNumbers" or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).
 #' @param data2 A "data.frame" containing copy number calls following feature annotations with the four columns ("Chromosome", "Start", "End", "FeatureName", ...). This is optional and allows CNA-associated breakpoint filtering. (see ?bpFilter)
 #' @param first.rm Remove the first 'artificial' breakpoint of the first DNA segment for each chromosome (default: first.rm=TRUE)
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPoints}.
@@ -38,6 +16,7 @@ runWorkflow <- function( object, geneAnnotation ) {
 #' data( copynumber.data.chr20 )
 #' breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 #'
+#' ## or alternatively
 #' library(CGHcall)
 #' cgh <- copynumber.data.chr20
 #' segmented <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh), 
@@ -219,17 +198,6 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
     }
 )
 
-## maybe remove this method??
-setMethod( "bpSummary", "CopyNumberBreakPoints",
-    function( object ) {
-        if( nrow(object@breakpoints) > 0 ) {
-            cat( "Detected BPs per sample:\n" )
-            colSums( object@breakpoints )
-        }
-    }
-)
-
-
 #' addGeneAnnotation
 #' 
 #' @description
@@ -238,7 +206,7 @@ setMethod( "bpSummary", "CopyNumberBreakPoints",
 #' @param geneAnnotation A dataframe with at least four columns ("Gene", "Chromosome", "Start", "End")
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene annotation added.
 #' @details The end of the first feature after gene start location up to and including the first feature after gene end location will be defined as gene-associated feaures. For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. In stead of using the built-in gene annotion files, feature-to-gene mapping can be based on an user-defined annotion file. The dataframe should contain at least these four columns: "Gene", "Chromosome", "Start" and "End".
-#' @details Note that the chromosome names are labeled similar in the annotation file and in the object of class "CopyNumberBreakPoints" (e.g. "1", "2", ..., "24")
+#' @details Note that the chromosome names are labeled similar in the annotation file and in the object of class \linkS4class{CopyNumberBreakPoints} (e.g. "1", "2", ..., "24")
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )
@@ -263,7 +231,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
     }
 
     ## check data chromosomes and remove others from gene annotation
-    dataChrs <- names(table( featureChromosomes(breakpointsFiltered) ))
+    dataChrs <- names(table( featureChromosomes(object) ))
     geneAnnotation <- geneAnnotation[ which( geneAnnotation$Chromosome %in% dataChrs ), ]
 
     ## setup gene information
@@ -544,13 +512,14 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 #' @param object An object of class \linkS4class{CopyNumberBreakPointGenes}
 #' @param level The level at which to operate, this can be either "gene" (correcting for gene length) or "feature" (per probe/bin)
 #' @param method The FDR correction method to apply. This can be "BH" (applies Benjamini-Hochberg-type FDR correction) or "Gilbert" (for dedicated Benjamini-Hochberg-type FDR correction)
+#' @param fdr.threshold The threshold for FDR correction'
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with cohort based statistics added.
 #' @details The statistical method on gene-level corrects for covariates that may influence the probability to be a breakpoint gene including number of breakpoints in a profile, number of gene-associated features and gene length by gene-associated feature coverage. The statistical analysis includes multiple testing where standard Benjamini-Hochberg-type FDR correction will be performed by default. This less computational intensive method assumes a similar null-distribution for all candidate breakpoint events and satisfies for analysis on breakpoint location-level. For statistics on gene-level however, we recommend to apply the more comprehensive and powerful dedicated Benjamini-Hochberg-type FDR correction that accounts for discreteness in null-distribution (Gilbert, 2005) following correction for covariates that may influence the probability to be a breakpoint gene including number of breakpoints in a profile, number of gene-associated features and gene length by gene-associated feature coverage.
 #' @references Gilbert,P.B. (2005) A modified false discovery rate multiple-comparisons procedure for discrete data, applied to human immunodeficiency virus genetics. Journal of the Royal Statistical Society Series C-Applied Statistics, 54, 143-158.
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )
-#' bp <- getBreakpoints( dcopynumber.data.chr20 )
+#' bp <- getBreakpoints( copynumber.data.chr20 )
 #' bp <- bpFilter( bp )
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
@@ -729,7 +698,14 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 #' @param add.jitter Logical. If TRUE, function jitter will be used for the y position of gene labels
 #' @details The plot includes breakpoint locations and breakpoint gene frequencies. Genes that are recurrently affected are labeled with their gene name.
 #' @examples
-#' bpPlot( bp, c(1:4) )
+#' data( copynumber.data.chr20 )
+#' data( ens.gene.ann.hg18 )
+#' bp <- getBreakpoints( copynumber.data.chr20 )
+#' bp <- bpFilter( bp )
+#' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+#' bp <- bpGenes( bp )
+#' bp <- bpStats( bp )
+#' bpPlot( bp, c(20) )
 #' @aliases bpPlot
 setMethod( "bpPlot", "CopyNumberBreakPoints",
     

@@ -4,7 +4,7 @@
 \name{copynumber.data.chr20}
 \alias{copynumber.data.chr20}
 \title{CGHcall Example copynumber data hg18 chr20}
-\format{An object of class \linkS4class{cghCall}}
+\format{An object of class cghCall}
 \usage{
 data( copynumber.data.chr20 )
 }
