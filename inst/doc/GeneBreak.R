@@ -1,74 +1,80 @@
 ### R code from vignette source 'GeneBreak.Rnw'
 
 ###################################################
-### code chunk number 1: GeneBreak.Rnw:21-22
+### code chunk number 1: loadingPackage
 ###################################################
 library(GeneBreak)
 
 
 ###################################################
-### code chunk number 2: GeneBreak.Rnw:25-27
+### code chunk number 2: settingOptions
 ###################################################
 options("GeneBreak::verbose"=NA)
 options(width=40)
 
 
 ###################################################
-### code chunk number 3: GeneBreak.Rnw:34-35
+### code chunk number 3: loadingCopynumberData
 ###################################################
 data( "copynumber.data.chr20" )
 
 
 ###################################################
-### code chunk number 4: GeneBreak.Rnw:64-65
+### code chunk number 4: displayCopynumberData
+###################################################
+copynumber.data.chr20
+
+
+###################################################
+### code chunk number 5: getBreakpoints
 ###################################################
 breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 
 
 ###################################################
-### code chunk number 5: GeneBreak.Rnw:72-73
+### code chunk number 6: loadingAnnotation
 ###################################################
 data( "ens.gene.ann.hg18" )
 
 
 ###################################################
-### code chunk number 6: GeneBreak.Rnw:95-96
+### code chunk number 7: bpFilter
 ###################################################
 breakpointsFiltered <- bpFilter( breakpoints )
 
 
 ###################################################
-### code chunk number 7: GeneBreak.Rnw:101-102
+### code chunk number 8: addGeneAnnotation
 ###################################################
 breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg18 )
 
 
 ###################################################
-### code chunk number 8: GeneBreak.Rnw:114-115
+### code chunk number 9: bpGenes
 ###################################################
 breakpointGenes <- bpGenes( breakpointsAnnotated )
 
 
 ###################################################
-### code chunk number 9: GeneBreak.Rnw:120-121
+### code chunk number 10: bpStats
 ###################################################
 breakpointStatistics <- bpStats( breakpointGenes )
 
 
 ###################################################
-### code chunk number 10: GeneBreak.Rnw:125-126 (eval = FALSE)
+### code chunk number 11: showStatsObject (eval = FALSE)
 ###################################################
 ## breakpointStatistics
 
 
 ###################################################
-### code chunk number 11: GeneBreak.Rnw:133-134
+### code chunk number 12: recurrentGenes
 ###################################################
 head( recurrentGenes( breakpointStatistics ) )
 
 
 ###################################################
-### code chunk number 12: GeneBreak.Rnw:143-175 (eval = FALSE)
+### code chunk number 13: createAnnotationExample (eval = FALSE)
 ###################################################
 ## # gene annotations obtained via Biomart. 
 ## # HUGO gene names (HGNC symbol), Ensembl_ID and chromosomal location
@@ -105,7 +111,7 @@ head( recurrentGenes( breakpointStatistics ) )
 
 
 ###################################################
-### code chunk number 13: GeneBreak.Rnw:184-185
+### code chunk number 14: sessionInfo
 ###################################################
 sessionInfo()
 

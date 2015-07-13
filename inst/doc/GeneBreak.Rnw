@@ -18,11 +18,11 @@
 
 This is a short tutorial on how to use the \pkg{GeneBreak} package. It covers an example run using included copy number data of one chromosome from 200 samples. The samples are part of the CAIRO study described in REF. Let's start by loading the package.
 
-<<>>=
+<<loadingPackage>>=
 library(GeneBreak)
 @
 
-<<echo=FALSE>>=
+<<settingOptions,echo=FALSE>>=
 options("GeneBreak::verbose"=NA)
 options(width=40)
 @
@@ -31,37 +31,21 @@ options(width=40)
 
 Copy number data can be loaded in two ways. Either from a cghCall/QDNAseq object (ouput of bioconductor packages CGHcall or QDNAseq) or by providing a data.frame with at least 5 columns: Chromosome, Start, End and FeatureName (usually probe identifier). Note: when using the data.frame input the column names must be exactly as described here and in the same order! In this tutorial we will use a built-in dataset of chromosome 20:
 
-<<>>=
+<<loadingCopynumberData>>=
 data( "copynumber.data.chr20" )
 @
 
 By inspecting the dataset, we see that we are dealing with an R object of class "cghCall" with 3653 features (aCGH probes in this case) and 200 samples.
 
-\begin{Schunk}
-\begin{Sinput}
-> copynumber.data.chr20
-cghCall (storageMode: lockedEnvironment)
-assayData: 3653 features, 200 samples 
-  element names: calls, copynumber, probamp, probgain, probloss, probnorm, segmented 
-protocolData: none
-phenoData
-  sampleNames: sample_1 sample_2 ... sample_200 (200 total)
-  varLabels: Cellularity
-  varMetadata: labelDescription
-featureData
-  featureNames: A_16_P03469195 A_14_P136138 ... A_18_P13856091 (3653 total)
-  fvarLabels: Chromosome Start End
-  fvarMetadata: labelDescription
-experimentData: use 'experimentData(object)'
-Annotation: 
-\end{Sinput}
-\end{Schunk}
+<<displayCopynumberData>>=
+copynumber.data.chr20
+@
 
 \subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
 
 Then we need to obtain copy number data.
 
-<<>>=
+<<getBreakpoints>>=
 breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 @
 
@@ -69,7 +53,7 @@ breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 
 Then we need to obtain gene annotations. For hg18 (and hg19, hg38) reference sequence these are included and can be loaded:
 
-<<>>=
+<<loadingAnnotation>>=
 data( "ens.gene.ann.hg18" )
 @
 
@@ -92,13 +76,13 @@ MIRN1302-2 ENSG00000221311          1  20229  20366 p36.33      1
 
 Next we filter breakpoints. Different filters can be set with different threshold. Default here is "deltaSeg" filter with a threshold of 0.2. This means that only breakpoints which... 
 
-<<>>=
+<<bpFilter>>=
 breakpointsFiltered <- bpFilter( breakpoints )
 @
 
 Next we will add the gene annotation information to the GeneBreak object. No analysis is done here yet.
 
-<<>>=
+<<addGeneAnnotation>>=
 breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg18 )
 @
 
@@ -111,18 +95,18 @@ Next we perform the gene analysis. This overlaps the genomic locations of the ge
 \label{fig:geneAnnotation}
 \end{figure}
 
-<<>>=
+<<bpGenes>>=
 breakpointGenes <- bpGenes( breakpointsAnnotated )
 @
 
 Next we determine the significantly recurring breakpoints. This be done at the "gene" or "feature" level and using one of two different methods ("Benjamini Hochberg" or "Gilbert"). The advantage of using...
 
-<<>>=
+<<bpStats>>=
 breakpointStatistics <- bpStats( breakpointGenes )
 @
 
 
-<<eval=FALSE>>=
+<<showStatsObject,eval=FALSE>>=
 breakpointStatistics
 @
 
@@ -130,7 +114,7 @@ This will return an object of class \code{CopyNumberBreakPointGenes}.
 
 By using recurrentGenes() we can observe the recurrent affected genes.
 
-<<>>=
+<<recurrentGenes>>=
 head( recurrentGenes( breakpointStatistics ) )
 @
 
@@ -140,7 +124,7 @@ head( recurrentGenes( breakpointStatistics ) )
 
 The steps below are a description of how the gene annotations in this package were created.
 
-<<eval=FALSE>>=
+<<createAnnotationExample,eval=FALSE>>=
 # gene annotations obtained via Biomart. 
 # HUGO gene names (HGNC symbol), Ensembl_ID and chromosomal location
 
@@ -181,7 +165,7 @@ ens.gene.ann.hg38 <- createAnnotationFile( ensembl80 )
 
 The version number of R and packages loaded for generating the vignette were:
 
-<<echo=FALSE>>=
+<<sessionInfo,echo=FALSE>>=
 sessionInfo()
 @
 
