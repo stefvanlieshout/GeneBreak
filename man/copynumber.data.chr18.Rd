@@ -10,7 +10,7 @@ data( copynumber.data.chr18 )
 }
 \description{
 A test dataset containing chr18 copynumber data
- for the BreakPointGenes package.
+ for the GeneBreak package.
 }
 \keyword{datasets}
 

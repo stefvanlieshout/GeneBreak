@@ -1,4 +1,4 @@
-BreakPointGenes R package
+GeneBreak R package
 ====================
 
 Breakpoints of copy number aberrations (CNA) indicate underlying DNA breaks and thereby regions involved in structural variants. The availability of large copy number data cohorts enables to identify genes recurrently affected by structural variants. This package allows you to systematically identify recurrent CNA-associated breakpoint genes. Breakpoint detection and a tailored annotation approach for breakpoint-to-gene mapping are implemented, which takes the gene position in relation to breakpoint interval into account. Furthermore, statistics with multiple testing correction is incorporated to obtain recurrent breakpoint events. The method can be applied both on copy number data obtained from microarrays, such as array Comparative Genomic Hybridization (CGH), and on whole genome sequencing.
@@ -9,13 +9,13 @@ Installation
 Requires package "devtools":
 
 ```R
-devtools::install_github( "stefvanlieshout/BreakPointGenes" )
+devtools::install_github( "stefvanlieshout/GeneBreak" )
 ```
 
 Sample workflow
 ---------------------
 
-Output from the Copy Number analysis workflows of [CGHcall] for cgh data and [QDNAseq] for NGS data can serve as input for the analysis of BreakPointGenes.
+Output from the Copy Number analysis workflows of [CGHcall] for cgh data and [QDNAseq] for NGS data can serve as input for the analysis of GeneBreak.
 
 The test-data used in this example contains data from one chromosome for a total of 200 samples.
 
@@ -23,13 +23,13 @@ The test-data used in this example contains data from one chromosome for a total
 [QDNAseq]: http://www.bioconductor.org/packages/release/bioc/html/QDNAseq.html
 
 ```R
-library( "BreakPointGenes" )
+library( "GeneBreak" )
 
 # read vignette for more explanation about the workflow
-vignette( "BreakPointGenes")
+vignette( "GeneBreak")
 
 # explore built-in data
-data( package="BreakPointGenes" )
+data( package="GeneBreak" )
 
 # get more information about built-in data
 help( "copynumber.data.chr20" )

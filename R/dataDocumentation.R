@@ -1,7 +1,7 @@
 #' Gene Annotation hg18
 #'
 #' A dataset containing the gene locations
-#'  required for the BreakPointGenes package.
+#'  required for the GeneBreak package.
 #'
 #' @docType data
 #' @keywords datasets
@@ -22,7 +22,7 @@ NULL
 #' Gene Annotation hg19
 #'
 #' A dataset containing the gene locations
-#'  required for the BreakPointGenes package.
+#'  required for the GeneBreak package.
 #'
 #' @docType data
 #' @keywords datasets
@@ -42,7 +42,7 @@ NULL
 #' Gene Annotation hg38
 #'
 #' A dataset containing the gene locations
-#'  required for the BreakPointGenes package.
+#'  required for the GeneBreak package.
 #'
 #' @docType data
 #' @keywords datasets
@@ -61,7 +61,7 @@ NULL
 
 #' CGHcall Example copynumber data hg18 chr18
 #' @description A test dataset containing chr18 copynumber data
-#'  for the BreakPointGenes package.
+#'  for the GeneBreak package.
 #'
 #' @docType data
 #' @keywords datasets
@@ -72,7 +72,7 @@ NULL
 
 #' CGHcall Example copynumber data hg18 chr20
 #' @description A test dataset containing chr20 copynumber data
-#'  for the BreakPointGenes package.
+#'  for the GeneBreak package.
 #'
 #' @docType data
 #' @keywords datasets
@@ -83,7 +83,7 @@ NULL
 
 #' CGHcall Example copynumber data hg18 chr21
 #' @description A test dataset containing chr21 copynumber data
-#'  for the BreakPointGenes package.
+#'  for the GeneBreak package.
 #'
 #' @docType data
 #' @keywords datasets

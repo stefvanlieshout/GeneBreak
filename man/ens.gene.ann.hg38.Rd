@@ -10,7 +10,7 @@ data( ens.gene.ann.hg38 )
 }
 \description{
 A dataset containing the gene locations
- required for the BreakPointGenes package.
+ required for the GeneBreak package.
 }
 \details{
 Dataframe with 5 columns:
