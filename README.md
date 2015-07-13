@@ -38,7 +38,7 @@ help( "copynumber.data.chr20" )
 data( "copynumber.data.chr20" )
 
 # load built-in gene annotation dataset (hg19 and hg38 are also availabe)
-data( ens.gene.ann.hg18 )
+data( "ens.gene.ann.hg18" )
 
 # setup the breakpoint data
 breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
