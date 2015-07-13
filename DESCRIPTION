@@ -1,17 +1,11 @@
 Package: GeneBreak
-Version: 0.0.1
+Version: 0.99.0
 Title: Breakpoint Gene Detection
 Author: Evert van den Broek / Stef van Lieshout
 Maintainer: Stef van Lieshout <s.vanLieshout@vumc.nl>
 Depends: 
     R (>= 2.15.0)
 Imports: 
-    graphics,
-    methods,
-    stats,
-    utils,
-    CGHbase (>= 1.18.0),
-    CGHcall (>= 2.18.0)
 Description: Recurrent breakpoint gene detection on copy number aberration profiles
 biocViews: aCGH, CopyNumberVariation, DNASeq, Genetics, Sequencing
 License: GPL

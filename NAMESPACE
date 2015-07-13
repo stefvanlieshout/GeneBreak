@@ -1,17 +1,17 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # IMPORTS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-importClassesFrom( methods, character, logical, matrix, missing, numeric )
-importMethodsFrom( Biobase, featureNames )
-importMethodsFrom( CGHbase, regions )
-importMethodsFrom( methods, coerce, initialize, show )
+#importClassesFrom( methods, character, logical, matrix, missing, numeric )
+#importMethodsFrom( Biobase, featureNames )
+#importMethodsFrom( CGHbase, regions )
+#importMethodsFrom( methods, coerce, initialize, show )
 
-importFrom( CGHcall, CGHcall, ExpandCGHcall, postsegnormalize )
-importFrom( graphics, abline, axis, box, mtext, par,
-    points, rect, segments, text )
-importFrom( methods, callNextMethod, new )
-importFrom( R.utils, downloadFile )
-importFrom( utils, packageVersion, read.table, write.table )
+#importFrom( CGHcall, CGHcall, ExpandCGHcall, postsegnormalize )
+#importFrom( graphics, abline, axis, box, mtext, par,
+#    points, rect, segments, text )
+#importFrom( methods, callNextMethod, new )
+#importFrom( R.utils, downloadFile )
+#importFrom( utils, packageVersion, read.table, write.table )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # EXPORTS
