@@ -229,11 +229,11 @@ setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
 )
 
 #' Show recurrent genes
-#' @param object Output of bpStats(): a \code{CopyNumberBreakPointGenes} object
-#' @param fdr.threshold Genes with lower FDR are returned
-#' @param summarize If TRUE only certain columns are returned
+#' @param object Output of bpStats(): an object of class \code{CopyNumberBreakPointGenes}
+#' @param fdr.threshold A numeric Genes with lower FDR are returned
+#' @param summarize A logical to determine whether to only output a selection of columns
 #' @param order.column Name of the column to sort output on
-#' @return data.frame with recurrent genes
+#' @return data.frame with genes recurrently affected by breakpoints
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )

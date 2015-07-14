@@ -1,6 +1,11 @@
-%\VignetteIndexEntry{Introduction to GeneBreak}
+%\VignetteIndexEntry{GeneBreak}
+%\VignetteDepends{GeneBreak}
+%\VignetteKeywords{Recurrent gene break detection on copy number data from aCGH or sequencing.}
+%\VignettePackage{GeneBreak}
+%\VignetteEngine{utils::Sweave}
 
 \documentclass{article}
+
 \usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{
   hyperref}
 
@@ -11,12 +16,23 @@
 \newcommand{\code}[1]{\texttt{#1}}
 
 \title{Introduction to GeneBreak}
-\author{Evert van den Broek \& Stef van Lieshout}
+\author{Evert van den Broek\footnote{email@email.com} \& Stef van Lieshout}
 \maketitle
+\begin{center}
+  Department of Pathology \\*
+  VU University Medical Center \\*
+  The Netherlands, Amsterdam \\*
+\end{center}
+
+\tableofcontents
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Running GeneBreak}
 
-This is a short tutorial on how to use the \pkg{GeneBreak} package. It covers an example run using included copy number data of one chromosome from 200 samples. The samples are part of the CAIRO study described in REF. Let's start by loading the package.
+This is a short tutorial on how to use the \pkg{GeneBreak} package. It describes an example workflow which uses included copy number data of one chromosome from 200 aCGH samples. Let's start by loading the package.
 
 <<loadingPackage>>=
 library(GeneBreak)
@@ -27,9 +43,13 @@ options("GeneBreak::verbose"=NA)
 options(width=40)
 @
 
-\subsection{Loading copy number data}
+\subsection{Detect breakpoints from copy-number data}
 
 Copy number data can be loaded in two ways. Either from a cghCall/QDNAseq object (ouput of bioconductor packages CGHcall or QDNAseq) or by providing a data.frame with at least 5 columns: Chromosome, Start, End and FeatureName (usually probe identifier). Note: when using the data.frame input the column names must be exactly as described here and in the same order! In this tutorial we will use a built-in dataset of chromosome 20:
+
+%------------------------------------------------------------
+\subsubsection{Loading cghCall object}
+%------------------------------------------------------------
 
 <<loadingCopynumberData>>=
 data( "copynumber.data.chr20" )
@@ -41,15 +61,30 @@ By inspecting the dataset, we see that we are dealing with an R object of class 
 copynumber.data.chr20
 @
 
-\subsection{Obtaining data from a cghCall object (ouput from packages CGHcall or QDNAseq)}
-
-Then we need to obtain copy number data.
-
 <<getBreakpoints>>=
 breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 @
 
+%------------------------------------------------------------
+\subsubsection{Loading data from data.frame()}
+%------------------------------------------------------------
+
+Although we recommend the usage of either \code{QDNAseq} (for sequencing data) or \code{CGHcall} (for aCGH data) as a precursor for GeneBreak, there is a possibilty of using a \code{data.frame()} as input. This allows for the analysis of data from any pipeline by importing a text file into R.
+
+Here we use the output of CGHcall to output two data.frames() with segment and (optionally) call values. These can be used as input instead of a cghCall or QDNAseq object in \code{getBreakpoints}.
+<<getBreakpointsAlternative, eval=FALSE>>=
+library(CGHcall)
+cgh <- copynumber.data.chr20
+segmented <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
+ End=bpend(cgh), FeatureName=featureNames(cgh), segmented(cgh))
+called <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
+ End=bpend(cgh), FeatureName=featureNames(cgh), calls(cgh))
+breakpoints <- getBreakpoints( data = segmented, data2 = called )
+@
+
+%------------------------------------------------------------
 \subsection{Loading gene annotation data}
+%------------------------------------------------------------
 
 Then we need to obtain gene annotations. For hg18 (and hg19, hg38) reference sequence these are included and can be loaded:
 
@@ -72,7 +107,9 @@ MIRN1302-2 ENSG00000221311          1  20229  20366 p36.33      1
 \end{Sinput}
 \end{Schunk}
 
-\subsection{Filtering}
+%------------------------------------------------------------
+\subsection{Breakpoint selection by filtering}
+%------------------------------------------------------------
 
 Next we filter breakpoints. Different filters can be set with different threshold. Default here is "deltaSeg" filter with a threshold of 0.2. This means that only breakpoints which... 
 
@@ -82,24 +119,21 @@ breakpointsFiltered <- bpFilter( breakpoints )
 
 Next we will add the gene annotation information to the GeneBreak object. No analysis is done here yet.
 
+%------------------------------------------------------------
+\subsection{Detection of gene associated breaks}
+%------------------------------------------------------------
+
 <<addGeneAnnotation>>=
 breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg18 )
 @
 
 Next we perform the gene analysis. This overlaps the genomic locations of the genes with the copy number data to find breakpoints within genes.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics [width = 360pt]{figure_SI.pdf}
-\caption{\textit{GeneBreak} geneAnnotation }
-\label{fig:geneAnnotation}
-\end{figure}
-
 <<bpGenes>>=
 breakpointGenes <- bpGenes( breakpointsAnnotated )
 @
 
-Next we determine the significantly recurring breakpoints. This be done at the "gene" or "feature" level and using one of two different methods ("Benjamini Hochberg" or "Gilbert"). The advantage of using...
+Next we determine the significantly recurring breakpoints. This be done at the "gene" or "feature" level and using one of two different methods ("Benjamini Hochberg" or "Gilbert"). The advantage of using... NOTE: when running bpStats() many warnings can be generated by a function (glm.fit) of a dependancy package, this does not harm the analysis.
 
 <<bpStats>>=
 breakpointStatistics <- bpStats( breakpointGenes )
@@ -118,11 +152,38 @@ By using recurrentGenes() we can observe the recurrent affected genes.
 head( recurrentGenes( breakpointStatistics ) )
 @
 
+%------------------------------------------------------------
+\subsection{Plotting the frequencies of breakpoint locations}
+%------------------------------------------------------------
+
+<<echo=FALSE>>=
+png("bpPlot.png")
+@
+<<label=bpPlot>>=
+bpPlot( breakpointStatistics )
+@
+<<echo=FALSE, results=hide>>=
+dev.off()
+@
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{bpPlot}
+  \caption{Caption}
+  \label{fig:bpPlot}
+\end{figure}
+
+
 \clearpage
 
-\section{Gene Annotation creation}
+\section{Storage of R objects}
+At any time during the analysis, the GeneBreak objects (and any R objects for that matter) can be saved to disk with:
+\code{saveRDS}, and in the future be read from the local file with
+\code{loadRDS}
 
-The steps below are a description of how the gene annotations in this package were created.
+\section{Downloading Gene Annotations}
+
+This section describes the steps taken to create the gene annotations used in this package. It may serve as a start for creating your own if required for whatever reason.
 
 <<createAnnotationExample,eval=FALSE>>=
 # gene annotations obtained via Biomart. 
