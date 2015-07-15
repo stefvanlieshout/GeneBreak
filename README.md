@@ -6,10 +6,14 @@ Breakpoints of copy number aberrations (CNA) indicate underlying DNA breaks and 
 Installation
 ---------------------
 
-Requires package "devtools":
-
 ```R
 devtools::install_github( "stefvanlieshout/GeneBreak" )
+```
+
+This requires package "devtools":
+
+```R
+install.packages("devtools")
 ```
 
 Sample workflow
