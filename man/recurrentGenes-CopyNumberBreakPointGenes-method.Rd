@@ -10,16 +10,16 @@
   fdr.threshold = 0.1, summarize = TRUE, order.column = "FDR")
 }
 \arguments{
-\item{object}{Output of bpStats(): a \code{CopyNumberBreakPointGenes} object}
+\item{object}{Output of bpStats(): an object of class \code{CopyNumberBreakPointGenes}}
 
-\item{fdr.threshold}{Genes with lower FDR are returned}
+\item{fdr.threshold}{A numeric Genes with lower FDR are returned}
 
-\item{summarize}{If TRUE only certain columns are returned}
+\item{summarize}{A logical to determine whether to only output a selection of columns}
 
 \item{order.column}{Name of the column to sort output on}
 }
 \value{
-data.frame with recurrent genes
+data.frame with genes recurrently affected by breakpoints
 }
 \description{
 Show recurrent genes
