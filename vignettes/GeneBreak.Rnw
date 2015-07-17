@@ -1,6 +1,6 @@
 %\VignetteIndexEntry{GeneBreak}
 %\VignetteDepends{GeneBreak}
-%\VignetteKeywords{Recurrent gene break detection on copy number data from aCGH or sequencing.}
+%\VignetteKeywords{Recurrent gene break detection on copy number data from array-CGH or sequencing.}
 %\VignettePackage{GeneBreak}
 %\VignetteEngine{utils::Sweave}
 
@@ -16,7 +16,7 @@
 \newcommand{\code}[1]{\texttt{#1}}
 
 \title{Introduction to GeneBreak}
-\author{Evert van den Broek\footnote{email@email.com} \& Stef van Lieshout}
+\author{Evert van den Broek\footnote{email@email.com} \cr\& Stef van Lieshout}
 \maketitle
 \begin{center}
   Department of Pathology \\*
@@ -32,7 +32,7 @@
 
 \section{Running GeneBreak}
 
-This is a short tutorial on how to use the \pkg{GeneBreak} package. It describes an example workflow which uses included copy number data of one chromosome from 200 aCGH samples. Let's start by loading the package.
+This is a short tutorial on how to use the \pkg{GeneBreak} package. It describes an example workflow which uses included copy number aberration (CNA) data obtained by CGHcall analysis of 200 array-CGH (Agilent 180k) samples from advanced colorectal cancers. Let's start by loading the package.
 
 <<loadingPackage>>=
 library(GeneBreak)
@@ -45,7 +45,7 @@ options(width=40)
 
 \subsection{Detect breakpoints from copy-number data}
 
-Copy number data can be loaded in two ways. Either from a cghCall/QDNAseq object (ouput of bioconductor packages CGHcall or QDNAseq) or by providing a data.frame with at least 5 columns: Chromosome, Start, End and FeatureName (usually probe identifier). Note: when using the data.frame input the column names must be exactly as described here and in the same order! In this tutorial we will use a built-in dataset of chromosome 20:
+Copy number data can be loaded in two ways. We recommend the usage of bioconductor packages \code{CGHcall} or \code{QDNAseq} to process CNA data from array-CGH or sequencing data respectively. The obtained cghCall/QDNAseq object can directly serve as input for the GeneBreak pipeline. Alternatively, a data.frame with exactly these five columns: "Chromosome", "Start", "End" and "FeatureName" (usually probe or bin identifier) followed by columns with sample data can be provided. Note: the first five column names of the data.frame must be similar! In this tutorial we will use a built-in dataset that only contains CNA data from chromosome 20:
 
 %------------------------------------------------------------
 \subsubsection{Loading cghCall object}
@@ -55,44 +55,65 @@ Copy number data can be loaded in two ways. Either from a cghCall/QDNAseq object
 data( "copynumber.data.chr20" )
 @
 
-By inspecting the dataset, we see that we are dealing with an R object of class "cghCall" with 3653 features (aCGH probes in this case) and 200 samples.
+Inspection of the loaded data shows that we are dealing with an R object of class \code{cghCall} with 3653 features (array-CGH probes in this case) and 200 samples.
 
 <<displayCopynumberData>>=
 copynumber.data.chr20
 @
+
+To generate an object of class \code{CopyNumberBreakpoints} with breakpoint locations, run \code{getBreakpoints()}. This will obtain the required information from the \code{cghCall} object and determine the breakpoint locations.
 
 <<getBreakpoints>>=
 breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 @
 
 %------------------------------------------------------------
-\subsubsection{Loading data from data.frame()}
+\subsubsection{Loading data from a dataframe}
 %------------------------------------------------------------
 
-Although we recommend the usage of either \code{QDNAseq} (for sequencing data) or \code{CGHcall} (for aCGH data) as a precursor for GeneBreak, there is a possibilty of using a \code{data.frame()} as input. This allows for the analysis of data from any pipeline by importing a text file into R.
+There is a possibilty of using a \code{data.frame()} as input for \code{GeneBreak}. This allows  breakpoint analysis of data from any copy number detection pipeline by importing a text file into \code{getBreakpoints()}.
 
-Here we use the output of CGHcall to output two data.frames() with segment and (optionally) call values. These can be used as input instead of a cghCall or QDNAseq object in \code{getBreakpoints}.
+Here we show how to use two data.frames() with segment and (optionally) call values as input for \code{getBreakpoints} instead of a cghCall/QDNAseq object.
+
 <<getBreakpointsAlternative, eval=FALSE>>=
 library(CGHcall)
 cgh <- copynumber.data.chr20
+
 segmented <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
  End=bpend(cgh), FeatureName=featureNames(cgh), segmented(cgh))
 called <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
  End=bpend(cgh), FeatureName=featureNames(cgh), calls(cgh))
+
 breakpoints <- getBreakpoints( data = segmented, data2 = called )
 @
 
 %------------------------------------------------------------
-\subsection{Loading gene annotation data}
+\subsection{Breakpoint selection by filtering}
 %------------------------------------------------------------
 
-Then we need to obtain gene annotations. For hg18 (and hg19, hg38) reference sequence these are included and can be loaded:
+Next breakpoints can be filtered by stringent criteria. Different filters can be set (see \code{?bpFilter} for more details). Default setting is "CNA-ass" which means that breakpoints flanked by copy number neutral segments will be filtered out. Note: you need discrete copy number calls (loss,neutral, gain, etc) for this option.
+
+<<bpFilter>>=
+breakpointsFiltered <- bpFilter( breakpoints, filter = "CNA-ass" )
+@
+
+%------------------------------------------------------------
+\subsection{Identification of genes affected by breakpoints}
+%------------------------------------------------------------
+
+This describes the two steps needed to identify genes affected by breakpoints by the \pkg{GeneBreak} package.
+
+%------------------------------------------------------------
+\subsubsection{Loading gene annotation data}
+%------------------------------------------------------------
+
+We need to load gene annotations to be able to identify genes affected by breakpoints in the next step. Gene annotation for human reference genome hg18 (and hg19, hg38) are built-in, but also user-defined annotations can be used. The required columns for this data.frame are "Gene", "Chromosome", "Start" and "End".
 
 <<loadingAnnotation>>=
 data( "ens.gene.ann.hg18" )
 @
 
-Inspect the annotation.
+This shows the contents of the hg18 gene annotation dataframe:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -108,59 +129,84 @@ MIRN1302-2 ENSG00000221311          1  20229  20366 p36.33      1
 \end{Schunk}
 
 %------------------------------------------------------------
-\subsection{Breakpoint selection by filtering}
+\subsubsection{Detection of gene-associated breakpoints}
 %------------------------------------------------------------
 
-Next we filter breakpoints. Different filters can be set with different threshold. Default here is "deltaSeg" filter with a threshold of 0.2. This means that only breakpoints which... 
-
-<<bpFilter>>=
-breakpointsFiltered <- bpFilter( breakpoints )
-@
-
-Next we will add the gene annotation information to the GeneBreak object. No analysis is done here yet.
-
-%------------------------------------------------------------
-\subsection{Detection of gene associated breaks}
-%------------------------------------------------------------
+Here, the loaded gene annotation information will be added to the GeneBreak object and feature-to-gene mapping will be performed.
 
 <<addGeneAnnotation>>=
 breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg18 )
 @
 
-Next we perform the gene analysis. This overlaps the genomic locations of the genes with the copy number data to find breakpoints within genes.
+Added labels describe gene position with respect to feature positions:
+   A: genes located upstream of the first chromosomal feature (no gene-associated features)
+   B: genes located downstream of the last chromosomal feature (no gene-associated features)
+   C: the whole gene is located between two features (in case of array-CGH probes)
+   C: the whole gene is located between start and end of one bin (in case of sequencing data)
+   D: gene represented by one or multiple features
+   E: gene represented by one or multiple features, but the end of the gene is not covered by any feature
+   X: no feature covers the chromosome of the gene
+
+
+Next, gene-associated breakpoints will be identified.
 
 <<bpGenes>>=
 breakpointGenes <- bpGenes( breakpointsAnnotated )
 @
 
-Next we determine the significantly recurring breakpoints. This be done at the "gene" or "feature" level and using one of two different methods ("Benjamini Hochberg" or "Gilbert"). The advantage of using... NOTE: when running bpStats() many warnings can be generated by a function (glm.fit) of a dependancy package, this does not harm the analysis.
+%------------------------------------------------------------
+\subsection{Cohort-based breakpoint statistics}
+%------------------------------------------------------------
+
+Following identification of (gene) breakpoints per profile, breakpoint events that are significantly recurring will be determined by dedicated statistical analysis. This can be performed at "gene" (breakpoint gene) and/or "feature" (breakpoint location) level. Two different methods of FDR-type correction for multiple testing can be used, the standard Benjamini-Hochberg FDR-type correction ("BH") or dedicated Benjamini-Hochberg FDR-type correction ("Gilbert").
+
+%------------------------------------------------------------
+\subsubsection{Detection of recurrent breakpoint genes}
+%------------------------------------------------------------
+
+The gene-based statistical analysis includes correction for covariates that may influence the probability to be a breakpoint gene including number of breakpoints in a profile, number of gene-associated features and gene length by gene-associated feature coverage. Multiple testing can be applied by the powerful dedicated Benjamini-Hochberg FDR-type correction ("Gilbert") that accounts for the discreteness of the null-distribution.
+NOTE: when running \code{bpStats()} warnings can be generated by a function (glm.fit) of a dependancy package, this does not harm the analysis.
 
 <<bpStats>>=
-breakpointStatistics <- bpStats( breakpointGenes )
+breakpointStatistics <- bpStats( breakpointGenes, level = "gene", method = "Gilbert" )
 @
 
-
-<<showStatsObject,eval=FALSE>>=
-breakpointStatistics
-@
 
 This will return an object of class \code{CopyNumberBreakPointGenes}.
 
-By using recurrentGenes() we can observe the recurrent affected genes.
+By using \code{recurrentGenes()} we can observe the recurrent affected genes.
 
 <<recurrentGenes>>=
 head( recurrentGenes( breakpointStatistics ) )
 @
 
 %------------------------------------------------------------
-\subsection{Plotting the frequencies of breakpoint locations}
+\subsubsection{Detection of recurrent breakpoint locations}
 %------------------------------------------------------------
+
+With this step, statistics at breakpoint location (feature) level will be added to the object of class \code{CopyNumberBreakPointGenes}. Here, we recommend to use the less computationally intensive standard Benjamini-Hochberg FDR-type correction for multiple testing, because the breakpoint probability is equal across features per profile, which means that all positions correspond to the same null-distribution. 
+
+<<bpStats>>=
+breakpointStatistics <- bpStats( 
+  breakpointStatistics, level = "feature", method = "BH" )
+@
+
+
+<<showStatsObject,eval=TRUE>>=
+breakpointStatistics
+@
+
+%------------------------------------------------------------
+\subsection{Visualization of breakpoint frequencies}
+%------------------------------------------------------------
+
+Breakpoint locations and frequencies can be visualized using this function:
 
 <<echo=FALSE>>=
 png("bpPlot.png")
 @
 <<label=bpPlot>>=
-bpPlot( breakpointStatistics )
+bpPlot( breakpointStatistics, fdr.threshold = 0.1 )
 @
 <<echo=FALSE, results=hide>>=
 dev.off()
@@ -169,7 +215,7 @@ dev.off()
 \begin{figure}[h]
   \centering
   \includegraphics{bpPlot}
-  \caption{Caption}
+  \caption{Graphical representation of CNA-associated chromosomal breakpoint frequencies and their distribution over chromosomes 20. The X-axis depicts the genomic position in Mb. The Y-axis depicts the chromosomal breakpoint frequencies across the series of 200 CRC samples. Breakpoint frequencies are indicated on array-CGH probe-level (vertical black bars) and on gene-level (horizontal red bars). Recurrent breakpoint genes (FDR<0.1) are named. When the gene breakpoint frequency exceeded 15\% (horizontal dashed line), the breakpoint frequency (\%) follows the gene name.}
   \label{fig:bpPlot}
 \end{figure}
 
@@ -196,21 +242,46 @@ This section describes the steps taken to create the gene annotations used in th
 
 library(biomaRt)
 
-ensembl54 = useMart( host='may2009.archive.ensembl.org', biomart='ENSEMBL_MART_ENSEMBL', dataset="hsapiens_gene_ensembl" )
-ensembl75 = useMart( host='feb2014.archive.ensembl.org', biomart='ENSEMBL_MART_ENSEMBL', dataset="hsapiens_gene_ensembl" )
-ensembl80 = useMart( "ensembl", dataset="hsapiens_gene_ensembl" )
+ensembl54 = useMart( 
+  host = 'may2009.archive.ensembl.org', 
+  biomart = 'ENSEMBL_MART_ENSEMBL', 
+  dataset = "hsapiens_gene_ensembl" 
+)
+ensembl75 = useMart( 
+  host = 'feb2014.archive.ensembl.org', 
+  biomart = 'ENSEMBL_MART_ENSEMBL', 
+  dataset = "hsapiens_gene_ensembl" 
+)
+ensembl80 = useMart( 
+  "ensembl", 
+  dataset = "hsapiens_gene_ensembl" 
+)
 
 createAnnotationFile <- function( biomartVersion ) {
-  biomart_result <- getBM(attributes =  c("hgnc_symbol", "ensembl_gene_id", "chromosome_name",  "start_position", "end_position", "band", "strand"), mart = biomartVersion)
+  biomart_result <- getBM( 
+    attributes =  c( 
+      "hgnc_symbol", "ensembl_gene_id", "chromosome_name",  
+      "start_position", "end_position", "band", "strand" 
+    ), 
+    mart = biomartVersion
+  )
 
   biomart_result[ ,3] <- as.vector( biomart_result[ ,3] )
-  biomart_result$chromosome_name[ biomart_result$chromosome_name=="X" ] <- "23"
-  biomart_result$chromosome_name[ biomart_result$chromosome_name=="Y" ] <- "24"
+  idx_x <- biomart_result$chromosome_name == "X"
+  idx_y <- biomart_result$chromosome_name == "Y"
+  biomart_result$chromosome_name[ idx_x ] <- "23"
+  biomart_result$chromosome_name[ idx_y ] <- "24"
   
-  biomart_genes <-biomart_result[ which(biomart_result[ ,1]!="" & biomart_result[ ,3] %in% c(1:24)) , ]
-  colnames(biomart_genes)[1:5]<-c("Gene","EnsID","Chromosome","Start","End")
+  biomart_genes <- biomart_result[ which(biomart_result[ ,1] != "" & 
+    biomart_result[ ,3] %in% c(1:24)) , ]
+  colnames(biomart_genes)[1:5] <- c("Gene","EnsID","Chromosome","Start","End")
   
-  cat( c("Biomart version:", biomartVersion@host, "including:", dim(biomart_genes)[1], "genes\n") ) 
+  cat( 
+    c( "Biomart version:", biomartVersion@host, 
+          "including:", dim(biomart_genes)[1], "genes\n"
+    )
+  ) 
+  
   return( biomart_genes )
 }
 

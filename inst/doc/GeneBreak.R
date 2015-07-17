@@ -32,39 +32,47 @@ breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 
 
 ###################################################
-### code chunk number 6: loadingAnnotation
+### code chunk number 6: getBreakpointsAlternative (eval = FALSE)
 ###################################################
-data( "ens.gene.ann.hg18" )
+## library(CGHcall)
+## cgh <- copynumber.data.chr20
+## 
+## segmented <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
+##  End=bpend(cgh), FeatureName=featureNames(cgh), segmented(cgh))
+## called <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
+##  End=bpend(cgh), FeatureName=featureNames(cgh), calls(cgh))
+## 
+## breakpoints <- getBreakpoints( data = segmented, data2 = called )
 
 
 ###################################################
 ### code chunk number 7: bpFilter
 ###################################################
-breakpointsFiltered <- bpFilter( breakpoints )
+breakpointsFiltered <- bpFilter( breakpoints, filter = "CNA-ass" )
 
 
 ###################################################
-### code chunk number 8: addGeneAnnotation
+### code chunk number 8: loadingAnnotation
+###################################################
+data( "ens.gene.ann.hg18" )
+
+
+###################################################
+### code chunk number 9: addGeneAnnotation
 ###################################################
 breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg18 )
 
 
 ###################################################
-### code chunk number 9: bpGenes
+### code chunk number 10: bpGenes
 ###################################################
 breakpointGenes <- bpGenes( breakpointsAnnotated )
 
 
 ###################################################
-### code chunk number 10: bpStats
+### code chunk number 11: bpStats
 ###################################################
-breakpointStatistics <- bpStats( breakpointGenes )
-
-
-###################################################
-### code chunk number 11: showStatsObject (eval = FALSE)
-###################################################
-## breakpointStatistics
+breakpointStatistics <- bpStats( breakpointGenes, level = "gene", method = "Gilbert" )
 
 
 ###################################################
@@ -74,7 +82,38 @@ head( recurrentGenes( breakpointStatistics ) )
 
 
 ###################################################
-### code chunk number 13: createAnnotationExample (eval = FALSE)
+### code chunk number 13: bpStats
+###################################################
+breakpointStatistics <- bpStats( 
+  breakpointStatistics, level = "feature", method = "BH" )
+
+
+###################################################
+### code chunk number 14: showStatsObject
+###################################################
+breakpointStatistics
+
+
+###################################################
+### code chunk number 15: GeneBreak.Rnw:205-206
+###################################################
+png("bpPlot.png")
+
+
+###################################################
+### code chunk number 16: bpPlot
+###################################################
+bpPlot( breakpointStatistics, fdr.threshold = 0.1 )
+
+
+###################################################
+### code chunk number 17: GeneBreak.Rnw:211-212
+###################################################
+dev.off()
+
+
+###################################################
+### code chunk number 18: createAnnotationExample (eval = FALSE)
 ###################################################
 ## # gene annotations obtained via Biomart. 
 ## # HUGO gene names (HGNC symbol), Ensembl_ID and chromosomal location
@@ -86,21 +125,46 @@ head( recurrentGenes( breakpointStatistics ) )
 ## 
 ## library(biomaRt)
 ## 
-## ensembl54 = useMart( host='may2009.archive.ensembl.org', biomart='ENSEMBL_MART_ENSEMBL', dataset="hsapiens_gene_ensembl" )
-## ensembl75 = useMart( host='feb2014.archive.ensembl.org', biomart='ENSEMBL_MART_ENSEMBL', dataset="hsapiens_gene_ensembl" )
-## ensembl80 = useMart( "ensembl", dataset="hsapiens_gene_ensembl" )
+## ensembl54 = useMart( 
+##   host = 'may2009.archive.ensembl.org', 
+##   biomart = 'ENSEMBL_MART_ENSEMBL', 
+##   dataset = "hsapiens_gene_ensembl" 
+## )
+## ensembl75 = useMart( 
+##   host = 'feb2014.archive.ensembl.org', 
+##   biomart = 'ENSEMBL_MART_ENSEMBL', 
+##   dataset = "hsapiens_gene_ensembl" 
+## )
+## ensembl80 = useMart( 
+##   "ensembl", 
+##   dataset = "hsapiens_gene_ensembl" 
+## )
 ## 
 ## createAnnotationFile <- function( biomartVersion ) {
-##   biomart_result <- getBM(attributes =  c("hgnc_symbol", "ensembl_gene_id", "chromosome_name",  "start_position", "end_position", "band", "strand"), mart = biomartVersion)
+##   biomart_result <- getBM( 
+##     attributes =  c( 
+##       "hgnc_symbol", "ensembl_gene_id", "chromosome_name",  
+##       "start_position", "end_position", "band", "strand" 
+##     ), 
+##     mart = biomartVersion
+##   )
 ## 
 ##   biomart_result[ ,3] <- as.vector( biomart_result[ ,3] )
-##   biomart_result$chromosome_name[ biomart_result$chromosome_name=="X" ] <- "23"
-##   biomart_result$chromosome_name[ biomart_result$chromosome_name=="Y" ] <- "24"
+##   idx_x <- biomart_result$chromosome_name == "X"
+##   idx_y <- biomart_result$chromosome_name == "Y"
+##   biomart_result$chromosome_name[ idx_x ] <- "23"
+##   biomart_result$chromosome_name[ idx_y ] <- "24"
 ##   
-##   biomart_genes <-biomart_result[ which(biomart_result[ ,1]!="" & biomart_result[ ,3] %in% c(1:24)) , ]
-##   colnames(biomart_genes)[1:5]<-c("Gene","EnsID","Chromosome","Start","End")
+##   biomart_genes <- biomart_result[ which(biomart_result[ ,1] != "" & 
+##     biomart_result[ ,3] %in% c(1:24)) , ]
+##   colnames(biomart_genes)[1:5] <- c("Gene","EnsID","Chromosome","Start","End")
 ##   
-##   cat( c("Biomart version:", biomartVersion@host, "including:", dim(biomart_genes)[1], "genes\n") ) 
+##   cat( 
+##     c( "Biomart version:", biomartVersion@host, 
+##           "including:", dim(biomart_genes)[1], "genes\n"
+##     )
+##   ) 
+##   
 ##   return( biomart_genes )
 ## }
 ## 
@@ -111,7 +175,7 @@ head( recurrentGenes( breakpointStatistics ) )
 
 
 ###################################################
-### code chunk number 14: sessionInfo
+### code chunk number 19: sessionInfo
 ###################################################
 sessionInfo()
 
