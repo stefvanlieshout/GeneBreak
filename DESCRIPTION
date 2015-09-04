@@ -11,5 +11,5 @@ Suggests: QDNAseq, CGHcall
 URL: https://github.com/stefvanlieshout/GeneBreak
 Description: Recurrent breakpoint gene detection on copy number aberration profiles.
 License: GPL-2
-biocViews: aCGH, CopyNumberVariation, DNASeq, Genetics, Sequencing, Preprocessing, Visualization
+biocViews: aCGH, CopyNumberVariation, DNASeq, Genetics, Sequencing, WholeGenome, Visualization
 LazyData: FALSE
