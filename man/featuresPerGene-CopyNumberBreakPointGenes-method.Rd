@@ -4,7 +4,7 @@
 \name{featuresPerGene,CopyNumberBreakPointGenes-method}
 \alias{featuresPerGene}
 \alias{featuresPerGene,CopyNumberBreakPointGenes-method}
-\title{Access Object featuresPerGene}
+\title{Access Object featuresPerGene. This method returns a vector with gene-related features for a particular gene.}
 \usage{
 \S4method{featuresPerGene}{CopyNumberBreakPointGenes}(object, geneName = NULL)
 }
@@ -14,7 +14,7 @@
 \item{geneName}{Exact Gene name as in the annotation}
 }
 \description{
-Access Object featuresPerGene
+Access Object featuresPerGene. This method returns a vector with gene-related features for a particular gene.
 }
 \examples{
 data( copynumber.data.chr20 )
@@ -23,6 +23,7 @@ bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )
+
 featuresPerGene( bp, geneName="PCMTD2" )
 }
 

@@ -4,7 +4,7 @@
 \name{segmentData,CopyNumberBreakPoints-method}
 \alias{segmentData}
 \alias{segmentData,CopyNumberBreakPoints-method}
-\title{Access Object segmentData}
+\title{Access Object segmentData. This method returns a dataframe with segment values.}
 \usage{
 \S4method{segmentData}{CopyNumberBreakPoints}(object)
 }
@@ -12,11 +12,12 @@
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
 \description{
-Access Object segmentData
+Access Object segmentData. This method returns a dataframe with segment values.
 }
 \examples{
 data( copynumber.data.chr20 )
 bp <- getBreakpoints( copynumber.data.chr20 )
+
 segmentData( bp )
 }
 

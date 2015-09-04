@@ -4,7 +4,7 @@
 \name{geneChromosomes,CopyNumberBreakPointGenes-method}
 \alias{geneChromosomes}
 \alias{geneChromosomes,CopyNumberBreakPointGenes-method}
-\title{Access Object geneChromosomes}
+\title{Access Object geneChromosomes. This method returns a vector with gene chromosomes.}
 \usage{
 \S4method{geneChromosomes}{CopyNumberBreakPointGenes}(object)
 }
@@ -12,7 +12,7 @@
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
 \description{
-Access Object geneChromosomes
+Access Object geneChromosomes. This method returns a vector with gene chromosomes.
 }
 \examples{
 data( copynumber.data.chr20 )
@@ -21,6 +21,7 @@ bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )
+
 geneChromosomes( bp )
 }
 

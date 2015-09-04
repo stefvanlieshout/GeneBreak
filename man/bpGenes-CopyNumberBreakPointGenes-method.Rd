@@ -18,7 +18,7 @@ Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene-bre
 Indentifies genes affected by breakpoint locations.
 }
 \details{
-This step requires feature-to-gene annotations added to the input object (see ?addGeneAnnotation).
+This step requires feature-to-gene annotations added to the input object (see \code{?addGeneAnnotation}).
 }
 \examples{
 data( copynumber.data.chr20 )
@@ -28,5 +28,9 @@ bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )
+
+## options to inspect the data
+bp
+accessOptions( bp )
 }
 

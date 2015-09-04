@@ -28,12 +28,16 @@ Returns an object of class \linkS4class{CopyNumberBreakPoints} with breakpoint m
 Selects breakpoints by filter criteria options.
 }
 \details{
-Filter options "CNA-ass" and "deltaCall" require calls in addition to segmented copynumber data (see input for getBreakpoints() )
+Filter options "CNA-ass" and "deltaCall" require calls in addition to segmented copynumber data (see input for \code{getBreakpoints()} )
 }
 \examples{
 data( copynumber.data.chr20 )
 bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp, filter = "CNA-ass" )
 bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
+
+## options to inspect the data
+bp
+accessOptions( bp )
 }
 

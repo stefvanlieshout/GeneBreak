@@ -9,8 +9,7 @@
 data( copynumber.data.chr21 )
 }
 \description{
-A test dataset containing chr21 copynumber data
- for the GeneBreak package.
+A test dataset containing chromosome 21 copynumber data for the GeneBreak package (hg18 based).
 }
 \keyword{datasets}
 

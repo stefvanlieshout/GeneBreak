@@ -4,7 +4,7 @@
 \name{callData,CopyNumberBreakPoints-method}
 \alias{callData}
 \alias{callData,CopyNumberBreakPoints-method}
-\title{Access Object callData}
+\title{Access Object callData. This method returns a dataframe with feature call values.}
 \usage{
 \S4method{callData}{CopyNumberBreakPoints}(object)
 }
@@ -12,11 +12,12 @@
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
 \description{
-Access Object callData
+Access Object callData. This method returns a dataframe with feature call values.
 }
 \examples{
 data( copynumber.data.chr20 )
 bp <- getBreakpoints( copynumber.data.chr20 )
+
 callData( bp )
 }
 

@@ -9,8 +9,7 @@
 data( ens.gene.ann.hg18 )
 }
 \description{
-A dataset containing the gene locations
- required for the GeneBreak package.
+A dataset containing the gene locations based on human genome reference hg18.
 }
 \details{
 Dataframe with 5 columns:

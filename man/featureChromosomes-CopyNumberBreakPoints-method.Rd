@@ -4,7 +4,7 @@
 \name{featureChromosomes,CopyNumberBreakPoints-method}
 \alias{featureChromosomes}
 \alias{featureChromosomes,CopyNumberBreakPoints-method}
-\title{Access Object featureChromosomes}
+\title{Access Object featureChromosomes. This method returns a vector with feature chromosomes.}
 \usage{
 \S4method{featureChromosomes}{CopyNumberBreakPoints}(object)
 }
@@ -12,7 +12,7 @@
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
 \description{
-Access Object featureChromosomes
+Access Object featureChromosomes. This method returns a vector with feature chromosomes.
 }
 \examples{
 data( copynumber.data.chr20 )

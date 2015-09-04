@@ -4,7 +4,7 @@
 \name{sampleNames,CopyNumberBreakPoints-method}
 \alias{sampleNames}
 \alias{sampleNames,CopyNumberBreakPoints-method}
-\title{Access Object sampleNames}
+\title{Access Object sampleNames. This method returns a vector with sample names.}
 \usage{
 \S4method{sampleNames}{CopyNumberBreakPoints}(object)
 }
@@ -12,11 +12,12 @@
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
 \description{
-Access Object sampleNames
+Access Object sampleNames. This method returns a vector with sample names.
 }
 \examples{
 data( copynumber.data.chr20 )
 bp <- getBreakpoints( copynumber.data.chr20 )
+
 sampleNames( bp )
 }
 

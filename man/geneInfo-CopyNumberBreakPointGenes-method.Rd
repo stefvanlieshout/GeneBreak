@@ -4,7 +4,7 @@
 \name{geneInfo,CopyNumberBreakPointGenes-method}
 \alias{geneInfo}
 \alias{geneInfo,CopyNumberBreakPointGenes-method}
-\title{Gather Gene information}
+\title{Access Options geneInfo. This method returns a dataframe with gene annotations.}
 \usage{
 \S4method{geneInfo}{CopyNumberBreakPointGenes}(object)
 }
@@ -15,7 +15,7 @@
 data.frame
 }
 \description{
-Gather Gene information
+Access Options geneInfo. This method returns a dataframe with gene annotations.
 }
 \examples{
 data( copynumber.data.chr20 )
@@ -23,6 +23,7 @@ data( ens.gene.ann.hg18 )
 bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+
 geneInfo( bp )
 }
 

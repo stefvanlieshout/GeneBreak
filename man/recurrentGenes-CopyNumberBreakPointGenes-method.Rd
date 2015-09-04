@@ -4,7 +4,7 @@
 \name{recurrentGenes,CopyNumberBreakPointGenes-method}
 \alias{recurrentGenes}
 \alias{recurrentGenes,CopyNumberBreakPointGenes-method}
-\title{Show recurrent genes}
+\title{Access Options recurrentGenes. This method returns a dataframe that contains genes that are recurrently affected across samples based on a FDR threshold.}
 \usage{
 \S4method{recurrentGenes}{CopyNumberBreakPointGenes}(object,
   fdr.threshold = 0.1, summarize = TRUE, order.column = "FDR")
@@ -22,7 +22,7 @@
 data.frame with genes recurrently affected by breakpoints
 }
 \description{
-Show recurrent genes
+Access Options recurrentGenes. This method returns a dataframe that contains genes that are recurrently affected across samples based on a FDR threshold.
 }
 \examples{
 data( copynumber.data.chr20 )
@@ -32,6 +32,7 @@ bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )
 bp <- bpStats( bp )
+
 recurrentGenes( bp )
 }
 

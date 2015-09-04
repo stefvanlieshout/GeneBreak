@@ -1,7 +1,6 @@
 #' Gene Annotation hg18
 #'
-#' A dataset containing the gene locations
-#'  required for the GeneBreak package.
+#' @description A dataset containing the gene locations based on human genome reference hg18.
 #'
 #' @docType data
 #' @keywords datasets
@@ -20,8 +19,7 @@ NULL
 
 #' Gene Annotation hg19
 #'
-#' A dataset containing the gene locations
-#'  required for the GeneBreak package.
+#' @description A dataset containing the gene locations based on human genome reference hg19.
 #'
 #' @docType data
 #' @keywords datasets
@@ -40,8 +38,7 @@ NULL
 
 #' Gene Annotation hg38
 #'
-#' A dataset containing the gene locations
-#'  required for the GeneBreak package.
+#' @description A dataset containing the gene locations based on human genome reference hg38.
 #'
 #' @docType data
 #' @keywords datasets
@@ -59,8 +56,7 @@ NULL
 NULL
 
 #' CGHcall Example copynumber data hg18 chr18
-#' @description A test dataset containing chr18 copynumber data
-#'  for the GeneBreak package.
+#' @description A test dataset containing copynumber data of chromosome 18 for the GeneBreak package (hg18 based).
 #'
 #' @docType data
 #' @keywords datasets
@@ -70,8 +66,7 @@ NULL
 NULL
 
 #' CGHcall Example copynumber data hg18 chr20
-#' @description A test dataset containing chr20 copynumber data
-#'  for the GeneBreak package.
+#' @description A test dataset containing chromosome 20 copynumber data for the GeneBreak package (hg18 based).
 #'
 #' @docType data
 #' @keywords datasets
@@ -82,8 +77,7 @@ NULL
 NULL
 
 #' CGHcall Example copynumber data hg18 chr21
-#' @description A test dataset containing chr21 copynumber data
-#'  for the GeneBreak package.
+#' @description A test dataset containing chromosome 21 copynumber data for the GeneBreak package (hg18 based).
 #'
 #' @docType data
 #' @keywords datasets

@@ -10,12 +10,13 @@ library(GeneBreak)
 ### code chunk number 2: settingOptions
 ###################################################
 options("GeneBreak::verbose"=NA)
-options(width=40)
+options(width=75)
 
 
 ###################################################
 ### code chunk number 3: loadingCopynumberData
 ###################################################
+library(CGHcall)
 data( "copynumber.data.chr20" )
 
 
@@ -29,6 +30,7 @@ copynumber.data.chr20
 ### code chunk number 5: getBreakpoints
 ###################################################
 breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
+breakpoints
 
 
 ###################################################
@@ -49,6 +51,7 @@ breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 ### code chunk number 7: bpFilter
 ###################################################
 breakpointsFiltered <- bpFilter( breakpoints, filter = "CNA-ass" )
+breakpointsFiltered
 
 
 ###################################################
@@ -58,62 +61,99 @@ data( "ens.gene.ann.hg18" )
 
 
 ###################################################
-### code chunk number 9: addGeneAnnotation
+### code chunk number 9: showHeadGeneAnnotation
+###################################################
+head( ens.gene.ann.hg18 )
+
+
+###################################################
+### code chunk number 10: addGeneAnnotation
 ###################################################
 breakpointsAnnotated <- addGeneAnnotation( breakpointsFiltered, ens.gene.ann.hg18 )
 
 
 ###################################################
-### code chunk number 10: bpGenes
+### code chunk number 11: showFeatures_PCMTD2
+###################################################
+featuresPerGene ( breakpointsAnnotated , geneName = "PCMTD2" )
+
+
+###################################################
+### code chunk number 12: showGeneAssociatedFeatureInfo
+###################################################
+geneFeatures <- geneInfo( breakpointsAnnotated )
+head( geneFeatures[ , 
+  c("Gene", "Chromosome", "Start", "End", "featureTotal", 
+    "featureNames", "remarks") ] )
+
+
+###################################################
+### code chunk number 13: bpGenes
 ###################################################
 breakpointGenes <- bpGenes( breakpointsAnnotated )
 
 
 ###################################################
-### code chunk number 11: bpStats
+### code chunk number 14: headBreakpointGenes
 ###################################################
-breakpointStatistics <- bpStats( breakpointGenes, level = "gene", method = "Gilbert" )
+result_BreakpointGenes <- geneInfo ( breakpointGenes )
+head( result_BreakpointGenes[ which ( result_BreakpointGenes$sampleCount > 0 ) , 
+  c( "Gene", "Chromosome", "Start", "End", "featureTotal", "nrOfBreakLocations",
+     "sampleCount", "sampleNamesWithBreakpoints") ] )
 
 
 ###################################################
-### code chunk number 12: recurrentGenes
+### code chunk number 15: bpStats
+###################################################
+breakpointStatistics <- bpStats( breakpointGenes, 
+  level = "gene", method = "Gilbert" )
+
+
+###################################################
+### code chunk number 16: recurrentGenes
 ###################################################
 head( recurrentGenes( breakpointStatistics ) )
 
 
 ###################################################
-### code chunk number 13: bpStats
+### code chunk number 17: bpStats
 ###################################################
 breakpointStatistics <- bpStats( 
   breakpointStatistics, level = "feature", method = "BH" )
 
 
 ###################################################
-### code chunk number 14: showStatsObject
+### code chunk number 18: showStatsObject
 ###################################################
 breakpointStatistics
 
 
 ###################################################
-### code chunk number 15: GeneBreak.Rnw:205-206
+### code chunk number 19: recurrentGenes
 ###################################################
-png("bpPlot.png")
+head( featureInfo( breakpointStatistics ) )
 
 
 ###################################################
-### code chunk number 16: bpPlot
+### code chunk number 20: GeneBreak.Rnw:251-252
+###################################################
+pdf("bpPlot.png", width=10)
+
+
+###################################################
+### code chunk number 21: bpPlot
 ###################################################
 bpPlot( breakpointStatistics, fdr.threshold = 0.1 )
 
 
 ###################################################
-### code chunk number 17: GeneBreak.Rnw:211-212
+### code chunk number 22: GeneBreak.Rnw:257-258
 ###################################################
 dev.off()
 
 
 ###################################################
-### code chunk number 18: createAnnotationExample (eval = FALSE)
+### code chunk number 23: createAnnotationExample (eval = FALSE)
 ###################################################
 ## # gene annotations obtained via Biomart. 
 ## # HUGO gene names (HGNC symbol), Ensembl_ID and chromosomal location
@@ -175,7 +215,7 @@ dev.off()
 
 
 ###################################################
-### code chunk number 19: sessionInfo
+### code chunk number 24: sessionInfo
 ###################################################
 sessionInfo()
 

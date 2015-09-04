@@ -3,8 +3,8 @@
 #' getBreakpoints
 #' 
 #' @description
-#' Builds the  \linkS4class{CopyNumberBreakPoints} object from copynumber data 
-#' @param data An object of class "cghCall" or an object of class QDNAseqCopyNumbers" or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).
+#' Builds the \linkS4class{CopyNumberBreakPoints} object from copynumber data and detects breakpoint locations.
+#' @param data An object of class \pkg{cghCall} or an object of class \linkS4class{QDNAseqCopyNumbers} or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).
 #' @param data2 A "data.frame" containing copy number calls following feature annotations with the four columns ("Chromosome", "Start", "End", "FeatureName", ...). This is optional and allows CNA-associated breakpoint filtering. (see ?bpFilter)
 #' @param first.rm Remove the first 'artificial' breakpoint of the first DNA segment for each chromosome (default: first.rm=TRUE)
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPoints}.
@@ -24,6 +24,10 @@
 #' called <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh), 
 #'   End=bpend(cgh), FeatureName=featureNames(cgh), calls(cgh))
 #' breakpoints <- getBreakpoints( data = segmented, data2 = called )
+#' 
+#' ## options to inspect the data
+#' breakpoints
+#' accessOptions( breakpoints )
 getBreakpoints <- function( data, data2=NULL, first.rm=TRUE ) {
     
     ## input checks
@@ -138,12 +142,16 @@ getBreakpoints <- function( data, data2=NULL, first.rm=TRUE ) {
 #' }
 #' @param threshold Set the minimal log2 ratio difference between segments. This parameter is required for the "deltaSeg" filter option
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPoints} with breakpoint matrix replaced by filtered breakpoints.
-#' @details Filter options "CNA-ass" and "deltaCall" require calls in addition to segmented copynumber data (see input for getBreakpoints() )
+#' @details Filter options "CNA-ass" and "deltaCall" require calls in addition to segmented copynumber data (see input for \code{getBreakpoints()} )
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
 #' bp <- bpFilter( bp, filter = "CNA-ass" )
 #' bp <- bpFilter( bp, filter = "deltaSeg", threshold = 0.2 )
+#' 
+#' ## options to inspect the data
+#' bp
+#' accessOptions( bp )
 #' @aliases bpFilter
 setMethod( "bpFilter", "CopyNumberBreakPoints",
     function( object, filter="CNA-ass", threshold=NULL) {
@@ -201,16 +209,17 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
 #' addGeneAnnotation
 #' 
 #' @description
-#' Maps features to gene locations
+#' Maps features to gene locations.
 #' @param object An object of class \linkS4class{CopyNumberBreakPoints}
 #' @param geneAnnotation A dataframe with at least four columns ("Gene", "Chromosome", "Start", "End")
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene annotation added.
-#' @details The end of the first feature after gene start location up to and including the first feature after gene end location will be defined as gene-associated feaures. For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. In stead of using the built-in gene annotion files, feature-to-gene mapping can be based on an user-defined annotion file. The dataframe should contain at least these four columns: "Gene", "Chromosome", "Start" and "End".
+#' @details The end of the first feature after gene start location up to and including the first feature after gene end location will be defined as gene-associated feaures. For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. Please take care to use a matching reference genome for your breakpoint data. In stead of using the built-in gene annotion files, feature-to-gene mapping can be based on an user-defined annotion file. The dataframe should contain at least these four columns: "Gene", "Chromosome", "Start" and "End".
 #' @details Note that the chromosome names are labeled similar in the annotation file and in the object of class \linkS4class{CopyNumberBreakPoints} (e.g. "1", "2", ..., "24")
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )
 #'
+#' ## other buil-in gene annotations are:
 #' # data( ens.gene.ann.hg19 )
 #' # data( ens.gene.ann.hg38 )
 #'
@@ -218,6 +227,10 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
 #' bp <- bpFilter( bp ) 
 #' # input copynumber.data.chr20 is hg18 based
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+#' 
+#' ## options to inspect the data
+#' bp
+#' accessOptions( bp )
 #' @aliases addGeneAnnotation
 setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
     function( object, geneAnnotation ) {
@@ -373,7 +386,7 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 #' Indentifies genes affected by breakpoint locations.
 #' @param object An object of class \linkS4class{CopyNumberBreakPointGenes}
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene-breakpoint information
-#' @details This step requires feature-to-gene annotations added to the input object (see ?addGeneAnnotation).
+#' @details This step requires feature-to-gene annotations added to the input object (see \code{?addGeneAnnotation}).
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )
@@ -382,6 +395,10 @@ setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
 #' bp <- bpFilter( bp )
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
+#' 
+#' ## options to inspect the data
+#' bp
+#' accessOptions( bp )
 #' @aliases bpGenes
 setMethod( "bpGenes", "CopyNumberBreakPointGenes",
     
@@ -524,6 +541,10 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
 #' bp <- bpStats( bp )
+#' 
+#' ## options to inspect the data
+#' bp
+#' accessOptions( bp )
 #' @aliases bpStats
 setMethod( "bpStats", "CopyNumberBreakPoints",
 
@@ -705,6 +726,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
 #' bp <- bpStats( bp )
+#' 
 #' bpPlot( bp, c(20) )
 #' @aliases bpPlot
 setMethod( "bpPlot", "CopyNumberBreakPoints",

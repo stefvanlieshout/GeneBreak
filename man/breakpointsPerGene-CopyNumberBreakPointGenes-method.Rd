@@ -4,7 +4,7 @@
 \name{breakpointsPerGene,CopyNumberBreakPointGenes-method}
 \alias{breakpointsPerGene}
 \alias{breakpointsPerGene,CopyNumberBreakPointGenes-method}
-\title{Access Object breakpointsPerGene}
+\title{Access Object breakpointsPerGene. This method returns a dataframe with breakpoints per gene.}
 \usage{
 \S4method{breakpointsPerGene}{CopyNumberBreakPointGenes}(object)
 }
@@ -12,7 +12,7 @@
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
 \description{
-Access Object breakpointsPerGene
+Access Object breakpointsPerGene. This method returns a dataframe with breakpoints per gene.
 }
 \examples{
 data( copynumber.data.chr20 )
@@ -21,6 +21,7 @@ bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )
+
 breakpointsPerGene( bp )
 }
 

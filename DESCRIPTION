@@ -4,7 +4,7 @@ Title: Gene Break Detection
 Version: 0.99.0
 Date: 2015-07-31
 Author: Evert van den Broek / Stef van Lieshout
-Maintainer: Stef van Lieshout <s.vanLieshout@vumc.nl>
+Maintainer: Christian Rausch <c.rausch@vumc.nl> / Sanne Abeln <s.abeln@vu.nl>
 Imports: graphics, methods
 Depends: R(>= 3.2)
 Suggests: QDNAseq, CGHcall

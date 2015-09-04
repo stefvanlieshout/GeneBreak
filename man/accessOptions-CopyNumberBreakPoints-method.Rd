@@ -4,7 +4,7 @@
 \name{accessOptions,CopyNumberBreakPoints-method}
 \alias{accessOptions}
 \alias{accessOptions,CopyNumberBreakPoints-method}
-\title{Access Object Data}
+\title{Access Object Data. This method lists possible functions to access the data of the object.}
 \usage{
 \S4method{accessOptions}{CopyNumberBreakPoints}(object)
 }
@@ -12,11 +12,12 @@
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
 \description{
-Access Object Data
+Access Object Data. This method lists possible functions to access the data of the object.
 }
 \examples{
 data( copynumber.data.chr20 )
 bp <- getBreakpoints( copynumber.data.chr20 )
+
 accessOptions( bp )
 # accessOptions( breakpointGenes )
 # accessOptions( breakpointStatistics )

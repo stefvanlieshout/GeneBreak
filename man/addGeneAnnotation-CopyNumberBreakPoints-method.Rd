@@ -17,15 +17,16 @@
 Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene annotation added.
 }
 \description{
-Maps features to gene locations
+Maps features to gene locations.
 }
 \details{
-The end of the first feature after gene start location up to and including the first feature after gene end location will be defined as gene-associated feaures. For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. In stead of using the built-in gene annotion files, feature-to-gene mapping can be based on an user-defined annotion file. The dataframe should contain at least these four columns: "Gene", "Chromosome", "Start" and "End".
+The end of the first feature after gene start location up to and including the first feature after gene end location will be defined as gene-associated feaures. For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. Please take care to use a matching reference genome for your breakpoint data. In stead of using the built-in gene annotion files, feature-to-gene mapping can be based on an user-defined annotion file. The dataframe should contain at least these four columns: "Gene", "Chromosome", "Start" and "End".
 }
 \examples{
 data( copynumber.data.chr20 )
 data( ens.gene.ann.hg18 )
 
+## other buil-in gene annotations are:
 # data( ens.gene.ann.hg19 )
 # data( ens.gene.ann.hg38 )
 
@@ -33,5 +34,9 @@ bp <- getBreakpoints( copynumber.data.chr20 )
 bp <- bpFilter( bp )
 # input copynumber.data.chr20 is hg18 based
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+
+## options to inspect the data
+bp
+accessOptions( bp )
 }
 

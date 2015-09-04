@@ -70,11 +70,12 @@ setMethod( "show",
     }
 )
 
-#' Access Object Data
+#' Access Object Data. This method lists possible functions to access the data of the object.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
+#' 
 #' accessOptions( bp )
 #' # accessOptions( breakpointGenes )
 #' # accessOptions( breakpointStatistics )
@@ -103,62 +104,67 @@ setMethod( "accessOptions",
 ## CopyNumberBreakPoints specific slot access
 ## ---------------
 
-#' Access Object callData
+#' Access Object callData. This method returns a dataframe with feature call values.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
+#' 
 #' callData( bp )
 #' @aliases callData
 setMethod( "callData", "CopyNumberBreakPoints",
     function(object) object@calls
 )
 
-#' Access Object segmentData
+#' Access Object segmentData. This method returns a dataframe with segment values.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
+#' 
 #' segmentData( bp )
 #' @aliases segmentData
 setMethod( "segmentData", "CopyNumberBreakPoints",
     function(object) object@segments
 )
 
-#' Access Object breakpointData
+#' Access Object breakpointData. This method returns a dataframe with breakpoint values per feature.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
+#' 
 #' breakpointData( bp )
 #' @aliases breakpointData
 setMethod( "breakpointData", "CopyNumberBreakPoints",
     function(object) object@breakpoints
 )
 
-#' Access Object featureNames
+#' Access Object featureNames. This method returns a vector with feature names.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
+#' 
 #' featureNames( bp )
 #' @aliases featureNames
 setMethod( "featureNames", "CopyNumberBreakPoints",
     function(object) rownames(object@breakpoints)
 )
 
-#' Access Object sampleNames
+#' Access Object sampleNames. This method returns a vector with sample names.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
+#' 
 #' sampleNames( bp )
 #' @aliases sampleNames
 setMethod( "sampleNames", "CopyNumberBreakPoints",
     function(object) colnames(object@breakpoints)
 )
 
-#' Access Object featureChromosomes
+#' Access Object featureChromosomes. This method returns a vector with feature chromosomes.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
@@ -173,7 +179,7 @@ setMethod( "featureChromosomes", "CopyNumberBreakPoints",
 ## CopyNumberBreakPointGenes specific slot access
 ## ---------------
 
-#' Access Object featuresPerGene
+#' Access Object featuresPerGene. This method returns a vector with gene-related features for a particular gene.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @param geneName Exact Gene name as in the annotation
 #' @examples
@@ -183,6 +189,7 @@ setMethod( "featureChromosomes", "CopyNumberBreakPoints",
 #' bp <- bpFilter( bp )
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
+#' 
 #' featuresPerGene( bp, geneName="PCMTD2" )
 #' @aliases featuresPerGene
 setMethod( "featuresPerGene", "CopyNumberBreakPointGenes",
@@ -198,7 +205,7 @@ setMethod( "featuresPerGene", "CopyNumberBreakPointGenes",
     } 
 )
 
-#' Access Object breakpointsPerGene
+#' Access Object breakpointsPerGene. This method returns a dataframe with breakpoints per gene.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
@@ -207,13 +214,14 @@ setMethod( "featuresPerGene", "CopyNumberBreakPointGenes",
 #' bp <- bpFilter( bp )
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
+#' 
 #' breakpointsPerGene( bp )
 #' @aliases breakpointsPerGene
 setMethod( "breakpointsPerGene", "CopyNumberBreakPointGenes",
     function(object) object@breakpointsPerGene
 )
 
-#' Access Object geneChromosomes
+#' Access Object geneChromosomes. This method returns a vector with gene chromosomes.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @examples
 #' data( copynumber.data.chr20 )
@@ -222,13 +230,14 @@ setMethod( "breakpointsPerGene", "CopyNumberBreakPointGenes",
 #' bp <- bpFilter( bp )
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
+#' 
 #' geneChromosomes( bp )
 #' @aliases geneChromosomes
 setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
     function(object) object@geneAnnotation$Chromosome
 )
 
-#' Show recurrent genes
+#' Access Options recurrentGenes. This method returns a dataframe that contains genes that are recurrently affected across samples based on a FDR threshold.
 #' @param object Output of bpStats(): an object of class \code{CopyNumberBreakPointGenes}
 #' @param fdr.threshold A numeric Genes with lower FDR are returned
 #' @param summarize A logical to determine whether to only output a selection of columns
@@ -242,6 +251,7 @@ setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
 #' bp <- bpStats( bp )
+#' 
 #' recurrentGenes( bp )
 #' @aliases recurrentGenes
 setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
@@ -260,7 +270,7 @@ setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
     } 
 )
 
-#' Gather Gene information
+#' Access Options geneInfo. This method returns a dataframe with gene annotations. 
 #' @param object of class \code{CopyNumberBreakPointGenes}
 #' @return data.frame
 #' @examples
@@ -269,6 +279,7 @@ setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
 #' bp <- getBreakpoints( copynumber.data.chr20 )
 #' bp <- bpFilter( bp )
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
+#' 
 #' geneInfo( bp )
 #' @aliases geneInfo
 setMethod( "geneInfo", "CopyNumberBreakPointGenes",
@@ -283,7 +294,7 @@ setMethod( "geneInfo", "CopyNumberBreakPointGenes",
         return( output )
     } 
 )
-#' Gather Feature information
+#' Access Options featureInfo. This method returns a dataframe with feature annotations.
 #' @param object of class \code{CopyNumberBreakPoints}
 #' @return data.frame
 #' @examples
@@ -293,6 +304,7 @@ setMethod( "geneInfo", "CopyNumberBreakPointGenes",
 #' bp <- bpFilter( bp )
 #' bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 #' bp <- bpGenes( bp )
+#' 
 #' featureInfo( bp )
 #' @aliases featureInfo
 setMethod( "featureInfo", "CopyNumberBreakPoints",

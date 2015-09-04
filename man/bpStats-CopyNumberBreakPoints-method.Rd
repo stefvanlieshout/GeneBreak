@@ -35,6 +35,10 @@ bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )
 bp <- bpStats( bp )
+
+## options to inspect the data
+bp
+accessOptions( bp )
 }
 \references{
 Gilbert,P.B. (2005) A modified false discovery rate multiple-comparisons procedure for discrete data, applied to human immunodeficiency virus genetics. Journal of the Royal Statistical Society Series C-Applied Statistics, 54, 143-158.

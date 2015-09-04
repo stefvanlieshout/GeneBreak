@@ -34,6 +34,7 @@ bp <- bpFilter( bp )
 bp <- addGeneAnnotation( bp, ens.gene.ann.hg18 )
 bp <- bpGenes( bp )
 bp <- bpStats( bp )
+
 bpPlot( bp, c(20) )
 }
 
