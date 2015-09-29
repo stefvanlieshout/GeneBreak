@@ -1,7 +1,7 @@
 Package: GeneBreak
 Type: Package
 Title: Gene Break Detection
-Version: 0.99.2
+Version: 0.99.3
 Date: 2015-07-31
 Author: Evert van den Broek / Stef van Lieshout
 Maintainer: Christian Rausch <c.rausch@vumc.nl> / Sanne Abeln <s.abeln@vu.nl>
