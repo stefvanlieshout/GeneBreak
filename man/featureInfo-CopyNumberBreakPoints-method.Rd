@@ -12,7 +12,7 @@
 \item{object}{of class \code{CopyNumberBreakPoints}}
 }
 \value{
-data.frame
+data.frame with feature annotations
 }
 \description{
 Access Options featureInfo. This method returns a dataframe with feature annotations.

@@ -8,6 +8,9 @@
 \usage{
 data( ens.gene.ann.hg38 )
 }
+\value{
+data.frame
+}
 \description{
 A dataset containing the gene locations based on human genome reference hg38.
 }

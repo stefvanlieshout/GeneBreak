@@ -72,6 +72,7 @@ setMethod( "show",
 
 #' Access Object Data. This method lists possible functions to access the data of the object.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return prints text to screen
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
@@ -106,6 +107,7 @@ setMethod( "accessOptions",
 
 #' Access Object callData. This method returns a dataframe with feature call values.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return a dataframe with feature call values
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
@@ -118,6 +120,7 @@ setMethod( "callData", "CopyNumberBreakPoints",
 
 #' Access Object segmentData. This method returns a dataframe with segment values.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return a dataframe with segment values
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
@@ -130,6 +133,7 @@ setMethod( "segmentData", "CopyNumberBreakPoints",
 
 #' Access Object breakpointData. This method returns a dataframe with breakpoint values per feature.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return a dataframe with breakpoint values
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
@@ -142,6 +146,7 @@ setMethod( "breakpointData", "CopyNumberBreakPoints",
 
 #' Access Object featureNames. This method returns a vector with feature names.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return a vector with feature names
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
@@ -154,6 +159,7 @@ setMethod( "featureNames", "CopyNumberBreakPoints",
 
 #' Access Object sampleNames. This method returns a vector with sample names.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return a vector with sample names
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
@@ -166,6 +172,7 @@ setMethod( "sampleNames", "CopyNumberBreakPoints",
 
 #' Access Object featureChromosomes. This method returns a vector with feature chromosomes.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return a vector with feature chromosomes
 #' @examples
 #' data( copynumber.data.chr20 )
 #' bp <- getBreakpoints( copynumber.data.chr20 )
@@ -182,6 +189,7 @@ setMethod( "featureChromosomes", "CopyNumberBreakPoints",
 #' Access Object featuresPerGene. This method returns a vector with gene-related features for a particular gene.
 #' @param object An object of class \code{CopyNumberBreakPoints}
 #' @param geneName Exact Gene name as in the annotation
+#' @return a vector with gene-related features
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )
@@ -201,12 +209,15 @@ setMethod( "featuresPerGene", "CopyNumberBreakPointGenes",
                 stop( "Sorry, no record found for gene ", geneName, sep="")
             }
             object@featuresPerGene[[ idx ]]
+        }else{
+            stop( "Empty geneName param.." )
         }
     } 
 )
 
 #' Access Object breakpointsPerGene. This method returns a dataframe with breakpoints per gene.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return a dataframe with breakpoints per gene
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )
@@ -223,6 +234,7 @@ setMethod( "breakpointsPerGene", "CopyNumberBreakPointGenes",
 
 #' Access Object geneChromosomes. This method returns a vector with gene chromosomes.
 #' @param object An object of class \code{CopyNumberBreakPoints}
+#' @return vector with gene chromosomes
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )
@@ -272,7 +284,7 @@ setMethod( "recurrentGenes", "CopyNumberBreakPointGenes",
 
 #' Access Options geneInfo. This method returns a dataframe with gene annotations. 
 #' @param object of class \code{CopyNumberBreakPointGenes}
-#' @return data.frame
+#' @return data.frame with gene annotations
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )
@@ -296,7 +308,7 @@ setMethod( "geneInfo", "CopyNumberBreakPointGenes",
 )
 #' Access Options featureInfo. This method returns a dataframe with feature annotations.
 #' @param object of class \code{CopyNumberBreakPoints}
-#' @return data.frame
+#' @return data.frame with feature annotations
 #' @examples
 #' data( copynumber.data.chr20 )
 #' data( ens.gene.ann.hg18 )

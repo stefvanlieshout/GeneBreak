@@ -13,6 +13,9 @@
 
 \item{geneName}{Exact Gene name as in the annotation}
 }
+\value{
+a vector with gene-related features
+}
 \description{
 Access Object featuresPerGene. This method returns a vector with gene-related features for a particular gene.
 }

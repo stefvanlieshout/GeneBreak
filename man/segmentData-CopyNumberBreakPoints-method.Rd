@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
+\value{
+a dataframe with segment values
+}
 \description{
 Access Object segmentData. This method returns a dataframe with segment values.
 }

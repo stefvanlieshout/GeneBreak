@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
+\value{
+a vector with sample names
+}
 \description{
 Access Object sampleNames. This method returns a vector with sample names.
 }

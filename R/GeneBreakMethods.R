@@ -4,7 +4,7 @@
 #' 
 #' @description
 #' Builds the \linkS4class{CopyNumberBreakPoints} object from copynumber data and detects breakpoint locations.
-#' @param data An object of class \pkg{cghCall} or an object of class \linkS4class{QDNAseqCopyNumbers} or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).
+#' @param data An object of class \pkg{cghCall} or an object of class QDNAseqCopyNumbers or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).
 #' @param data2 A "data.frame" containing copy number calls following feature annotations with the four columns ("Chromosome", "Start", "End", "FeatureName", ...). This is optional and allows CNA-associated breakpoint filtering. (see ?bpFilter)
 #' @param first.rm Remove the first 'artificial' breakpoint of the first DNA segment for each chromosome (default: first.rm=TRUE)
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPoints}.
@@ -487,11 +487,11 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
 }
 .gilbertTest <- function( pvalues=NULL, cumgfs=NULL, fdr.threshold=1 ){
     
-    pvsrt <- sort( pvalues, index.return=T )
+    pvsrt <- sort( pvalues, index.return=TRUE )
     pvalssort <- pvsrt$x
 
     fdrgilbert <- c()
-    fdrnot1 <- T
+    fdrnot1 <- TRUE
     i <- 1
     fdrprev <- 0
     cumgfscut <- cumgfs
@@ -510,7 +510,7 @@ setMethod( "bpGenes", "CopyNumberBreakPointGenes",
         elmax <- min( nc, max( largsmall[ 2,] ) )
         cumgfscut <- cumgfscut[ ,1:elmax ]
         i <- i + 1
-        if( fdr >= fdr.threshold ) fdrnot1 <- F
+        if( fdr >= fdr.threshold ) fdrnot1 <- FALSE
         fdrgilbert <- c( fdrgilbert, fdr )
         fdrprev <- fdr
     }
@@ -717,6 +717,7 @@ setMethod( "bpStats", "CopyNumberBreakPoints",
 #' @param plot.ylim An integer giving the max y coordinate.
 #' @param fdr.threshold The FDR threshold to label recurrent breakpoint genes with their gene name
 #' @param add.jitter Logical. If TRUE, function jitter will be used for the y position of gene labels
+#' @return calls plot function
 #' @details The plot includes breakpoint locations and breakpoint gene frequencies. Genes that are recurrently affected are labeled with their gene name.
 #' @examples
 #' data( copynumber.data.chr20 )
@@ -803,9 +804,9 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             
             # xlim = c(startPlot,endPlot) extra zoomin function ?
             
-            plot( start.feature, featureBreakPerc, ylim=c(0, ylim+1), axes=T, type="h", xlab="chromosomal position (Mb)", ylab="breakpoint frequencies (%)", main=paste("BreakPoint frequencyPlot\nchromosome", chr), xaxt="n", yaxt="n",cex.lab=1.3, col= color.feature.chr)
+            plot( start.feature, featureBreakPerc, ylim=c(0, ylim+1), axes=TRUE, type="h", xlab="chromosomal position (Mb)", ylab="breakpoint frequencies (%)", main=paste("BreakPoint frequencyPlot\nchromosome", chr), xaxt="n", yaxt="n",cex.lab=1.3, col= color.feature.chr)
             mtext( paste( "recurrent breakpoint genes are labeled with gene name (FDR<", fdr.threshold, ")", sep=""), side=3, col=color.gene )
-            axis( 1, at=as.vector(axis(1, labels=F)), labels=(as.vector(axis(1, labels=F)))/10^6 ) # x-axis in MBs
+            axis( 1, at=as.vector(axis(1, labels=FALSE)), labels=(as.vector(axis(1, labels=FALSE)))/10^6 ) # x-axis in MBs
             axis( 2, at=0:(ylim+1), labels=c(0:(ylim), paste(">", ylim)), las=2 )
             abline( h=c(0,ylim), lty=c(1,5) )
             

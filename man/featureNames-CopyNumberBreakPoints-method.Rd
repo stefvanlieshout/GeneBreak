@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
+\value{
+a vector with feature names
+}
 \description{
 Access Object featureNames. This method returns a vector with feature names.
 }

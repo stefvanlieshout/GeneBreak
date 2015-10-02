@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
+\value{
+a dataframe with breakpoints per gene
+}
 \description{
 Access Object breakpointsPerGene. This method returns a dataframe with breakpoints per gene.
 }

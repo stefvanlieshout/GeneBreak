@@ -7,7 +7,7 @@
 getBreakpoints(data, data2 = NULL, first.rm = TRUE)
 }
 \arguments{
-\item{data}{An object of class \pkg{cghCall} or an object of class \linkS4class{QDNAseqCopyNumbers} or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).}
+\item{data}{An object of class \pkg{cghCall} or an object of class QDNAseqCopyNumbers or a data.frame containing feature annotations ("Chromosome", "Start", "End", "FeatureName") followed by copy number segment values (rows are features, columns are subjects).}
 
 \item{data2}{A "data.frame" containing copy number calls following feature annotations with the four columns ("Chromosome", "Start", "End", "FeatureName", ...). This is optional and allows CNA-associated breakpoint filtering. (see ?bpFilter)}
 

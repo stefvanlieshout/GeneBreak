@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
+\value{
+a dataframe with breakpoint values
+}
 \description{
 Access Object breakpointData. This method returns a dataframe with breakpoint values per feature.
 }

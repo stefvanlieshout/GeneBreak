@@ -20,6 +20,9 @@
 
 \item{add.jitter}{Logical. If TRUE, function jitter will be used for the y position of gene labels}
 }
+\value{
+calls plot function
+}
 \description{
 Plots breakpoint frequencies per chromosome
 }

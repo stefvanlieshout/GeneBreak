@@ -12,7 +12,7 @@
 \item{object}{of class \code{CopyNumberBreakPointGenes}}
 }
 \value{
-data.frame
+data.frame with gene annotations
 }
 \description{
 Access Options geneInfo. This method returns a dataframe with gene annotations.

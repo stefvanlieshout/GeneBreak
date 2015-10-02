@@ -7,6 +7,7 @@
 #' @name ens.gene.ann.hg18
 #' @usage data( ens.gene.ann.hg18 )
 #' @format A data.frame
+#' @return data.frame
 #' @details Dataframe with 5 columns:
 #' \itemize{
 #'   \item Gene: ensembl gene name
@@ -26,6 +27,7 @@ NULL
 #' @name ens.gene.ann.hg19
 #' @usage data( ens.gene.ann.hg19 )
 #' @format A data.frame
+#' @return data.frame
 #' @details Dataframe with 5 columns:
 #' \itemize{
 #'   \item Gene: ensembl gene name
@@ -45,6 +47,7 @@ NULL
 #' @name ens.gene.ann.hg38
 #' @usage data( ens.gene.ann.hg38 )
 #' @format A data.frame
+#' @return data.frame
 #' @details Dataframe with 5 columns:
 #' \itemize{
 #'   \item Gene: ensembl gene name
@@ -63,6 +66,7 @@ NULL
 #' @name copynumber.data.chr18
 #' @usage data( copynumber.data.chr18 )
 #' @format An object of class cghCall
+#' @return An object of class cghCall
 NULL
 
 #' CGHcall Example copynumber data hg18 chr20
@@ -73,6 +77,7 @@ NULL
 #' @name copynumber.data.chr20
 #' @usage data( copynumber.data.chr20 )
 #' @format An object of class cghCall
+#' @return An object of class cghCall
 
 NULL
 
@@ -84,4 +89,5 @@ NULL
 #' @name copynumber.data.chr21
 #' @usage data( copynumber.data.chr21 )
 #' @format An object of class cghCall
+#' @return An object of class cghCall
 NULL

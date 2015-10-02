@@ -8,6 +8,9 @@
 \usage{
 data( copynumber.data.chr18 )
 }
+\value{
+An object of class cghCall
+}
 \description{
 A test dataset containing copynumber data of chromosome 18 for the GeneBreak package (hg18 based).
 }

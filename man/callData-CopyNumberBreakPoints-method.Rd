@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
+\value{
+a dataframe with feature call values
+}
 \description{
 Access Object callData. This method returns a dataframe with feature call values.
 }

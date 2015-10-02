@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
+\value{
+prints text to screen
+}
 \description{
 Access Object Data. This method lists possible functions to access the data of the object.
 }

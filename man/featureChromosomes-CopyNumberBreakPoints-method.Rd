@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{An object of class \code{CopyNumberBreakPoints}}
 }
+\value{
+a vector with feature chromosomes
+}
 \description{
 Access Object featureChromosomes. This method returns a vector with feature chromosomes.
 }
