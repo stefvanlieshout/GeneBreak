@@ -247,17 +247,6 @@ setMethod( "geneChromosomes", "CopyNumberBreakPointGenes",
     function(object) object@geneAnnotation$Chromosome
 )
 
-setReplaceMethod("geneChromosomes", "CopyNumberBreakPointGenes",
-    function(object, value) {
-        if (!is.null(value)){
-            value <- as.character(value)
-            object@geneAnnotation$Chromosome <- value
-            validObject(object)
-            return(object)
-        }
-    }
-)
-
 #' Access Options recurrentGenes. This method returns a dataframe that contains genes that are recurrently affected across samples based on a FDR threshold.
 #' @param object Output of bpStats(): an object of class \code{CopyNumberBreakPointGenes}
 #' @param fdr.threshold A numeric Genes with lower FDR are returned
