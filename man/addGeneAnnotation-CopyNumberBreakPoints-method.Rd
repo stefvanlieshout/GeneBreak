@@ -11,7 +11,7 @@
 \arguments{
 \item{object}{An object of class \linkS4class{CopyNumberBreakPoints}}
 
-\item{geneAnnotation}{A dataframe with at least four columns ("Gene", "Chromosome", "Start", "End")}
+\item{geneAnnotation}{An object of class \code{GRanges} or dataframe with at least four columns ("Gene", "Chromosome", "Start", "End")}
 }
 \value{
 Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene annotation added.

@@ -1,6 +1,6 @@
 #' Gene Annotation hg18
 #'
-#' @description A dataset containing the gene locations based on human genome reference hg18.
+#' @description A dataset containing the gene locations based on human genome reference hg18 that was obtained from BioMart.
 #'
 #' @docType data
 #' @keywords datasets
@@ -20,7 +20,7 @@ NULL
 
 #' Gene Annotation hg19
 #'
-#' @description A dataset containing the gene locations based on human genome reference hg19.
+#' @description A dataset containing the gene locations based on human genome reference hg19 that was obtained from BioMart.
 #'
 #' @docType data
 #' @keywords datasets
@@ -40,7 +40,7 @@ NULL
 
 #' Gene Annotation hg38
 #'
-#' @description A dataset containing the gene locations based on human genome reference hg38.
+#' @description A dataset containing the gene locations based on human genome reference hg38 that was obtained from BioMart.
 #'
 #' @docType data
 #' @keywords datasets
@@ -59,7 +59,7 @@ NULL
 NULL
 
 #' CGHcall Example copynumber data hg18 chr18
-#' @description A test dataset containing copynumber data of chromosome 18 for the GeneBreak package (hg18 based).
+#' @description A test dataset containing copynumber data of chromosome 18 for the GeneBreak package (hg18 based). This copy number aberration (CNA) data was obtained by analysis of 200 array-CGH (Agilent 180k) samples from advanced colorectal cancers.
 #'
 #' @docType data
 #' @keywords datasets
@@ -70,7 +70,7 @@ NULL
 NULL
 
 #' CGHcall Example copynumber data hg18 chr20
-#' @description A test dataset containing chromosome 20 copynumber data for the GeneBreak package (hg18 based).
+#' @description A test dataset containing chromosome 20 copynumber data for the GeneBreak package (hg18 based). This copy number aberration (CNA) data was obtained by analysis of 200 array-CGH (Agilent 180k) samples from advanced colorectal cancers.
 #'
 #' @docType data
 #' @keywords datasets
@@ -82,7 +82,7 @@ NULL
 NULL
 
 #' CGHcall Example copynumber data hg18 chr21
-#' @description A test dataset containing chromosome 21 copynumber data for the GeneBreak package (hg18 based).
+#' @description A test dataset containing chromosome 21 copynumber data for the GeneBreak package (hg18 based). This copy number aberration (CNA) data was obtained by analysis of 200 array-CGH (Agilent 180k) samples from advanced colorectal cancers.
 #'
 #' @docType data
 #' @keywords datasets

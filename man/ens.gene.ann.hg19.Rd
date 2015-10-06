@@ -12,7 +12,7 @@ data( ens.gene.ann.hg19 )
 data.frame
 }
 \description{
-A dataset containing the gene locations based on human genome reference hg19.
+A dataset containing the gene locations based on human genome reference hg19 that was obtained from BioMart.
 }
 \details{
 Dataframe with 5 columns:

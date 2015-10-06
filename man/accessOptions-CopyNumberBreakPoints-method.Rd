@@ -9,7 +9,7 @@
 \S4method{accessOptions}{CopyNumberBreakPoints}(object)
 }
 \arguments{
-\item{object}{An object of class \code{CopyNumberBreakPoints}}
+\item{object}{An object of class \code{CopyNumberBreakPoints} or \code{CopyNumberBreakPointGenes}}
 }
 \value{
 prints text to screen
@@ -22,7 +22,5 @@ data( copynumber.data.chr20 )
 bp <- getBreakpoints( copynumber.data.chr20 )
 
 accessOptions( bp )
-# accessOptions( breakpointGenes )
-# accessOptions( breakpointStatistics )
 }
 

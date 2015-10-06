@@ -30,9 +30,9 @@ breakpoints <- getBreakpoints( data = copynumber.data.chr20 )
 library(CGHcall)
 cgh <- copynumber.data.chr20
 segmented <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
-  End=bpend(cgh), FeatureName=featureNames(cgh), segmented(cgh))
+  End=bpend(cgh), FeatureName=rownames(cgh), segmented(cgh))
 called <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh),
-  End=bpend(cgh), FeatureName=featureNames(cgh), calls(cgh))
+  End=bpend(cgh), FeatureName=rownames(cgh), calls(cgh))
 breakpoints <- getBreakpoints( data = segmented, data2 = called )
 
 ## options to inspect the data

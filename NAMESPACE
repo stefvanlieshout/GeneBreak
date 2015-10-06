@@ -2,15 +2,14 @@
 # IMPORTS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 importClassesFrom( methods, character, logical, matrix, missing, numeric )
-#importMethodsFrom( Biobase, featureNames )
-#importMethodsFrom( CGHbase, regions )
 importMethodsFrom( methods, coerce, initialize, show )
-
-#importFrom( CGHcall, CGHcall, ExpandCGHcall, postsegnormalize )
+importMethodsFrom( CGHbase, segmented, chromosomes, bpstart, bpend )
+importMethodsFrom( GenomicRanges, seqnames, names, start, end )
 importFrom( graphics, abline, axis, box, mtext, par, points, rect, segments, text )
 importFrom( methods, callNextMethod, new )
 #importFrom( R.utils, downloadFile )
 #importFrom( utils, packageVersion, read.table, write.table )
+#importFrom( Biobase, featureNames )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # EXPORTS
@@ -39,6 +38,6 @@ export( "geneInfo" )
 export( "featuresPerGene" )
 export( "breakpointsPerGene" )
 export( "sampleNames" )
-export( "featureNames" )
+export( "namesFeatures" )
 
 # EOF

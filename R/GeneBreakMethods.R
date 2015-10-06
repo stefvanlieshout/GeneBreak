@@ -20,9 +20,9 @@
 #' library(CGHcall)
 #' cgh <- copynumber.data.chr20
 #' segmented <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh), 
-#'   End=bpend(cgh), FeatureName=featureNames(cgh), segmented(cgh))
+#'   End=bpend(cgh), FeatureName=rownames(cgh), segmented(cgh))
 #' called <- data.frame( Chromosome=chromosomes(cgh), Start=bpstart(cgh), 
-#'   End=bpend(cgh), FeatureName=featureNames(cgh), calls(cgh))
+#'   End=bpend(cgh), FeatureName=rownames(cgh), calls(cgh))
 #' breakpoints <- getBreakpoints( data = segmented, data2 = called )
 #' 
 #' ## options to inspect the data
@@ -33,10 +33,14 @@ getBreakpoints <- function( data, data2=NULL, first.rm=TRUE ) {
     ## input checks
     if ( (class( data ) == 'cghCall') || (class( data ) == 'QDNAseqCopyNumbers') ){
 	    ## slots are the same for CGHcall and QDNAseq objects
-	    segmData <- data@assayData$segmented
-	    bpChrs   <- data@featureData@data$Chromosome
-	    bpStart  <- data@featureData@data$Start
-	    bpEnd    <- data@featureData@data$End
+	    #segmData <- data@assayData$segmented
+	    #bpChrs   <- data@featureData@data$Chromosome
+	    #bpStart  <- data@featureData@data$Start
+	    #bpEnd    <- data@featureData@data$End
+	    segmData <- segmented(data)
+	    bpChrs   <- chromosomes(data)
+	    bpStart  <- bpstart(data)
+	    bpEnd    <- bpend(data)
 	    featureNames <- rownames( segmData )
 	    callData <- matrix( data=NA, ncol=ncol(segmData), nrow=nrow(segmData) )
 
@@ -211,7 +215,7 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
 #' @description
 #' Maps features to gene locations.
 #' @param object An object of class \linkS4class{CopyNumberBreakPoints}
-#' @param geneAnnotation A dataframe with at least four columns ("Gene", "Chromosome", "Start", "End")
+#' @param geneAnnotation An object of class \code{GRanges} or dataframe with at least four columns ("Gene", "Chromosome", "Start", "End")
 #' @return Returns an object of class \linkS4class{CopyNumberBreakPointGenes} with gene annotation added.
 #' @details The end of the first feature after gene start location up to and including the first feature after gene end location will be defined as gene-associated feaures. For hg18, hg19 and hg38 built-in gene annotation files obtained from ensembl can be used. Please take care to use a matching reference genome for your breakpoint data. In stead of using the built-in gene annotion files, feature-to-gene mapping can be based on an user-defined annotion file. The dataframe should contain at least these four columns: "Gene", "Chromosome", "Start" and "End".
 #' @details Note that the chromosome names are labeled similar in the annotation file and in the object of class \linkS4class{CopyNumberBreakPoints} (e.g. "1", "2", ..., "24")
@@ -234,6 +238,25 @@ setMethod( "bpFilter", "CopyNumberBreakPoints",
 #' @aliases addGeneAnnotation
 setMethod( "addGeneAnnotation", "CopyNumberBreakPoints",
     function( object, geneAnnotation ) {
+
+    ## input checks
+    if ( (class( object ) == 'GRanges') ){
+
+    	geneAnnotationExt <- as.data.frame( geneAnnotation, row.names=NULL)[,grep("start|end|seqnames", colnames(as.data.frame(geneAnnotation)), invert=TRUE)] 
+
+	    geneNames <- names(geneAnnotation)
+	    bpChrs    <- gsub( "chr", "", seqnames(geneAnnotation) )
+	    bpStart   <- start(geneAnnotation)
+	    bpEnd     <- end(geneAnnotation)
+	    
+	    geneAnnotationCore <- data.frame( 
+	    	Gene = geneNames,
+	    	Chromosome = bpChrs,
+	    	Start = bpStart,
+	    	End = bpEnd
+	    )
+	    geneAnnotation <- cbind( geneAnnotationCore, geneAnnotationExt)
+    }
 
     ## sanity checks
     requiredColnames <- c("Gene", "Chromosome", "Start", "End")
@@ -735,23 +758,25 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
     function( object, plot.chr=NULL, plot.ylim=15, fdr.threshold=0.1, add.jitter=FALSE ) {
         cat( paste("Plotting breakpoint frequencies ...\n") )
         
-        breakpointGene <- 1
-        stats.gene <- 1
-        stats.feature <- 1 
+        breakpointGene <- ifelse( class(object) == "CopyNumberBreakPointGenes", 1, 0 )
+        stats.gene <- ifelse( class(object) == "CopyNumberBreakPointGenes", 1, 0 )
+        stats.feature <- 1
 
         ### input checks
-        if( !exists( "sampleNamesWithBreakpoints", where=object@geneData ) ) { 
-            breakpointGene <- 0
-            cat("Breakpoint gene data is not available yet.\n")
+        if ( class(object) == "CopyNumberBreakPointGenes" ){
+        	
+        	if( !exists( "sampleNamesWithBreakpoints", where=object@geneData ) ) { 
+            	breakpointGene <- 0
+            	cat("Breakpoint gene data is not available yet.\n")
+        	}
+        	if( !exists( "FDR", where=object@geneData ) ) { 
+            	stats.gene <- 0
+            	cat("Breakpoint gene statistics are not available yet.\n")
+        	}	
         }
 
-        if( !exists( "FDR", where=object@geneData ) ) { 
-            stats.gene <- 0
-            cat("Breakpoint gene statistics are not available yet.\n")
-        }
-        
         if( !exists( "FDR", where=object@featureData ) ) { 
-            stats.feature <- 0 
+            stats.feature <- 0
         }
         
         ## set general parameters
@@ -781,10 +806,10 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             chr.feature = which( featureChromosomes(object) == chr )
             featureBreakPerc <- apply( object@breakpoints, 1, function(x) { sum(x)/length(x)*100 } ) [chr.feature]
             recurrent.gene <- NULL
-            
+            start.feature <- object@featureAnnotation$Start[chr.feature]
+
             if( breakpointGene == 1 ) {
                 chr.gene = which(geneChromosomes(object)==chr)
-                start.feature <- object@featureAnnotation$Start[chr.feature]
                 geneBreakPerc <- apply( object@breakpointsPerGene, 1, function(x) { x[x>1]<-1 ; sum(x)/length(x)*100 } ) [chr.gene]
                 start.gene <- object@geneAnnotation$Start[chr.gene]
                 end.gene <- object@geneAnnotation$End[chr.gene]
@@ -797,7 +822,7 @@ setMethod( "bpPlot", "CopyNumberBreakPoints",
             
             if( stats.feature == 1 ) {
                 # color recurrent breakpoints (feature level); this may be a bit overdone
-                recurrent.feature <- which( object@featureData$FDR[chr.gene] < fdr.threshold )
+                recurrent.feature <- which( object@featureData$FDR[chr.feature] < fdr.threshold )
                 color.feature.chr <- rep( color.feature, length(featureBreakPerc) )
                 color.feature.chr[recurrent.feature] <- "darkblue"
             }

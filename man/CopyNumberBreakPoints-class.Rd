@@ -23,4 +23,37 @@ An S4 class to represent a CopyNumberBreakPoints object.
 
 \item{\code{featureData}}{A dataframe with calculated information about the features (usually probes or bins)}
 }}
+\section{Accessors}{
+
+\itemize{
+  \item callData( object ) Returns feature call values
+  \item segmentData( object ) Returns feature segment values
+  \item breakpointData( object ) Returns feature breakpoint values
+  \item sampleNames( object ) Returns vector with sample names
+  \item namesFeatures( object ) Returns vector with feature names
+  \item featureChromosomes( object ) Returns vector of feature chromosomes
+  \item featureInfo( object ) Returns feature data/information
+}
+}
+
+\section{Methods}{
+
+\itemize{
+  \item getBreakpoints Builds the \linkS4class{CopyNumberBreakPoints} object from copynumber data and detects breakpoint locations
+  \item bpFilter Selects breakpoints by filter criteria options
+  \item bpStats Applies cohort-based statistics to identify chromosomal locations that are recurrently affected by breakpoints
+  \item bpPlot Plots breakpoint frequencies per chromosome
+}
+}
+\examples{
+data( copynumber.data.chr20 )
+data( ens.gene.ann.hg18 )
+bp <- getBreakpoints( copynumber.data.chr20 )
+bp <- bpFilter( bp )
+bp <- bpStats( bp , level = 'feature' , method = 'BH' )
+bpPlot( bp, c(20) )
+}
+\author{
+E. van den Broek and S. van Lieshout
+}
 

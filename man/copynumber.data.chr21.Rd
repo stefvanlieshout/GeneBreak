@@ -12,7 +12,7 @@ data( copynumber.data.chr21 )
 An object of class cghCall
 }
 \description{
-A test dataset containing chromosome 21 copynumber data for the GeneBreak package (hg18 based).
+A test dataset containing chromosome 21 copynumber data for the GeneBreak package (hg18 based). This copy number aberration (CNA) data was obtained by analysis of 200 array-CGH (Agilent 180k) samples from advanced colorectal cancers.
 }
 \keyword{datasets}
 
