@@ -3,7 +3,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 importClassesFrom( methods, character, logical, matrix, missing, numeric )
 importMethodsFrom( methods, coerce, initialize, show )
-importMethodsFrom( CGHbase, segmented, chromosomes, bpstart, bpend )
+importMethodsFrom( CGHbase, calls, segmented, chromosomes, bpstart, bpend )
 importMethodsFrom( GenomicRanges, seqnames, names, start, end )
 importFrom( graphics, abline, axis, box, mtext, par, points, rect, segments, text )
 importFrom( methods, callNextMethod, new )

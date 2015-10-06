@@ -45,7 +45,7 @@ getBreakpoints <- function( data, data2=NULL, first.rm=TRUE ) {
 	    callData <- matrix( data=NA, ncol=ncol(segmData), nrow=nrow(segmData) )
 
 	    ## check slot
-	    if ( exists( "calls", data@assayData ) ) callData <- data@assayData$calls
+	    if ( exists( "calls", data@assayData ) ) callData <- calls(data)
 
     }
     else if ( class(data) == "data.frame" ){
