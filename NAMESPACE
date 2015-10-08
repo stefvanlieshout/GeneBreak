@@ -10,6 +10,8 @@ importFrom( methods, callNextMethod, new )
 #importFrom( R.utils, downloadFile )
 #importFrom( utils, packageVersion, read.table, write.table )
 #importFrom( Biobase, featureNames )
+import(QDNAseq)
+import(CGHcall)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # EXPORTS
