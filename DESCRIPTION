@@ -3,9 +3,9 @@ Type: Package
 Version: 0.99.7
 Title: Gene Break Detection
 Authors@R: c(person("Evert", "van den Broek", role = c("aut", "cre"), email = "vandenbroek.evert@gmail.com" ),
-	person("Stef", "van Lieshout", role = c("aut", "cre")))
+	person("Stef", "van Lieshout", role = c("aut")))
 Author: Evert van den Broek [aut, cre],
-	Stef van Lieshout [aut, cre]
+	Stef van Lieshout [aut]
 Maintainer: Evert van den Broek <vandenbroek.evert@gmail.com>
 Imports: graphics, methods
 Depends: R(>= 3.2), QDNAseq, CGHcall, CGHbase, GenomicRanges
